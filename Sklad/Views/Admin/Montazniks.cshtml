@@ -1,0 +1,52 @@
+﻿
+@{
+    ViewBag.Title = "Montazniks";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="head">
+    <h4>Список Монтажников</h4>
+    <a href="/Admin/AddMontazniks" class="btn btn-default">Добавить монтажника</a>
+</div>
+
+<div class="head">
+    <h4>Список Розниц</h4>
+    <a href="/Admin/StockAdd" class="btn btn-default">Добавить розницу</a>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Фио</th>
+            <th>Серия и номер паспорта</th>
+            <th>Кем выдан</th>
+            <th>Когда выдан</th>
+            <th>Адрес по прописки</th>
+            <th>Телефон</th>
+            <th>Марка автомобиля</th>
+            <th>Гос номер автомобиля</th>
+            <th>Изменить</th>
+            <th>Удалить</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.FIO</td>
+                <td>@u.PasportNum</td>
+                <td>@u.WhoIssued</td>
+                <td>@u.WhereIssued</td>
+                <td>@u.Address</td>
+                <td>@u.Phone</td>
+                <td>@u.MarkAuto</td>
+                <td>@u.NumberAuto</td>
+                <td><a href="/Admin/Montaznik/@u.Id">Изменить</a></td>
+                <td><a href="/Admin/DeleteMontaznik/@u.Id">Удалить</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+

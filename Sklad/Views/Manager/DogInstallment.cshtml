@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewBag.Title = "DogInstallment";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+<h4>Договор Рассрочки</h4>
+
+<form role="form" method="get" action="/Manager/DogInstallmentForm">
+    <div class="form-group">
+        <label for="name">Номер заявки</label>
+        @if (ViewBag.SellNumb != null)
+        {
+            <input type="text" id="name" name="sellNumb" value="@ViewBag.SellNumb" class="form-control" />
+        }
+        else
+        {
+            <input type="text" id="name" name="sellNumb" class="form-control" />
+        }
+    </div>
+    <div class="form-group">
+        <label for="name">ФИО</label>
+        <input type="text" id="name" name="FIO" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="name">Серия и номер паспорта</label>
+        <input type="text" id="name" name="Passport_number" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="name">Кем Выдан</label>
+        <input type="text" id="name" name="issuedBy" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="name">Дата выдачи</label>
+        <input type="date" id="name" name="issuedDate" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="name">Адрес по прописке</label>
+        <input type="text" id="name" name="adress" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="name">Контактный телефон</label> 
+        <input type="text" id="name" name="privatePhone" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="name">Домашний телефон</label>
+        <input type="text" id="name" name="homePhone" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="name">Текущая Дата</label>
+        <input type="date" id="name" name="date" class="form-control"  value="@DateTime.Now.ToString("dd.MM.yyyy")"/>
+    </div>
+    <div class="form-group">
+        <label for="name">Сумма с учетом скидки</label>
+        <input type="number" id="sum" name="sum" class="form-control" value="@ViewBag.Sum" />
+    </div>
+    <div class="form-group">
+        <label for="name">Денег внесено</label>
+        <input type="number" id="addedMoney" name="addedMoney" class="form-control" value="@ViewBag.AddMoney" />
+    </div>
+
+    <h3>Даты Платежей</h3>
+    <div id="installment_dates">
+        <div class="form-group">
+            <label for="name">Дата внесения</label>
+            <input type="date" id="name" name="installmentDate[0]" class="form-control" />
+            <label for="name">Сумма внесения</label>
+            <input type="text" id="name" name="installmentMoney[0]" class="form-control" />
+        </div>
+    </div>
+    
+    <button type="button" id="add_date" class="btn btn-default" style="margin-bottom: 40px;">Добавить дату внесения</button>
+    <button type="submit" class="btn btn-success" style="margin-bottom: 40px;">Далее</button>
+    
+    <script>
+        var i = kk + 1;
+        var add2html;
+        $('#add_date').click(function () {
+            add2html = '<div class="form-group"><label for="name">Дата внесения</label><input type="date" id="name" name="installmentDate[' + i + ']" class="form-control" /><label for="name">Сумма внесения</label><input type="text" id="name" name="installmentMoney[' + i + ']" class="form-control"/></div>'
+            $('#installment_dates').append(add2html);
+        i++;
+        k++;
+        })
+
+        document.getElementById('sum').value = @ViewBag.Sum;
+
+        document.getElementById('addedMoney').value = @ViewBag.AddMoney;
+    </script>
+</form>

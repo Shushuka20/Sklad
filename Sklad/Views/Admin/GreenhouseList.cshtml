@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "GreenhouseList";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="head">
+    <h4>Список продукции на складе @ViewBag.Stock.Name</h4>
+    <a href="/Admin/GreenhouseAdd/@ViewBag.Stock.Id" class="btn btn-default">Добавить продукцию</a>
+</div>
+<table class="table table-bordered">
+    <thead style="background-color: white; opacity: 1;">
+        <tr>
+            <th>Наименование</th>
+            <th>Список пакетов</th>
+            <th>Группа товара</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var g in Model)
+        {
+            <tr>
+                <td>@g.Name</td>
+                <td>
+                    @foreach (var p in g.PacksForGH)
+                {
+                        <p>@p.Name (@p.Amount шт.)</p>
+                    }
+                </td>
+                <td>@g.Group</td>
+                <td><a href="/Admin/Greenhouse/@g.Id" class="btn btn-default">Редактировать</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,14 @@
+﻿
+@{
+    ViewBag.Title = "DealerAddMoney";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<form role="form" method="post" action="/Admin/DealerAddMoney/@Model.Id">
+    <div class="form-group">
+        <label for="cost">Внести на счёт @Model.Name </label>
+        <input type="text" id="cost" name="cost" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Подтвердить</button>
+</form>
+

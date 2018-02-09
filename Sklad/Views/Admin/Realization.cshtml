@@ -1,0 +1,72 @@
+﻿
+@{
+    ViewBag.Title = "Realization";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+        <form method="post" role="form" action="/Admin/Realization/@Model.Id">
+
+            @if (Model.Dealer != null)
+            {
+                <div class="form-group">
+                    <label for="dealer">Дилер</label>
+                    <input type="text" id="dealer" name="dealer" class="form-control" value="@Model.Dealer" />
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label for="buyer">Клиент</label>
+                    <input type="text" id="buyer" name="buyer" class="form-control" value="@Model.Number" />
+                </div>
+            }
+
+            <div class="form-group">
+                <label for="discount">Скидка</label>
+                <input type="text" id="discount" name="Discount" class="form-control" value="@Model.Discount" />
+            </div>
+            <div class="form-group">
+                <label for="sum">Общая сумма с учётом скидки</label>
+                <input type="text" id="sum" name="SumWithD" class="form-control" value="@Model.SumWithD" />
+            </div>
+            <div class="form-group">
+                <label for="addMoney">Внесено денег</label>
+                <input type="text" id="addMoney" name="AddMoney" class="form-control" value="@Model.AddMoney" />
+            </div>
+            <div class="form-group">
+                <label for="shipment">Отгрузить сейчас</label>
+                <select id="shipment" name="Shipment" class="form-control">
+                    @if (Model.Shipment != true)
+            {
+                        <option value="false">Нет</option>
+                        <option value="true">Да</option>
+                    }
+                    else
+                    {
+                        <option value="true">Да</option>
+                        <option value="false">Нет</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="payForTerminal">Оплата по терминалу</label>
+                <select id="payForTerminal" name="PayForTerminal" class="form-control">
+                    @if (Model.PayForTerminal != true)
+            {
+                        <option value="false">Нет</option>
+                        <option value="true">Да</option>
+                    }
+                    else
+                    {
+                        <option value="true">Да</option>
+                        <option value="false">Нет</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="com">Комментарий</label>
+                <textarea name="Comment" class="form-control">@Model.Comment</textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Принять</button>
+        </form>
+

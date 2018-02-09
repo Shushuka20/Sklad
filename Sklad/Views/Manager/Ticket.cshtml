@@ -1,0 +1,188 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Untitled Document</title>
+
+    <link rel="stylesheet" href="~/Content/Pechat.css" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div style="max-width: 150px; float:left; padding:10px;box-sizing:border-box;">
+        @Model.Comment
+    </div>
+    <div class="pechat_main" style="float:left;">
+        <div class="pechat_left">
+            <div class="p_l1">
+                <p>Форма &#8470; k0-1</p>
+                <p>Утверждена Постановлением Госкомстата</p>
+                <p>России от 18.08.98 г. &#8470; 88</p>
+            </div>
+
+            <table class="p_l3">
+                <tr><td>ИП Дорогин Н.В.</td></tr>
+                <tr><td>предприятие, организация</td></tr>
+                <tr><td></td></tr>
+                <tr><td> структурное подразделения</td></tr>
+            </table>
+
+            <table class="p_l2">
+                <tr><td></td><td>Код</td></tr>
+                <tr><td>Форма ОКУД</td><td>0310001</td></tr>
+                <tr><td>по ОКПО</td><td></td></tr>
+                <tr><td></td><td></td></tr>
+            </table>
+            <div class="p_l44">ПРИХОДНЫЙ КАССОВЫЙ ПРИХОД</div>
+            <table class="p_l4">
+                <tr><td>Номер документа</td><td>Дата составления</td></tr>
+                <tr><td> @Model.Number </td><td> @DateTime.UtcNow.AddHours(6) </td></tr>
+            </table>
+
+
+            <table border="1" class="p_l5">
+                <tr><td rowspan="2">Дебет</td><td colspan="4">Кредит</td><td rowspan="2"></td><td rowspan="2">Сумма, руб,</td><td rowspan="2">Код целевого назначения</td></tr>
+                <tr><td></td><td>Код структу- рного подраз- деления</td><td>Корреспондирующий счет</td><td>Код аналитического учет</td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td> @Model.SumWithD руб.</td><td></td><td></td></tr>
+
+            </table>
+
+            <table class="tab2">
+                <tr><td>Принято от:</td><td> Частное лицо</td></tr>
+                <tr><td>Основание: </td><td></td></tr>
+                @foreach (var s in ViewBag.Packs)
+                {
+                    if (s.Amount > 0)
+                    {
+                        <tr><td></td><td> @s.Name @s.Amount шт. </td></tr>
+                    }
+                }
+                <tr><td></td><td></td>
+                <tr>
+                <tr><td>Сумма (итого):</td><td>  @Model.SumWithD рублей</td>
+                <tr>
+                <tr><td></td><td></td>
+                <tr><td>Получено:</td><td> @ViewBag.AddMoney рублей</td>
+                <tr>
+                <tr><td></td><td></td>
+                <tr><td>В том числе: </td><td> без НДС</td><td>
+                <tr><td>Приложение:</td><td></td></tr>
+                
+            </table>
+
+            <table class="p_l6">
+                <tr><td>Главный бухгалтер</td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>подпись</td><td></td><td>расшифровка подписи</td></tr>
+                <tr><td>Получил кассир</td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>подпись</td><td></td><td>расшифровка подписи</td></tr>
+
+            </table>
+
+        </div>
+        <div class="pechat_right">
+            <div class="p_abs">линия отреза</div>
+            <table class="r_tab1">
+                <tr><td>ИП Дорогин Н.В.</td></tr>
+                <tr>
+                    <td style="text-align:center">
+                        предприятие организация<br>
+                        <span style="font-size:14px"><b>КВИТАНЦИЯ</b></span><br>
+                        к приходному кассовому
+                        ордеру &#8470; @Model.Number <br>
+                        Принято от: Частное лицо
+                    </td>
+                </tr>
+                <tr><td></td></tr>
+                <tr><td>Основание:</td></tr>
+                @foreach (var s in Model.GreenhouseForSales)
+                {
+                    if (s.Amount > 0)
+                    {
+                        <tr><td> @s.Name @s.Amount шт. </td></tr>
+                    }
+                }
+
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+            </table>
+
+            <table class="r_tab2">
+                <tr><td>Сумма: @Model.SumWithD руб.</td></tr>
+                <tr><td></td></tr>
+                <tr><td>Получено: @ViewBag.AddMoney руб. </td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td>В том числе без НДС</td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td>@DateTime.UtcNow.AddHours(6)</td></tr>
+
+
+            </table>
+            <div class="r_tab90">
+                <p>М. П. (штампа)</p>
+                <p><b>Главный бухгалтер</b></p>
+            </div>
+
+            <table class="r_tab3">
+                <tr><td>подпись</td><td>расшифровка подписи</td></tr>
+                <tr><td><b>Кассир<b></td><td></td></tr>
+                <tr><td></td><td>подпись &nbsp;&nbsp;расшифровка</td></tr>
+
+                <tr><td></td></tr>
+                <tr><td></td></tr>                 
+            </table>
+        </div>    
+        <div class="clearfix"></div>
+    </div>
+    <div class="clearfix" style="margin-bottom: 40px;"></div>
+
+    <P CLASS="western" STYLE="margin-bottom: 0.14in">
+        № продажи: @Model.Number
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0.14in">
+        Имя
+        ______________________________________________________________________________
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0.14in">
+        Откуда узнали
+        о нашей организации?
+        ___________________________________________________
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0.14in">____________________________________________________________________________________</P>
+    <P CLASS="western" STYLE="margin-bottom: 0.14in">
+        Почему выбрали
+        нашу продукцию?
+        _____________________________________________________
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0.14in">____________________________________________________________________________________</P>
+    <P CLASS="western" STYLE="margin-bottom: 0.14in">
+        Чтобы вы
+        хотели добавить в ассортимент?
+    </P>
+    <P CLASS="western" STYLE="margin-bottom: 0.14in">
+        <BR /><BR />
+    </P>
+
+    <div>
+        <a href="/Home/Index" style="margin-top:80px; text-decoration:none; font-size:20px;">Панель менеджера</a>
+
+        <form action="/Manager/DogHran" method="get" role="form">
+            <input type="hidden" value="@Model.Number" name="sellNumb" />
+            <button type="submit">Сделать договор хранения</button>
+        </form>
+        <form action="/Manager/Delivery" method="get" role="form">
+            <input type="hidden" value="@Model.Number" name="sellNumb" />
+            <button type="submit">Сделать договор доставки</button>
+        </form>
+        <a href="/Home/Index" style="margin-top:80px; text-decoration:none; font-size:20px;">Сделать договор рассрочки</a>
+    </div>
+
+</body>
+</html>

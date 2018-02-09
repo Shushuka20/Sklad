@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "StocksInfo";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<div class="head">
+    <h4>Список Розниц</h4>
+</div>
+<table class="table table-bordered">
+    <thead style="background-color: white; opacity: 1;">
+        <tr>
+            <td>Название</td>
+            <td>Действие</td>
+        </tr>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.Name</td>
+                <td>
+                    <a href="/Manager/StockInfoPacks/@s.Id" class="btn btn-default">Список пакетов</a>
+                </td>
+            </tr>
+        }
+    </thead>
+</table>

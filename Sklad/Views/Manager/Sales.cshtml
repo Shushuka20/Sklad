@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewBag.Title = "Sales";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<div class="head">
+    <h4>Список Расходов</h4>
+    <a href="/Manager/SaleAdd" class="btn btn-default">Добавить расход</a>
+</div>
+<table class="table table-bordered">
+    <thead style="background-color: white; opacity: 1;">
+        <tr>
+            <td>№</td>
+            <td>Описание</td>
+            <td>Сумма без скидки</td>
+            <td>Скидка</td>
+            <td>Комментарий</td>
+            <td>Действие</td>
+        </tr>
+    @foreach (var s in Model)
+    {
+        <tr>
+            <td>@s.Number</td>
+            <td>@s.Description</td>
+            <td>@s.SumWithoutD</td>
+            <td>@s.Discount</td>
+            @if (s.Comment != null)
+            {
+                <td>@s.Comment</td>
+            }
+            else
+            {
+                <td></td>
+            }
+            <td><a href="/Manager/Sale/@s.Id" class="btn btn-default">Внести расход</a></td>
+        </tr>
+    }
+</table>

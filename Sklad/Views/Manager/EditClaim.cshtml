@@ -1,0 +1,145 @@
+﻿@using Sklad.Services
+
+@{
+    ViewBag.Title = "EditClaim";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+
+    ClaimService claimService = new ClaimService();
+}
+
+<h3 style="position: relative; top: 40px; margin-bottom: 40px; margin-top: 0px;">Редактирование заявки на производство</h3>
+
+<div class="col-md-12" style="font-size:21px; text-align:center; margin-top:30px" id="group">
+
+    <div class="dropdown line_real" id="gr1" style="margin-right:20px;">
+        <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Теплицы и парники</a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+            @foreach (var g in ViewBag.Ghs1)
+            {
+                <li style="cursor:pointer"><h4>@g.Name</h4></li>
+            }
+        </ul>
+    </div>
+
+    <div class="dropdown line_real" id="gr2" style="margin-right:20px;">
+        <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Поликарбонат</a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+            @foreach (var g in ViewBag.Ghs2)
+            {
+                <li style="cursor:pointer"><h4>@g.Name</h4></li>
+            }
+        </ul>
+    </div>
+    <div class="dropdown line_real" id="gr3" style="margin-right:20px;">
+        <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Монтаж</a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+            @foreach (var g in ViewBag.Ghs3)
+            {
+                <li style="cursor:pointer"><h4>@g.Name</h4></li>
+            }
+        </ul>
+    </div>
+    <div class="dropdown line_real" id="gr4" style="margin-right:20px;">
+        <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Доп. товары</a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+            @foreach (var g in ViewBag.Ghs4)
+            {
+                <li style="cursor:pointer"><h4>@g.Name</h4></li>
+            }
+        </ul>
+    </div>
+    <div class="dropdown line_real" id="gr5" style="margin-right:20px;">
+        <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Другая продукция</a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+            @foreach (var g in ViewBag.Ghs5)
+            {
+                <li style="cursor:pointer"><h4>@g.Name</h4></li>
+            }
+        </ul>
+    </div>
+    <div class="dropdown line_real" id="gr5" style="margin-right:20px;">
+        <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Заборы</a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+            @foreach (var g in ViewBag.Ghs6)
+            {
+                <li style="cursor:pointer"><h4>@g.Name</h4></li>
+            }
+        </ul>
+    </div>
+    <div class="dropdown line_real" id="gr5" style="margin-right:20px;">
+        <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Поливы</a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+            @foreach (var g in ViewBag.Ghs7)
+            {
+                <li style="cursor:pointer"><h4>@g.Name</h4></li>
+            }
+        </ul>
+    </div>
+    <div class="dropdown line_real" id="gr5" style="margin-right:20px;">
+        <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Парники</a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+            @foreach (var g in ViewBag.Ghs8)
+            {
+                <li style="cursor:pointer"><h4>@g.Name</h4></li>
+            }
+        </ul>
+    </div>
+
+</div>
+
+
+
+<form role="form" method="post" action="/Manager/EditClaim">
+    <input type="text" name="id" style="display: none" value="@Model.Id"/>
+
+    <div class="form-group">
+        <label for="name">Клиент</label>
+        <input type="text" id="name" name="client" class="form-control" value="@claimService.ReadProperty(Model.Client)"/>
+    </div>
+
+    <div class="form-group">
+        <label for="name">Адрес</label>
+        <input type="text" id="name" name="address" class="form-control" value="@claimService.ReadProperty(Model.Address)"/>
+    </div>
+
+    <div class="form-group">
+        <label for="name">Текст</label>
+        <input type="text" id="name" name="text" class="form-control" value="@claimService.ReadProperty(Model.Text)"/>
+    </div>
+
+    <div class="form-group">
+        <label for="name">Комментарий</label>
+        <input type="text" id="name" name="comment" class="form-control" value="@claimService.ReadProperty(Model.Comment)" />
+    </div>
+
+    <div id="greenhouses">
+        <h4>Описание заявки</h4>
+        @{ 
+            var i = 0;
+        }
+        @foreach (var pwc in ViewBag.Descriptions)
+        {
+            
+
+            <div class="line_real" style="margin-right:10px">
+                <div>
+                    <label for="ghname">Название</label>
+                    <input type="text" id="ghname[@i]" name="ghName[@i]" class="input db" value="@pwc.Key" />
+                </div>
+                <div>
+                    <label for="ghamount">Количество</label>
+                    <input type="text" id="ghamount[@i]" name="ghAmount[@i]" class="input db" value="@pwc.Value" /><br />
+                </div>
+                <button type="button" id="btn_delete" class="btn btn-danger" style="margin-bottom: 20px;">Удалить</button>
+            </div>
+         
+            i++;
+            <script>kk = @i - 1;</script>
+        }
+    </div>
+    <div id="add" class="btn btn-default">Добавить поле для ввода товара</div>
+    <button type="submit" class="btn btn-success">Изменить</button>
+
+</form>
+
+

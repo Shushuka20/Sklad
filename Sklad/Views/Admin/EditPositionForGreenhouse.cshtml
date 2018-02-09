@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "EditPositionForGreenhouse";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="col-md-12" style="font-size:21px; text-align:center; margin-top:30px" id="group">
+
+    <form role="form" method="post" action="/Admin/EditPositionForGreenhouse">
+        <input type="hidden" name="id" value="@ViewBag.Id" />
+        <input type="hidden" name="group" value="@ViewBag.Group" />
+
+        @{ int id = 0;}
+        @foreach(var g in Model)
+        {
+            <input class="butListGhs" type="text" value="@g.Name" name="gh[@id]" style="display:block; cursor:pointer; box-sizing:border-box;" readonly /> 
+            <!--<p class="butListGhs btn btn-danger" id="@id" style="cursor:pointer; display:inline-block;">X</p>-->
+            id++;
+        }
+
+        <button type="submit" style="float:left; margin-top:10px;">Принять</button>
+    </form>
+</div>
+
+
+

@@ -1,0 +1,14 @@
+﻿
+@{
+    ViewBag.Title = "ReceivingMoneyStart";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<form method="get" action="/Manager/ReceivingMonet" role="form">
+    <div class="form-group">
+        <label for="numb">Введите номер продажи (вместе с префиксом)</label>
+        <input type="text" id="numb" name="number" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Далее</button>
+</form>
+

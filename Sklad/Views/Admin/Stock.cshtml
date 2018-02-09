@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "Stock";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<form role="form" method="post" action="/Admin/Stock/@Model.Id">
+    <div class="form-group">
+        <label for="name">Название</label>
+        <input type="text" id="name" name="name" value="@Model.Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="prefix">Префикс</label>
+        <input type="text" id="prefix" name="prefix" value="@Model.Prefix" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="col">Цвет фона</label>
+        <input type="text" id="col" name="color" value="@Model.BackgroundColor" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Принять</button>
+    <a href="/Admin/StockDelete/@Model.Id" class="btn btn-danger">Удалить</a>
+</form>
+

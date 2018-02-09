@@ -1,0 +1,165 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script>var kk = 0;</script>
+</head>
+<body>
+    <header>
+        <div class="container-fluid np">
+            <div class="row-fluid">
+                <div class="topline" style="background-color: @ViewBag.ColorS ;">
+                    <h2>Панель менеджера</h2>
+                    <div class="user">
+                        <span>Пользователь: @User.Identity.Name</span>   <a href="/Account/LogOff" class="btn btn-default">Выход</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section class="main">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="col-xs-2">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" >Меню</div>
+                        <div class="panel-body">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="/Home/RealizationStart">Реализация</a></li>
+                                <li><a href="/Manager/PaymentStart">Внесение платежа</a></li>
+                                <li><a href="/Home/Sales">Внесение расходов</a></li>
+                                <li><a href="/Home/Realizations">Реализация подробно</a></li>
+                                <hr style="margin-top:5px;margin-bottom:5px;border-top:5px solid black;" />
+                                <li><a href="/Manager/ReceivingMoneyStart">Приём денег от монтажника</a></li>
+                                <li><a href="/Home/MontaznikList">Список реализаций</a></li>
+                                <li><a href="/Home/Montazniks">Список монтажников</a></li>
+                                <li><a href="/Home/Debtors">Должники</a></li>
+                                <hr style="margin-top:5px;margin-bottom:5px;border-top:5px solid black;" />
+                                <li><a href="/Manager/Delivery">Доставка</a></li>
+                                <li><a href="/Manager/DogHran">Договор Хранения</a></li>
+                                <li><a href="/Manager/DogInstallmentStart">Договор Рассрочки</a></li>
+                                <hr style="margin-top:5px;margin-bottom:5px;border-top:5px solid black;" />
+                                <li><a href="/Home/Packs">Список пакетов</a></li>
+                                <li><a href="/Manager/StocksInfo">Информация о всех розницах</a></li>
+                                <li><a href="/Home/HistoryPacks">История работы с пакетами</a></li>
+                                <li><a href="/Home/Info">Данные по точке</a></li>
+                                <li><a href="/Home/Claims">Заявки на производство</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-10 ta">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/jquery.stickytableheaders.min.js"></script>
+    <script>
+        $('table').stickyTableHeaders();
+    </script>
+    <script>
+        location.hash = "@ViewBag.PackId";
+    </script>
+    <script>
+        var i = kk + 1;
+        var add2html;
+        $('#add').click(function () {
+            add2html = '<div class="line_real" style="margin-right:10px"><div><label for="ghname">Название</label><input type="text" id="ghname' + i + '" name="ghName[' + i + ']" class="input db" /></div> <div><label for="ghamount">Количество</label><input type="text" id="ghamount" name="ghAmount[' + i + ']" class="input db" /><br /></div><button id="btn_delete" class="btn btn-danger" style="margin-bottom: 20px;">Удалить</button></div>'
+        $('#greenhouses').append(add2html);
+        i++;
+        k++;
+        })
+    </script>
+    <script>
+        var editingField;
+        greenhouses.addEventListener('click', сhangeInputDiv);
+
+        function editInputDiv(e) {
+            if (e.target.previousElementSibling.attributes.for.nodeValue == 'ghname') {
+                editingField = e.target;
+                console.log(editingField);
+            }
+        }
+
+        function removeInputDiv(e) {
+            var parentDiv = e.target.parentNode;
+            parentDiv.remove();
+            i--;
+            k--;
+        };
+
+        function сhangeInputDiv(e) {
+            if (e.target.id == 'btn_delete') {
+                removeInputDiv(e)
+            }
+            else if (e.target.tagName == 'INPUT') {
+                editInputDiv(e)
+            }
+        }
+    </script>
+    <script>
+
+        $('#butsum').click(function () {
+
+            var x = $('#sumwithoutd').val();
+            var x = x.split(',');
+            var x = x[0] + "." + x[1];
+            var x = x * 10000
+
+            console.log(x);
+            var y = $('#discount').val() * 10000;
+            console.log(y);
+        var i = (x - y)/10000;
+        console.log(i);
+        $('#sum').val(i);
+        })
+    </script>
+    <script>
+
+        var k = kk;
+        $('.dropdown-toggle').dropdown();
+        $('#group li h4').click(function () {
+        var yo = $(this).html();
+            if (editingField != undefined) {
+                editingField.value = yo;
+                editingField = undefined;
+            }
+            else
+                $('#ghname' + k + '').val(yo);
+        })
+    </script>
+    <script>
+        $('#but_sub').click(function () {
+            var a = $('#shipment').val();
+            if (a === "true") {
+                $('#Modal h3').text('Вы уверены, что хотите произвести отгрузку?');
+            }
+            else if (a === "false") {
+                $('#Modal h3').text('Вы уверены, что не хотите произвести отгрузку?');
+            }
+            $('#Modal').css('display', 'block');
+        });
+
+        $('#but_unsub').click(function () {
+            $('#Modal').css('display', 'none');
+        })
+    </script>
+
+
+</body>
+</html>

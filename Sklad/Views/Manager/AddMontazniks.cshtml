@@ -1,0 +1,51 @@
+﻿
+@{
+    ViewBag.Title = "AddMontazniks";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<form role="form" method="post" action="/Manager/AddMontaznik">
+    <div class="form-group">
+        <label for="name">ФИО</label>
+        <input type="text" id="name" name="FIO" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="phone">Серия и номер паспорта</label>
+        <input type="text" id="phone" name="PasportNum" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="address">Кем Выдан</label>
+        <input type="text" id="address" name="WhoIssued" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="costRecommend">Когда выдан</label>
+        <input type="date" id="costRecommend" name="WhereIssued" class="form-control"></input>
+    </div>
+    <div class="form-group">
+        <label for="debt">Адрес по прописке</label>
+        <input type="text" id="debt" name="Address" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="debt">Телефон</label>
+        <input type="text" id="debt" name="Phone" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="debt">Марка автомобиля</label>
+        <input type="text" id="debt" name="MarkAuto" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="debt">Гос номер автомобиля</label>
+        <input type="text" id="debt" name="NumberAuto" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="inn">Инн</label>
+        <input type="text" id="inn" name="Inn" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="snils">Снилс</label>
+        <input type="text" id="snils" name="Snils" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Подтвердить</button>
+</form>
+

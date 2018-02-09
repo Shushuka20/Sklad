@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "Dealer";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<form role="form" method="post" action="/Admin/Dealer/@Model.Id">
+    <div class="form-group">
+        <label for="name">Название</label>
+        <input type="text" id="name" name="Name" class="form-control" value="@Model.Name"/>
+    </div>
+    <div class="form-group">
+        <label for="phone">Телефон</label>
+        <input type="text" id="phone" name="Phone" class="form-control" value="@Model.Phone"/>
+    </div>
+    <div class="form-group">
+        <label for="address">Адрес</label>
+        <input type="text" id="address" name="Address" class="form-control" value="@Model.Address"/>
+    </div>
+    <div class="form-group">
+        <label for="costRecommend">Рекомендуемая цена</label>
+        <textarea id="costRecommend" name="CostRecommend" class="form-control">
+            @Model.CostRecommend
+        </textarea>
+    </div>
+    <div class="form-group">
+        <label for="debt">Задолженность: @Model.Debt </label>
+    </div>
+    <div class="form-group">
+        <label for="enabledForSale">Разрешение на продажу</label>
+        <select id="enabledForSale" name="EnabledForSale" class="form-control">
+            @if (Model.EnabledForSale)
+            {
+                <option value="true">Есть</option>
+                <option value="false">Нет</option>
+            }
+            else
+            {
+                <option value="false">Нет</option>
+                <option value="true">Есть</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Подтвердить</button>
+    <a href="/Admin/DealerDelete/@Model.Id" class="btn btn-danger">Удалить</a>
+</form>
+

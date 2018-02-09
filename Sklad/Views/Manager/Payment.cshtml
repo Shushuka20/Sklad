@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "Payment";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<form role="form" method="post" action="/Manager/Payment/@Model.Id">
+    <div class="form-group">
+        <label for="numb">Номер заказа</label>
+        <input type="text" id="numb" value="@Model.Number" class="form-control" />
+    </div>
+    @if (Model.Dealer != null)
+    {
+        <div class="form-group">
+            <label for="dealer">Дилер</label>
+            <input type="text" id="dealer" value="@Model.Dealer.Name" class="form-control" />
+        </div>
+    }
+    <div class="form-group">
+        <label for="remain">Задолженность клиента</label>
+        <input type="text" id="remain" value="@Model.Remain" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="sum">Сумма</label>
+        <input type="text" id="sum" name="sum" class="form-control" />
+    </div>
+    @if (Model.Shipment != true)
+    {
+        <div class="form-group">
+            <label for="ship">Отгрузка</label>
+            <select class="form-control" id="ship" name="ship">
+                <option value="true">Да</option>
+                <option value="false">Нет</option>
+            </select>
+        </div>
+    }
+    else
+    {
+        <input type="hidden" name="ship" value="false" />
+    }
+    <div class="form-group">
+        <label for="payterm">Оплата по терминалу</label>
+        <select class="form-control" id="payterm" name="payterm">
+            <option value="false">Нет</option>
+            <option value="true">Да</option>            
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="comment">Комментарий</label>
+        <textarea id="comment" name="comment" class="form-control"></textarea>
+    </div>
+    <button id="submitPayment" type="submit" class="btn btn-success">Подтвердить</button>
+</form>
+
+<script>
+        var remain = document.getElementById('remain');
+        var sum = document.getElementById('sum');
+        var submit = document.getElementById('submitPayment');
+
+        function Compare() {
+            if (parseFloat(remain.value.replace(/,/, '.')) < parseFloat(sum.value.replace(/,/, '.'))) 
+                submit.disabled = true;
+            else if (parseFloat(sum.value.replace(/,/, '.')) == 0) {
+                submit.disabled = true
+            }
+            else if (parseFloat(remain.value.replace(/,/, '.')) >= parseFloat(sum.value.replace(/,/, '.')))
+                submit.disabled = false;
+            
+
+            console.log(parseFloat(sum.value.replace(/,/, '.')))
+        }
+
+        sum.addEventListener("input", Compare);
+
+</script>

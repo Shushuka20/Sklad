@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "DogHran";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<form role="form" method="get" action="/Manager/DogHranPech">
+    <div class="form-group">
+        <label for="name">Номер заявки</label>
+        @if (ViewBag.SellNumb != null)
+        {
+            <input type="text" id="name" name="sellNumb" value="@ViewBag.SellNumb" class="form-control" />
+        }
+        else
+        {
+            <input type="text" id="name" name="sellNumb" class="form-control" />
+        }
+    </div>
+    <div class="form-group">
+        <label for="name">ФИО</label>
+        <input type="text" id="name" name="FIO" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="name">Адрес установки</label>
+        <input type="text" id="name" name="address" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="name">Телефон</label>
+        <input type="number" id="name" name="phone" class="form-control" />
+    </div>
+
+
+
+    <button type="submit" class="btn btn-success">Подтвердить</button>
+</form>
+

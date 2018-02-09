@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewBag.Title = "SaleAdd";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<form role="form" method="post" action="/Manager/SaleAdd">
+    <div class="form-group">
+        <label for="outgoD">Описание расхода</label>
+        <input type="text" id="outgoD" name="outgoD" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="outgo">Сумма расхода</label>
+        <input type="text" id="outgo" name="outgo" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="outgoCategory">Категория расхода</label>
+        <select id="outgoCategory" name="outgoCategory" class="input db1">
+            <option value="Зарплата">Зарплата</option>
+            <option value="Инкасация">Инкасация</option>
+            <option value="Доставка">Доставка</option>
+            <option value="Закуп СПК">Закуп СПК</option>
+            <option value="Канцелярия">Канцелярия</option>
+            <option value="Возврат денежных средств">Возврат денежных средств</option>
+            <option value="Аренда">Аренда</option>
+            <option value="Прочее">Прочее</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Подтвердить</button>
+</form>
+

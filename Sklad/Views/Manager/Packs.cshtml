@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewBag.Title = "Packs";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<div class="head">
+    <h4>Список Пакетов</h4>
+</div>
+<table class="table table-bordered">
+    <thead style="background-color: white; opacity: 1;">
+        <tr>
+            <td>Название</td>
+            <td>Группа</td>
+            <td>Кол-во</td>
+            <td>Действие</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            if (p.Amount < p.CostMin)
+            {
+                <tr id="@p.Id" style="background-color: #d04646;">
+                    <td>@p.Name</td>
+                    <td>@p.Group</td>
+                    <td>@p.Amount</td>
+                    <td>
+                        <a href="/Manager/AddPacks/@p.Id" class="btn btn-success">Добавить пакеты</a>
+                        <a href="/Manager/DeletePacks/@p.Id" class="btn btn-danger">Списать пакеты</a>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr id="@p.Id">
+                    <td>@p.Name</td>
+                    <td>@p.Group</td>
+                    <td>@p.Amount</td>
+                    <td>
+                        <a href="/Manager/AddPacks/@p.Id" class="btn btn-success">Добавить пакеты</a>
+                        <a href="/Manager/DeletePacks/@p.Id" class="btn btn-danger">Списать пакеты</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

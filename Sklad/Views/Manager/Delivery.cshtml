@@ -1,0 +1,56 @@
+﻿
+@{
+    ViewBag.Title = "Delivery";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<form role="form" method="get" action="/Manager/DeliveryDoc">
+    <div class="form-group">
+        <label for="name">Номер продажи</label>
+        @if (ViewBag.SellNumb != null)
+        {
+            <input type="text" id="name" name="sellNumb" value="@ViewBag.SellNumb" class="form-control" />
+        }
+        else
+        {
+            <input type="text" id="name" name="sellNumb" class="form-control" />
+        }
+    </div>
+    <div class="form-group">
+        <label for="phone">Выбор исполнителя</label>
+        <select class="form-control" name="montId">
+            @foreach(var m in ViewBag.Mont)
+            {
+                <option value="@m.Id">@m.FIO</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="address">Монтаж</label> <br />  
+        <select class="form-control" name="mont">
+            <option value="false">Нет</option>
+            <option value="true">Да</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="costRecommend">Доставка</label> <br /> 
+        <select class="form-control" name="deliv">
+            <option value="false">Нет</option>
+            <option value="true">Да</option>
+        </select>
+    </div>
+    @if (ViewBag.Shipment != true)
+    {
+        <div class="form-group">
+            <label for="shipment">Отгрузить пакеты?</label> <br /> 
+            <select class="form-control" name="shipment">
+                <option value="false">Нет</option>
+                <option value="true">Да</option>
+            </select>
+        </div>
+    }
+
+
+    <button type="submit" class="btn btn-success">Подтвердить</button>
+</form>
+

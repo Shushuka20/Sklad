@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewBag.Title = "GreenhouseAdd";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<form role="form" method="post" action="/Admin/GreenhouseAdd/@Model.Id">
+    <div class="form-group">
+        <label for="name">Наименование</label>
+        <input type="text" id="name" name="name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="group">Группа товара</label>
+        <input type="text" id="group" name="group" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="bonus">Бонус для менеджера</label>
+        <input type="text" id="bonus" name="bonus" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="costPrice">Себестоимость</label>
+        <input type="text" id="costPrice" name="CostPrice" class="form-control" />
+    </div>
+    <div class="form-group">
+        <h3>Список пакетов</h3><br />
+        @{ int i = 0;}
+        @foreach(var p in ViewBag.Packs)
+        {
+            <input type="hidden" name="Packs[@i].Id" value="@p.Id" />
+            <label>@p.Name</label>
+            <input type="text" name="Packs[@i].amount" class="form-control" />
+            i++;
+        }
+    </div>  
+    <button type="submit" class="btn btn-success">Принять</button>
+</form>
+

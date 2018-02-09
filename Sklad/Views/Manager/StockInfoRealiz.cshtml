@@ -1,0 +1,59 @@
+﻿
+@{
+    ViewBag.Title = "StockInfoRealiz";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12" align="center"><h3>Реализация подробно</h3></div>
+</div>
+<div class="row" style="border-bottom: 1px solid #000000">
+    <div class="col-md-1" align="center"><h4>Дата</h4></div>
+    <div class="col-md-1" align="center"><h4>№ продажи</h4></div>
+    <div class="col-md-1" align="center"><h4>Описание продажи</h4></div>
+    <div class="col-md-1" align="center"><h4>Сумма продажи без скидки</h4></div>
+    <div class="col-md-1" align="center"><h4>Скидка</h4></div>
+    <div class="col-md-1" align="center"><h4>Внесли денег</h4></div>
+    <div class="col-md-1" align="center"><h4>Остаток</h4></div>
+    <div class="col-md-1" align="center"><h4>Расход по продаже</h4></div>
+    <div class="col-md-1" align="center"><h4>Описание расхода</h4></div>
+    <div class="col-md-1" align="center"><h4>Была ли отгрузка</h4></div>
+    <div class="col-md-1" align="center"><h4>Покупатель</h4></div>
+    <div class="col-md-1" align="center"><h4>Комментарий</h4></div>
+</div>
+@foreach (var s in Model)
+{
+    <div class="row" style="border-bottom: 1px solid #000000">
+        <div class="col-md-1" align="center"><h4>@s.Date</h4></div>
+        <div class="col-md-1" align="center"><h4>@s.Number</h4></div>
+        <div class="col-md-1" align="center"><h4>@s.Description</h4></div>
+        <div class="col-md-1" align="center"><h4>@s.SumWithoutD</h4></div>
+        <div class="col-md-1" align="center"><h4>@s.Discount</h4></div>
+        <div class="col-md-1" align="center"><h4>@s.AddMoney</h4></div>
+        <div class="col-md-1" align="center"><h4>@s.Remain</h4></div>
+        <div class="col-md-1" align="center"><h4>@s.Outgo</h4></div>
+        <div class="col-md-1" align="center"><h4>@s.OutgoDescription</h4></div>
+        <div class="col-md-1" align="center">
+            @if (s.Shipment == true)
+            {
+                <h4>Была</h4>
+            }
+            else if (s.Shipment == false)
+            {
+                <h4>Не была</h4>
+            }
+        </div>
+        <div class="col-md-1" align="center">
+            @if (s.Dealer != null)
+            {
+                <h4>@s.Dealer.Name</h4>
+            }
+            else
+            {
+                <h4>@s.Number</h4>
+            }
+        </div>
+        <div class="col-md-1" align="center"><h4>@s.Comment</h4></div>
+    </div>
+}
+

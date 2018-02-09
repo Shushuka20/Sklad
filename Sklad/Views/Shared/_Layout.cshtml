@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container-fluid np">
+            <div class="row-fluid">
+                <div class="topline">
+                    <h2>Панель управления</h2>
+                    <div class="user">
+                        <span>Пользователь: @User.Identity.Name</span>   <a href="/Account/LogOff" class="btn btn-default">Выход</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container content">
+        @RenderBody()
+        <hr />
+    </div>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</body>
+</html>

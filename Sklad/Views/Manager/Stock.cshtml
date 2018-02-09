@@ -1,0 +1,18 @@
+﻿
+@{
+    ViewBag.Title = "Stock";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-2" align="center"><a href="/Manager/RealizationStart/@Model.Id" class="btn btn-default">Реализация</a></div>
+    <div class="col-md-2" align="center"><a href="/Manager/PaymentStart" class="btn btn-default">Внесение платежа</a></div>
+    <div class="col-md-2" align="center"><a href="/Manager/Sales/@Model.Id" class="btn btn-default">Внесение расходов</a></div>
+    <div class="col-md-2" align="center"><a href="/Manager/Packs/@Model.Id" class="btn btn-default">Список пакетов</a></div>
+    <div class="col-md-2" align="center"><a href="/Manager/StocksInfo" class="btn btn-default">Информация о всех розницах</a></div>
+    <div class="col-md-2" align="center"><a href="/Manager/Info/@Model.Id" class="btn btn-default">Данные по точке</a></div>    
+</div><br/>
+<div class="row">
+    <div class="col-md-2" align="center"><a href="/Manager/Realizations/@Model.Id" class="btn btn-default">Реализация подробно</a></div>
+    <div class="col-md-2" align="center"><a href="/Manager/HistoryPacks/@Model.Id" class="btn btn-default">История работы с пакетами</a></div>    
+</div>

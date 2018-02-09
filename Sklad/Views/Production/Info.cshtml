@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewBag.Title = "Info";
+    Layout = "~/Views/Shared/_LayoutProduction.cshtml";
+}
+
+<div class="head">
+    <h4>Данные по точке</h4>
+</div>
+<table style="width: 800px; margin: 0 auto;" class="table table-bordered">
+    <tbody>
+        <tr>
+            <th>Денег на кассе:</th>
+            <th>@ViewBag.Sum</th>
+        </tr>
+        <tr>
+            <th>Сумма задолженности клиентов:</th>
+            <th>
+                @if (Model.Id == 3)
+                {
+                    { ViewBag.Debt -= 240150; }
+                }
+                @ViewBag.Debt
+            </th>
+        </tr>
+    </tbody>
+</table>
+<div class="head" style="margin-top: 40px;">
+    <h4>Cписок оставшихся пакетов</h4>
+</div>
+
+<table style="width: 800px; margin: 0 auto;" class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Количество</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model.Packs)
+        {
+            <tr>
+                <td>@p.Name</td>
+                <td>@p.Amount</td>
+            </tr>
+        }
+    </tbody>
+</table>

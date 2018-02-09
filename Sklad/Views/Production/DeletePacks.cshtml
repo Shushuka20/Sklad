@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewBag.Title = "DeletePacks";
+    Layout = "~/Views/Shared/_LayoutProduction.cshtml";
+}
+
+<form role="form" method="post" action="/Production/DeletePacks/@Model.Id">
+    <div class="form-group">
+        <label>@Model.Name</label>
+    </div>
+    <div class="form-group">
+        <label>@Model.Amount</label>
+    </div>
+    <div class="form-group">
+        <label for="amount">Списать пакетов</label>
+        <input type="text" id="amount" name="amount" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="desc">Комментарий</label>
+        <textarea id="desc" name="description" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Подтвердить</button>
+</form>
+
+

@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewBag.Title = "StockInfo";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12" align="center"><h3></h3></div>
+</div>
+<div class="row">
+    <div class="col-md-3" align="center"><a href="/Manager/StockInfoPacks/@Model.Id" class="btn btn-default">Список пакетов</a></div>
+    <div class="col-md-3" align="center"><a href="/Manager/StockInfoOutgos/@Model.Id" class="btn btn-default">Список расходов</a></div>
+    <div class="col-md-3" align="center"><a href="/Manager/StockInfoRealiz/@Model.Id" class="btn btn-default">Реализация подробно</a></div>
+    <div class="col-md-3" align="center"><a href="/Manager/StockInfoHistory/@Model.Id" class="btn btn-default">История работы с пакетами</a></div>
+</div>
+

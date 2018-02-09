@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "StockInfoHistory";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12" align="center"><h3>История работы с пакетами</h3></div>
+</div>
+<div class="row">
+    <div class="col-md-4" align="center"><h4>Дата</h4></div>
+    <div class="col-md-4" align="center"><h4>Название</h4></div>
+    <div class="col-md-4" align="center"><h4>Количество</h4></div>
+</div>
+@foreach (var h in Model)
+{
+    <div class="row">
+        <div class="col-md-4" align="center"><h4>@h.Date</h4></div>
+        <div class="col-md-4" align="center"><h4>@h.Name</h4></div>
+        <div class="col-md-4" align="center"><h4>@h.Amount</h4></div>
+    </div>
+}
+

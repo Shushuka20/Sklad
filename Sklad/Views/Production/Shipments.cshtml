@@ -1,0 +1,295 @@
+﻿
+@{
+    ViewBag.Title = "Shipments";
+    Layout = "~/Views/Shared/_LayoutProduction.cshtml";
+}
+
+<div class="head">
+    <h4>Реализация подробно</h4>
+</div>
+<div class="head">
+    <h4>Выберите дату для фильтра</h4>
+</div>
+<div class="row" align="center">
+    <form method="get" action="/Manager/RealizationsFiltr/@ViewBag.Id" data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results">
+        <input class="input" type="date" name="date1" />
+        <input class="input" type="date" name="date2" />
+        <button style="position: relative; top: -1px" type="submit" class="btn btn-default">Принять</button>
+    </form>
+</div>
+<table class="table table-bordered table-condensed">
+    <thead style="background-color: white; opacity: 1;">
+        <tr>
+            <th>Дата</th>
+            <th>№ продажи</th>
+            <th>Описание </th>
+            <th>Сумма продажи без скидки</th>
+            <th>Скидка</th>
+            <th>Внесли денег</th>
+            <th>Остаток</th>
+            <th>Расход по продаже</th>
+            <th>Описание расхода</th>
+            <th>Была ли отгрузка</th>
+            <th>Покупатель</th>
+            <th>Комментарий</th>
+        </tr>
+    </thead>
+    <tbody id="results">
+        @foreach (var s in Model)
+        {
+            string str = s.Comment;
+            if (s.Number != null && s.Description == null && s.Outgo == 0)
+            {
+                if (s.PayForTerminal == true)
+                {
+                    <tr style="background-color: #49bcff">
+                        <td>@s.Date</td>
+                        <td>@s.Number</td>
+                        <td>@s.Description</td>
+                        <td>@s.SumWithoutD</td>
+                        <td>@s.Discount</td>
+                        <td>@s.AddMoney</td>
+                        <td>@s.Remain</td>
+                        <td>@s.Outgo</td>
+                        <td>@s.OutgoDescription</td>
+                        <td>
+                            @if (s.Shipment == true)
+                            {
+                                <span>Была</span>
+                            }
+                            else if (s.Shipment == false)
+                            {
+                                <span>Не была</span>
+                            }
+                        </td>
+                        <td>
+                            @if (s.Dealer != null)
+                            {
+                                <span>@s.Dealer.Name</span>
+                            }
+                            else
+                            {
+                                <span>@s.Number</span>
+                            }
+                        </td>
+                        <td>@s.Comment</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr style="background-color: #ff9749">
+                        <td>@s.Date</td>
+                        <td>@s.Number</td>
+                        <td>@s.Description</td>
+                        <td>@s.SumWithoutD</td>
+                        <td>@s.Discount</td>
+                        <td>@s.AddMoney</td>
+                        <td>@s.Remain</td>
+                        <td>@s.Outgo</td>
+                        <td>@s.OutgoDescription</td>
+                        <td>
+                            @if (s.Shipment == true)
+                            {
+                                <span>Была</span>
+                            }
+                            else if (s.Shipment == false)
+                            {
+                                <span>Не была</span>
+                            }
+                        </td>
+                        <td>
+                            @if (s.Dealer != null)
+                            {
+                                <span>@s.Dealer.Name</span>
+                            }
+                            else
+                            {
+                                <span>@s.Number</span>
+                            }
+                        </td>
+                        <td>@s.Comment</td>
+                    </tr>
+                }
+            }
+            else if (s.PayForTerminal == true)
+            {
+                <tr style="background-color: #5cb85c">
+                    <td>@s.Date</td>
+                    <td>@s.Number</td>
+                    <td>@s.Description</td>
+                    <td>@s.SumWithoutD</td>
+                    <td>@s.Discount</td>
+                    <td>@s.AddMoney</td>
+                    <td>@s.Remain</td>
+                    <td>@s.Outgo</td>
+                    <td>@s.OutgoDescription</td>
+                    <td>
+                        @if (s.Shipment == true)
+                        {
+                            <span>Была</span>
+                        }
+                        else if (s.Shipment == false)
+                        {
+                            <span>Не была</span>
+                        }
+                    </td>
+                    <td>
+                        @if (s.Dealer != null)
+                        {
+                            <span>@s.Dealer.Name</span>
+                        }
+                        else
+                        {
+                            <span>@s.Number</span>
+                        }
+                    </td>
+
+                    <td>@s.Comment</td>                
+                </tr>
+            }
+            else if (str != null)
+            {
+                if (str.Contains("Монтажник:"))
+                {
+                    <tr style="background-color: #FFEC00">
+                        <td>@s.Date</td>
+                        <td>@s.Number</td>
+                        <td>@s.Description</td>
+                        <td>@s.SumWithoutD</td>
+                        <td>@s.Discount</td>
+                        <td>@s.AddMoney</td>
+                        <td>@s.Remain</td>
+                        <td>@s.Outgo</td>
+                        <td>@s.OutgoDescription</td>
+                        <td>
+                            @if (s.Shipment == true)
+                        {
+                                <span>Была</span>
+                            }
+                            else if (s.Shipment == false)
+                            {
+                                <span>Не была</span>
+                            }
+                        </td>
+                        <td>
+                            @if (s.Dealer != null)
+                        {
+                                <span>@s.Dealer.Name</span>
+                            }
+                            else
+                            {
+                                <span>@s.Number</span>
+                            }
+                        </td>
+                        <td>@s.Comment</td>                      
+                    </tr>
+                }
+                else if (str.Contains("Приём денег."))
+                {
+                    <tr style="background-color: #E6E6FA">
+                        <td>@s.Date</td>
+                        <td>@s.Number</td>
+                        <td>@s.Description</td>
+                        <td>@s.SumWithoutD</td>
+                        <td>@s.Discount</td>
+                        <td>@s.AddMoney</td>
+                        <td>@s.Remain</td>
+                        <td>@s.Outgo</td>
+                        <td>@s.OutgoDescription</td>
+                        <td>
+                            @if (s.Shipment == true)
+                        {
+                                <span>Была</span>
+                            }
+                            else if (s.Shipment == false)
+                            {
+                                <span>Не была</span>
+                            }
+                        </td>
+                        <td>
+                            @if (s.Dealer != null)
+                        {
+                                <span>@s.Dealer.Name</span>
+                            }
+                            else
+                            {
+                                <span>@s.Number</span>
+                            }
+                        </td>
+                        <td>@s.Comment</td>                      
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>@s.Date</td>
+                        <td>@s.Number</td>
+                        <td>@s.Description</td>
+                        <td>@s.SumWithoutD</td>
+                        <td>@s.Discount</td>
+                        <td>@s.AddMoney</td>
+                        <td>@s.Remain</td>
+                        <td>@s.Outgo</td>
+                        <td>@s.OutgoDescription</td>
+                        <td>
+                            @if (s.Shipment == true)
+                            {
+                                <span>Была</span>
+                            }
+                            else if (s.Shipment == false)
+                            {
+                                <span>Не была</span>
+                            }
+                        </td>
+                        <td>
+                            @if (s.Dealer != null)
+                            {
+                                <span>@s.Dealer.Name</span>
+                            }
+                            else
+                            {
+                                <span>@s.Number</span>
+                            }
+                        </td>
+                        <td>@s.Comment</td>                     
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td>@s.Date</td>
+                    <td>@s.Number</td>
+                    <td>@s.Description</td>
+                    <td>@s.SumWithoutD</td>
+                    <td>@s.Discount</td>
+                    <td>@s.AddMoney</td>
+                    <td>@s.Remain</td>
+                    <td>@s.Outgo</td>
+                    <td>@s.OutgoDescription</td>
+                    <td>
+                        @if (s.Shipment == true)
+                        {
+                            <span>Была</span>
+                        }
+                        else if (s.Shipment == false)
+                        {
+                            <span>Не была</span>
+                        }
+                    </td>
+                    <td>
+                        @if (s.Dealer != null)
+                        {
+                            <span>@s.Dealer.Name</span>
+                        }
+                        else
+                        {
+                            <span>@s.Number</span>
+                        }
+                    </td>
+                    <td>@s.Comment</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewBag.Title = "HistoryMaterials";
+    Layout = "~/Views/Shared/_LayoutProduction.cshtml";
+}
+
+<div class="head">
+    <h4>История работы с пакетами</h4>
+</div>
+<table class="table table-bordered">
+    <thead style="background-color: white; opacity: 1;">
+        <tr>
+            <td>Дата</td>
+            <td>Название</td>
+            <td>Количество</td>
+            <td>Комментарий</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var h in Model)
+        {
+            <tr>
+                <td>@h.Date</td>
+                <td>@h.Name</td>
+                <td>@h.Amount</td>
+                <td>@h.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

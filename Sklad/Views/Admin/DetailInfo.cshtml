@@ -1,0 +1,156 @@
+﻿
+@{
+    ViewBag.Title = "DetailInfo";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="row" align="center" style="margin-bottom: 20px">
+    <h3 style="margin: 0; margin-bottom: 10px;">Выберите дату для фильтрации</h3>
+    <form method="get" action="/Admin/DetailFiltr/@ViewBag.Hui" data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results">
+        <input class="input" type="date" name="date1" required />
+        <input class="input" type="date" name="date2" required />
+        <button style="position: relative; top: -1px" type="submit" class="btn btn-default">Принять</button>
+    </form>
+</div>
+<div id="results">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Наличный оборот
+                </div>
+                <div class="panel panel-body">
+                    @ViewBag.SumCash
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Оборот по терминалу
+                </div>
+                <div class="panel panel-body">
+                    @ViewBag.SumTerminal
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Чистая Прибыль
+                </div>
+                <div class="panel panel-body">
+                    @ViewBag.Profit
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-header">
+        <h3>Расходы по категориям</h3>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Зарплата
+                </div>
+                <div class="panel panel-body">
+                    @ViewBag.SumPay
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Инкасация
+                </div>
+                <div class="panel panel-body">
+                    @ViewBag.sumCashment
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Доставка
+                </div>
+                <div class="panel panel-body">
+                    @ViewBag.sumDelivery
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Закуп СПК
+                </div>
+                <div class="panel panel-body">
+                    @ViewBag.sumProcurement
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Канцелярия
+                </div>
+                <div class="panel panel-body">
+                    @ViewBag.sumChancery
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Возврат денежных средств
+                </div>
+                <div class="panel panel-body">
+                    @ViewBag.sumReturn
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Аренда
+                </div>
+                <div class="panel panel-body">
+                    @ViewBag.sumArenda
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Остальные
+                </div>
+                <div class="panel panel-body">
+                    @ViewBag.sumOthers
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" style="padding-bottom: 40px;">
+    <div class="head" style="margin-top: 40px;">
+        <h4>Cписок проданной продукции</h4>
+    </div>
+    <table style="width: 800px; margin: 0 auto;" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Количество</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in ViewBag.GreenHouseList)
+            {
+                <tr>
+                    <td>@p.Key</td>
+                    <td>@p.Value</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

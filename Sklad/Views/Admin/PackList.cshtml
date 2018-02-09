@@ -1,0 +1,46 @@
+﻿
+@{
+    ViewBag.Title = "PackList";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="head">
+    <h4>Список пакетов на складе @ViewBag.Stock.Name</h4>
+    <a href="/Admin/PackAdd/@ViewBag.Stock.Id" class="btn btn-default">Добавить пакет</a>
+</div>
+<table class="table table-bordered">
+    <thead style="background-color: white; opacity: 1;">
+        <tr>
+            <th>Наименование</th>>
+            <th>Группа</th>
+            <th>Кол-во на складе</th>
+            <th>Цена за ед.</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            if (p.Amount < p.CostMin)
+            {
+                <tr style="background-color: #d04646;">
+                    <td>@p.Name</td>
+                    <td>@p.Group</td>
+                    <td>@p.Amount</td>
+                    <td>@p.Cost</td>
+                    <td><a href="/Admin/Pack/@p.Id" class="btn btn-default">Редактировать</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td>@p.Name</td>
+                    <td>@p.Group</td>
+                    <td>@p.Amount</td>
+                    <td>@p.Cost</td>
+                    <td><a href="/Admin/Pack/@p.Id" class="btn btn-default">Редактировать</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

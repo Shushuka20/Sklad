@@ -1,0 +1,55 @@
+﻿
+@{
+    ViewBag.Title = "Dealers";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="head">
+    <h4>Список Дилеров</h4>
+    <a href="/Admin/DealerAdd" class="btn btn-default">Добавить дилера</a>
+</div>
+<table class="table table-bordered">
+    <thead style="background-color: white; opacity: 1;">
+        <tr>
+        <th>Название</th>
+        <th>Телефон</th>
+        <th>Адрес</th>
+        <th>Рекомендуемые цены</th>
+        <th>Задолженность</th>
+        <th>Разрешена продажа?</th>
+        <th>Действие</th>
+    </tr>
+    </thead>
+    <tbody class="dealers">
+        @foreach (var d in Model)
+        {
+           <tr>
+                <td>@d.Name</td>
+                <td>@d.Phone</td>
+                <td>@d.Address</td>
+                <td>@d.CostRecommend</td>
+                <td>@d.Debt</td>
+                <td>
+                    @if (d.EnabledForSale)
+                {
+                        <span>Да</span>
+                    }
+                    else
+                    {
+                        <span>Нет</span>
+                    }
+                </td>
+                <td>
+                    <div class="action">
+                        <a href="/Admin/Dealer/@d.Id" class="btn btn-default">Подробнее</a>
+                        <a href="/Admin/DealerAddMoney/@d.Id" class="btn btn-default">Внести деньги на счёт</a>
+                    </div>
+                    <div class="action">
+                        <a href="/Admin/DealerHistory/@d.Id" class="btn btn-default">Список операций</a>
+                        <a href="/Admin/DealerRealizations/@d.Id" class="btn btn-default">Список реализаций</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,110 @@
+﻿@using Sklad.Services
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutProduction.cshtml";
+
+    ClaimService claimService = new ClaimService();
+}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Номер</th>
+            <th>Текст</th>
+            <th>Розница</th>
+            <th>Клиент</th>
+            <th>Описание</th>
+            <th>Адрес</th>
+            <th>Статус</th>
+            <th>Комментарий</th>
+            <th>Комментарий производства</th>
+            <th>Дата</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Id</td>
+                @if (claimService.ReadStateProperty(c.Text))
+                {
+                    <td style="background-color: orange; color: #fff;">
+                        @claimService.ReadProperty(c.Text)
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @claimService.ReadProperty(c.Text)
+                    </td>
+                }
+                <td>@c.StockName</td>
+                @if (claimService.ReadStateProperty(c.Client))
+                {
+                    <td style="background-color: orange; color: #fff;">
+                        @claimService.ReadProperty(c.Client)
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @claimService.ReadProperty(c.Client)
+                    </td>
+                }
+                @if (claimService.ReadStateProperty(c.Description))
+                {
+                    <td style="background-color: orange; color: #fff;">
+                        @claimService.ReadProperty(c.Description)
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @claimService.ReadProperty(c.Description)
+                    </td>
+                }
+                @if (claimService.ReadStateProperty(c.Address))
+                {
+                    <td style="background-color: orange; color: #fff;">
+                        @claimService.ReadProperty(c.Address)
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @claimService.ReadProperty(c.Address)
+                    </td>
+                }
+                @if(c.Status == "В работе")
+                {
+                        <td style="background-color: darkred; color: #fff;">@c.Status</td>
+                }
+                else if(c.Status == "Готово")
+                {
+                        <td style="background-color: green; color: #fff;"> @c.Status </td>
+                }
+                @if (claimService.ReadStateProperty(c.Comment))
+                {
+                    <td style="background-color: orange; color: #fff;">
+                        @claimService.ReadProperty(c.Comment)
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @claimService.ReadProperty(c.Comment)
+                    </td>
+                }
+                <td>@c.CommentProd</td>
+                <td>@c.Date</td>
+                <td>
+                    <a href="/Production/EditClaim/@c.Id">Изменить / </a>
+                    <a href="/Production/Ticket/@c.Id">Печать</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

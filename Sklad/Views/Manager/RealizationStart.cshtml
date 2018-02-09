@@ -1,0 +1,144 @@
+﻿
+@{
+    ViewBag.Title = "RealizationStart";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<div class="col-md-12" style="font-size:21px; text-align:center; margin-top:30px" id="group">
+    
+        <div class="dropdown line_real" id="gr1" style="margin-right:20px;">
+            <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Теплицы и парники</a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+                @foreach(var g in ViewBag.Ghs1)
+                {
+                    <li style="cursor:pointer"><h4>@g.Name</h4></li>
+                }
+            </ul>
+        </div>
+
+        <div class="dropdown line_real" id="gr2" style="margin-right:20px;">
+            <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Поликарбонат</a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+                @foreach (var g in ViewBag.Ghs2)
+                {
+                    <li style="cursor:pointer"><h4>@g.Name</h4></li>
+                }
+            </ul>
+        </div>
+        <div class="dropdown line_real" id="gr3" style="margin-right:20px;">
+            <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Монтаж</a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+                @foreach (var g in ViewBag.Ghs3)
+                {
+                    <li style="cursor:pointer"><h4>@g.Name</h4></li>
+                }
+            </ul>
+        </div>
+        <div class="dropdown line_real" id="gr4" style="margin-right:20px;">
+            <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Доп. товары</a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+                @foreach (var g in ViewBag.Ghs4)
+                {
+                    <li style="cursor:pointer"><h4>@g.Name</h4></li>
+                }
+            </ul>
+        </div>
+        <div class="dropdown line_real" id="gr5" style="margin-right:20px;">
+            <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Другая продукция</a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+                @foreach (var g in ViewBag.Ghs5)
+                {
+                    <li style="cursor:pointer"><h4>@g.Name</h4></li>
+                }
+            </ul>
+        </div>    
+        <div class="dropdown line_real" id="gr5" style="margin-right:20px;">
+            <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Заборы</a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+                @foreach (var g in ViewBag.Ghs6)
+                {
+                    <li style="cursor:pointer"><h4>@g.Name</h4></li>
+                }
+            </ul>
+        </div>
+        <div class="dropdown line_real" id="gr5" style="margin-right:20px;">
+            <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Поливы</a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+                @foreach (var g in ViewBag.Ghs7)
+                {
+                    <li style="cursor:pointer"><h4>@g.Name</h4></li>
+                }
+            </ul>
+        </div>
+        <div class="dropdown line_real" id="gr5" style="margin-right:20px;">
+            <a data-toggle="dropdown" href="" style="color:#000; text-decoration:none" class="btn btn-default">Парники</a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" style="width:300px">
+                @foreach (var g in ViewBag.Ghs8)
+                {
+                    <li style="cursor:pointer"><h4>@g.Name</h4></li>
+                }
+            </ul>
+        </div>
+
+</div>
+<div class="col-md-12" style="margin-top:50px">
+    <form role="form" method="post" action="/Manager/RealizationStart/@Model.Id">
+        <div class="form-group">
+            <label for="dil">Если сделка происходит с дилером, введите его имя.</label>
+            <select id="dil" name="dealer" class="input">
+                <option>-</option>
+                @foreach (var d in ViewBag.Dealers)
+                {
+                    <option value="@d.Id">@d.Name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="Group1">Выбор товара</label>
+            <div id="greenhouses">
+                @if (ViewBag.ListForRealization != null)
+                            {
+                                string[] s = ViewBag.ListForRealization.Split(',');
+                                for (var k = 0; k < s.Length - 1; k++)
+                                {
+                                    string[] ss = s[k].Split(':');
+
+                        <div class="line_real" style="margin-right:10px">
+                            <div>
+                                <label for="ghname">Название</label>
+                                <input type="text" id="ghname0" name="ghName[@k]" class="input db" value="@ss[0]" />
+                            </div>
+                            <div>
+                                <label for="ghamount">Количество</label>
+                                <input type="text" id="ghamount" name="ghAmount[@k]" class="input db" value="@ss[1]" /><br />
+                            </div>
+                            <button id="btn_delete" class="btn btn-danger" style="margin-bottom: 20px;">Удалить</button>
+                        </div>
+                        <script>kk = @k;</script>
+                    }
+                }
+                else
+                {
+                    <div class="line_real" style="margin-right:10px">
+                        <div>
+                            <label for="ghname">Название</label>
+                            <input type="text" id="ghname0" name="ghName[0]" class="input db" />
+                        </div>
+                        <div>
+                            <label for="ghamount">Количество</label>
+                            <input type="text" id="ghamount" name="ghAmount[0]" class="input db" /><br />
+                        </div>
+                        <button id="btn_delete" class="btn btn-danger" style="margin-bottom: 20px;">Удалить</button>
+                    </div>
+                }
+
+            </div>
+            <div id="add" class="btn btn-default">Добавить поле для ввода товара</div>
+        </div><br /><br />
+        <button type="submit" class="btn btn-success">Продолжить</button>
+    </form>
+</div>
+
+
+
+

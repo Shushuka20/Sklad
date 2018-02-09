@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "Outgos";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12" align="center"><h4>Список расходов</h4></div>
+</div>
+<div class="row">
+    <div class="col-md-4" align="center"><h4>Номер</h4></div>
+    <div class="col-md-4" align="center"><h4>Описание</h4></div>
+    <div class="col-md-4" align="center"><h4>Сумма</h4></div>
+</div>
+@foreach (var s in Model)
+{
+    <div class="row">
+        <div class="col-md-4" align="center"><h4>@s.Number</h4></div>
+        <div class="col-md-4" align="center"><h4>@s.OutgoDescription</h4></div>
+        <div class="col-md-4" align="center"><h4>@s.Outgo</h4></div>
+    </div>
+}
+

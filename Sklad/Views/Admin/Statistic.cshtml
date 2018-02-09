@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewBag.Title = "Statistic";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="head">
+    <h4>Статистика</h4>
+</div>
+<div class="head">
+    <h4>Выберите дату для фильтра</h4>
+</div>
+<div class="row" align="center">
+    <form method="get" action="/Admin/StatisticFiltr" data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results">
+        <input class="input" type="date" name="date1" />
+        <input class="input" type="date" name="date2" />
+        <select class="input" name="stockId">
+            <option value="0">Все</option>
+            @foreach(var s in ViewBag.Stocks)
+            {
+                <option value="@s.Id">@s.Name</option>
+            }
+        </select>
+        <button style="position: relative; top: -1px" type="submit" class="btn btn-default">Принять</button>
+    </form>
+</div>
+
+<table class="table table-bordered table-condensed">
+    <thead style="background-color: white; opacity: 1;">
+        <tr>
+            <th>Название</th>
+            <th>Количество</th>
+        </tr>
+    </thead>
+    <tbody id="results">   
+    @foreach(var p in ViewBag.Hps)
+    {
+        <tr>
+            <td>
+                @p.Name
+            </td>
+            <td>
+                @p.Amount
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

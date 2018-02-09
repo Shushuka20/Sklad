@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "Users";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="head">
+    <h4>Список Пользователей</h4>
+    <a href="/Account/Register" class="btn btn-default">Добавить пользователя</a>
+</div>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Логин</th>
+            <th>Роль</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Login</td>
+                <td>@u.Role</td>
+                <td><a href="/Admin/UserNew/@u.Id" class="btn btn-default">Редактировать</a><a href="/Admin/UserDelete/@u.Id" class="btn btn-danger">Удалить</a></td>
+            </tr>
+        }
+    </tbody>
+    </table>

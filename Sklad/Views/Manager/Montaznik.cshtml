@@ -1,0 +1,52 @@
+﻿
+@{
+    ViewBag.Title = "Montaznik";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<form role="form" method="post" action="/Manager/Montaznik">
+    <input type="hidden" value="@Model.Id" name="Id" />
+    <div class="form-group">
+        <label for="name">ФИО</label>
+        <input type="text" id="name" name="FIO" value="@Model.FIO" class="form-control" placeholder="" />
+    </div>
+    <div class="form-group">
+        <label for="phone">Серия и номер паспорта</label>
+        <input type="text" id="phone" name="PasportNum" value="@Model.PasportNum" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="address">Кем Выдан</label>
+        <input type="text" id="address" name="WhoIssued" value="@Model.WhoIssued" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="costRecommend">Когда выдан</label>
+        <input type="date" id="costRecommend" name="WhereIssued" value="@Model.WhereIssued" class="form-control"></input>
+    </div>
+    <div class="form-group">
+        <label for="debt">Адрес по прописке</label>
+        <input type="text" id="debt" name="Address" value="@Model.Address" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="debt">Телефон</label>
+        <input type="text" id="debt" name="Phone" value="@Model.Phone" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="debt">Марка автомобиля</label>
+        <input type="text" id="debt" name="MarkAuto" value="@Model.MarkAuto" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="debt">Гос номер автомобиля</label>
+        <input type="text" id="debt" name="NumberAuto" value="@Model.NumberAuto" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="inn">Инн</label>
+        <input type="text" id="inn" name="Inn" value="@Model.INN" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="snils">Снилс</label>
+        <input type="text" id="snils" name="Snils" value="@Model.Snils" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Подтвердить</button>
+</form>
+

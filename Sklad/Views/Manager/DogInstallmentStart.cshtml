@@ -1,0 +1,14 @@
+﻿
+@{
+    ViewBag.Title = "DogInstallmentStart";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+
+<form role="form" method="post" action="/Manager/DogInstallmentStart">
+    <div class="form-group">
+        <label for="name">Номер заявки</label>
+        <input type="text" id="name" name="sellNumb" class="form-control" value="" />
+    </div>
+    <button type="submit" class="btn btn-success">Далее</button>
+</form>

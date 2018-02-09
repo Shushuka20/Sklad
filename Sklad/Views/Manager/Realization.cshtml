@@ -1,0 +1,104 @@
+﻿
+@{
+    ViewBag.Title = "Realization";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<div class="head">
+    <h3>Реализация</h3>
+</div>
+<form role="form" method="post" action="/Manager/Realization/@Model.Id">
+
+    <div id="Modal" class="Modal" style="position: fixed; background-color: #ffffff; left: 30%; top: 25%; border: 1px solid #222; padding: 50px; text-align: center; border-radius: 7px; z-index: 999; display: none;">
+        <h3>Вы уверены </h3>
+        <button type="submit" class="btn btn-default" style="width: 100px; margin-top: 20px;">Да</button>
+        <div class="btn btn-default" id="but_unsub" style="width: 100px; margin-top: 20px;">Нет</div>
+    </div>
+    
+    <div class="col-xs-5" style="margin-bottom: 80px">
+        <label><h4>
+            <strong>Сумма без скидки: 
+                @{
+                    string a = Convert.ToString(ViewBag.Sum);
+                    string[] b = a.Split(',');
+                    string c = b[0] + "." + b[1];
+                }
+            @c
+            </strong>
+        </h4></label>
+        <input id="sumwithoutd" type="hidden" name="SumWithoutD" value="@ViewBag.Sum" />
+
+        @if (Model.Dealer != null)
+        {
+            <div class="form-group">
+                <label for="dealer">Дилер</label>
+                <input type="text" id="dealer" name="dealer" class="input db1" value="@Model.Dealer.Name" />
+            </div>
+        }
+        <div class="form-group">
+            <label for="buyer">Клиент</label>
+            <input type="text" id="buyer" name="buyer" class="input db1" value="@Model.Number" />
+        </div>
+        <div class="form-group">
+            <label for="discount">Скидка</label>
+            <input type="text" id="discount" name="Discount" class="input db1" />
+            <div id="butsum" class="btn btn-default" style="margin-top: 20px">Рассчёт суммы</div>
+        </div>
+        <div class="form-group">
+            <label for="sum">Общая сумма с учётом скидки</label>
+            <input type="text" id="sum" name="SumWithD" class="input db1" />
+        </div>
+        <div class="form-group">
+            <label for="addMoney">Внесено денег</label>
+            <input type="text" id="addMoney" name="AddMoney" class="input db1" />
+        </div>
+        @if (Model.Shipment != true)
+        {
+            <div class="form-group">
+                <label for="shipment">Отгрузить сейчас</label>
+                <select id="shipment" name="Shipment" class="input db1">
+                    <option value="true">Да</option>
+                    <option value="false">Нет</option>
+                </select>
+            </div>
+        }
+        <div class="form-group">
+            <label for="payForTerminal">Оплата по терминалу</label>
+            <select id="payForTerminal" name="PayForTerminal" class="input db1">
+                <option value="false">Нет</option>
+                <option value="true">Да</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="comment">Комментарий</label>
+            <textarea id="comment" name="Comment" class="input db1"></textarea>
+        </div>
+        <div class="btn btn-success" id="but_sub">Продолжить</div>
+        <a href="/Home/RealizationStart" class="btn btn-default">Назад</a>
+    </div>
+    @if(Model.Dealer != null && Model.Dealer.CostRecommend != null)
+    {
+    <div class="col-xs-5" align="center">
+        @foreach(var cr in ViewBag.CostRecommend)
+        {
+            <p style="margin-top: 100px; text-align: center"> @cr </p>
+        }
+    </div>
+    }
+    <div class="col-xs-5" align="center">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <p>Название / Количество / Стоимость</p>
+            </div>
+        </div>
+            @foreach (var gh in ViewBag.GreenHouseList)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <p>@gh.Name / @gh.Amount / @gh.Cost</p>
+                    </div>
+                </div>
+            }
+    </div>
+</form>
+

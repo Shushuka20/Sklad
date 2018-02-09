@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form method="post" role="form" action="/Account/Register">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label for="login">Логин</label>
+        <input type="text" id="login" name="Login" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="text" id="password" name="Password" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="confirm_password">Подтвердите пароль:</label>
+        <input type="text" id="confirm_password" name="ConfirmPassword" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Подтвердить</button>
+</form>
+

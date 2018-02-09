@@ -1,0 +1,70 @@
+﻿
+@{
+    ViewBag.Title = "Shipment";
+    Layout = "~/Views/Shared/_LayoutProduction.cshtml";
+}
+
+<div class="head">
+    <h3>Отгрузка</h3>
+</div>
+<form role="form" method="post" action="/Production/Shipment/@Model.Id">
+
+    <div id="Modal" class="Modal" style="position: fixed; background-color: #ffffff; left: 30%; top: 25%; border: 1px solid #222; padding: 50px; text-align: center; border-radius: 7px; z-index: 999; display: none;">
+        <h3>Вы уверены </h3>
+        <button type="submit" class="btn btn-default" style="width: 100px; margin-top: 20px;">Да</button>
+        <div class="btn btn-default" id="but_unsub" style="width: 100px; margin-top: 20px;">Нет</div>
+    </div>
+
+    <div class="col-xs-5" style="margin-bottom: 80px">
+        <label>
+            <h4>
+                <strong>
+                    Сумма без скидки:
+                    @{
+                        string a = Convert.ToString(ViewBag.Sum);
+                        string[] b = a.Split(',');
+                        string c = b[0] + "." + b[1];
+                    }
+                    @c
+                </strong>
+            </h4>
+        </label>
+        <input id="sumwithoutd" type="hidden" name="SumWithoutD" value="@ViewBag.Sum" />
+
+        <div class="form-group">
+            <label for="buyer">Клиент</label>
+            <input type="text" id="buyer" name="buyer" class="input db1" value="@Model.Number" />
+        </div>
+        @if (Model.Shipment != true)
+        {
+            <div class="form-group">
+                <label for="shipment">Отгрузить сейчас</label>
+                <select id="shipment" name="Shipment" class="input db1">
+                    <option value="true">Да</option>
+                    <option value="false">Нет</option>
+                </select>
+            </div>
+        }
+        <div class="form-group">
+            <label for="comment">Комментарий</label>
+            <textarea id="comment" name="Comment" class="input db1"></textarea>
+        </div>
+        <div class="btn btn-success" id="but_sub">Продолжить</div>
+    </div>
+
+    <div class="col-xs-5" align="center">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <p>Название / Количество / Стоимость</p>
+            </div>
+        </div>
+        @foreach (var gh in ViewBag.GreenHouseList)
+            {
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <p>@gh.Name / @gh.Amount / @gh.Cost</p>
+                </div>
+            </div>
+        }
+    </div>
+</form>

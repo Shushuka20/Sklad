@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+<div class="head">
+    <h4>Список Остлеживаемых Розниц</h4>
+</div>
+<table class="table table-bordered">
+    <thead style="background-color: white; opacity: 1;">
+        <tr>
+            <th>Название</th>
+            <th>Префикс</th>
+            <th>Денег на кассе</th>
+            <th>Задолженность</th>
+            <th>Должники</th>
+            <th>Пакеты</th>
+            <th>Список продукции</th>
+            <th>Реализация подробно</th>
+            <th>Статистика</th>
+            <th>Отслеживать</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.Name</td>
+                <td>@s.Prefix</td>
+                <td>@s.Sum</td>
+                <td>
+                    @if (s.Name == "Аносова 3")
+                    {
+                        { s.Debt -= 240150; }
+                    }
+                    @s.Debt
+                </td>
+                <td>
+                    <a href="/Admin/Debtors/@s.Id" class="btn btn-default">Перейти</a>
+                </td>
+                <td>
+                    <a href="/Admin/PackList/@s.Id" class="btn btn-default">Список пакетов</a>
+                    <a href="/Admin/HistoryPacks/@s.Id" class="btn btn-default">История работы с пакетами</a>
+                </td>
+                <td><a href="/Admin/GreenhouseList/@s.Id" class="btn btn-default">Перейти</a></td>
+                <td>
+                    <a href="/Admin/Realizations/@s.Id" class="btn btn-default">Перейти</a>
+                    <a href="/Admin/ListsPositionForGreenhouse/@s.Id" class="btn btn-default">Изменить позиции продукции</a>
+                </td>
+                <td>
+                    <a class="btn btn-default" href="/Admin/DetailInfo/@s.Id">Статистика</a>
+                </td>
+                <td>
+                    @if (s.Track == true)
+                    {
+                        <a href="/Admin/ChangeTrack/@s.Id" class="btn btn-default">Да</a>
+                    }
+                    else
+                    {
+                        <a href="/Admin/ChangeTrack/@s.Id" class="btn btn-default">Нет</a>
+                    }
+                    
+                </td>
+                <td>
+                    <a href="/Admin/Stock/@s.Id" class="btn btn-default">Редактировать</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
