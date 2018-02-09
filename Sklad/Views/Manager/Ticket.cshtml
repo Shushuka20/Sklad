@@ -141,7 +141,7 @@
         </div>    
         <div class="clearfix"></div>
     </div>
-    <div class="clearfix" style="margin-bottom: 40px;"></div>
+    <div class="clearfix" style="margin-bottom: 740px;"></div>
 
     <P CLASS="western" STYLE="margin-bottom: 0.14in">
         № продажи: @Model.Number
@@ -181,7 +181,10 @@
             <input type="hidden" value="@Model.Number" name="sellNumb" />
             <button type="submit">Сделать договор доставки</button>
         </form>
-        <a href="/Home/Index" style="margin-top:80px; text-decoration:none; font-size:20px;">Сделать договор рассрочки</a>
+        <form action="/Manager/DogInstallmentStart" method="post" role="form">
+            <input type="hidden" value="@Model.Number" name="sellNumb" />
+            <button type="submit">Сделать договор рассрочки</button>
+        </form>  
     </div>
 
 </body>
