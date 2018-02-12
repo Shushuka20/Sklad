@@ -23,5 +23,6 @@ namespace Sklad.Models
         public DbSet<InfoMoney> InfoMoneys { get; set; }
         public DbSet<Montaznik> Montazniks { get; set; }
         public DbSet<Claim> Claims { get; set; }
+        public DbSet<Installment> Installments { get; set; }
     }
 }

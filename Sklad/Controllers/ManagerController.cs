@@ -1702,6 +1702,113 @@ namespace Sklad.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult OrderInstallation(int? id)
+        {
+            IEnumerable<Installment> installments = db.Installments.Include(i => i.Sale).Include(m => m.Montazniks);
+            IEnumerable<Installment> installmentsNotGreen = installments.Where(i => i.Color != "green").OrderBy(d => d.ForDate);
+            IEnumerable<Installment> installmentsGreen = installments.Where(i => i.Color == "green");
+
+            installments = installmentsNotGreen.Concat(installmentsGreen);
+
+            return View(installments);
+        }
+        
+        [HttpGet]
+        public ActionResult OrderInstallationStart()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult OrderInstallmentStart(string sellNumb)
+        {
+            return RedirectToAction("OrderInstallmentFinal", "Manager", new { sellNumb });
+        }
+
+        [HttpGet]
+        public ActionResult OrderInstallmentFinal(string sellNumb)
+        {
+            Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
+            ViewBag.Montazniks = db.Montazniks.ToList();
+
+            return View(sale);
+        }
+
+        [HttpPost]
+        public ActionResult OrderInstallmentFinal(string sellNumb, string adress, string phone, DateTime datefrom, DateTime datefor, bool light, ICollection<int> montazniksIds, string comment)
+        {
+            Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
+            List<Montaznik> montazniksList = new List<Montaznik>();
+
+            foreach(var i in montazniksIds)
+            {
+                Montaznik montaznik = db.Montazniks.FirstOrDefault(m => m.Id == i);
+                montazniksList.Add(montaznik);
+            }
+
+            Installment installment = new Installment()
+            {
+                Adress = adress,
+                Phone = phone,
+                FromDate = datefrom,
+                ForDate = datefor,
+                Light = light,
+                Comment = comment,
+                Sale = sale,
+                Montazniks = montazniksList
+            };
+            db.Installments.Add(installment);
+            db.SaveChanges();
+
+            return RedirectToAction("OrderInstallation", "Manager");
+        }
+
+        [HttpGet]
+        public ActionResult InstallationEdit(int? id)
+        {
+            Installment installment = db.Installments.Include(s => s.Sale).Include(m => m.Montazniks).FirstOrDefault(i => i.Id == id);
+            ViewBag.Montazniks = db.Montazniks.ToList();
+
+            return View(installment);
+        }
+        [HttpPost]
+        public ActionResult InstallationEdit(int id, string adress, string phone, DateTime datefrom, DateTime datefor, bool light, ICollection<int> montazniksIds, string comment)
+        {
+            Installment installment = db.Installments.FirstOrDefault(i => i.Id == id);
+
+            installment.Montazniks.Clear();
+
+            if (montazniksIds != null)
+            {
+                foreach (var i in db.Montazniks.Where(m => montazniksIds.Contains(m.Id)))
+                {
+                    installment.Montazniks.Add(i);
+                }                
+            }
+            
+            installment.Adress = adress;
+            installment.Phone = phone;
+            installment.FromDate = datefrom;
+            installment.ForDate = datefor;
+            installment.Light = light;
+            installment.Comment = comment;
+            db.Entry(installment).State = EntityState.Modified;
+            db.SaveChanges();
+
+            return RedirectToAction("OrderInstallation", "Manager");
+        }
+
+        [HttpGet]
+        public ActionResult ChangeColor(int? id, string color)
+        {
+            Installment installment = db.Installments.FirstOrDefault(i => i.Id == id);
+
+            installment.Color = color;
+            db.SaveChanges();
+
+            return RedirectToAction("OrderInstallation", "Manager");
+        }
+
 
     }
 

@@ -1,0 +1,108 @@
+﻿
+@{
+    ViewBag.Title = "OrderInstallation";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+    string white = "#fff";
+    string black = "#222";
+}
+<style>
+    .black-text {
+        color: #222;
+    }
+</style>
+<div class="head">
+    <h4>Очередь Монтажей</h4>
+    <a href="/Manager/OrderInstallationStart" class="btn btn-default">Добавить в очередь</a>
+</div>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Номер чека</th>
+            <th>Теплица</th>
+            <th>Адрес</th>
+            <th>Номер телефона</th>
+            <th>Внесено денег</th>
+            <th>Остаток</th>
+            <th>Дата с</th>
+            <th>Дата по</th>
+            <th>Есть ли свет</th>
+            <th>Монтажники</th>
+            <th>Комментарии</th>
+            <th>Изменить</th>
+            <th>Цвет</th>
+        </tr>
+    </thead>
+    <tbody>
+       @foreach (var i in Model)
+       {
+           if(i.Color != "white" && i.Color != "yellow" ) { 
+               <tr style="background-color: @i.Color; color: @white">
+                   <td>@i.Sale.Number</td>
+                   <td>@i.Sale.Description</td>
+                   <td>@i.Adress</td>
+                   <td>@i.Phone</td>
+                   <td>@i.Sale.AddMoney</td>
+                   <td>@i.Sale.Remain</td>
+                   <td>@i.FromDate.ToString("dd MM yyyy")</td>
+                   <td>@i.ForDate.ToString("dd MM yyyy")</td>
+                   @if (i.Light == true)
+                   {
+                       <td>Да</td>
+                   }
+                   else
+                   {
+                       <td>Нет</td>
+                   }
+                   <td>
+                       @foreach (var m in i.Montazniks)
+                       {
+                           @m.FIO; <br />
+                       }
+                   </td>
+                   <td>@i.Comment</td>
+                   <td><a href="/Manager/InstallationEdit/@i.Id" class="btn btn-default">Изменить</a></td>
+                   <td>
+                       <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "white" })" class="btn btn-default"></a>
+                       <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "green" })" class="btn btn-success"></a>
+                       <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "yellow" })" class="btn btn-warning"></a>
+                       <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "red" })" class="btn btn-danger"></a>
+                   </td>
+               </tr>
+           }
+           else if (i.Color == "white" || i.Color == "yellow") {
+            <tr style="background-color: @i.Color; color: @black">
+                <td>@i.Sale.Number</td>
+                <td>@i.Sale.Description</td>
+                <td>@i.Adress</td>
+                <td>@i.Phone</td>
+                <td>@i.Sale.AddMoney</td>
+                <td>@i.Sale.Remain</td>
+                <td>@i.FromDate.ToString("dd MM yyyy")</td>
+                <td>@i.ForDate.ToString("dd MM yyyy")</td>
+                @if (i.Light == true)
+                {
+                    <td>Да</td>
+                }
+                else
+                {
+                    <td>Нет</td>
+                }
+                <td>
+                    @foreach (var m in i.Montazniks)
+                    {
+                        @m.FIO; <br />
+                    }
+                </td>
+                <td>@i.Comment</td>
+                <td><a href="/Manager/InstallationEdit/@i.Id" class="btn btn-default">Изменить</a></td>
+                <td>
+                    <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "white" })" class="btn btn-default"></a>
+                    <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "green" })" class="btn btn-success"></a>
+                    <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "yellow" })" class="btn btn-warning"></a>
+                    <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "red" })" class="btn btn-danger"></a>
+                </td>
+            </tr>
+           }
+       }
+    </tbody>
+</table>
