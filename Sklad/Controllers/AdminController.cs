@@ -18,16 +18,16 @@ namespace Sklad.Controllers
             var infos = db.Stocks
                 .Where(s => s.Track == true)
                 .GroupJoin(
-                    db.InfoMoneys.Where(i => i.PayForTerminal != true),
+                    db.Sales.Where(i => i.PayForTerminal != true),
                     stock => stock.Id,
                     info => info.Stock.Id,
-                    (stock, info) => new
+                    (stock, sale) => new
                     {
                         Id = stock.Id,
                         Name = stock.Name,
                         Prefix = stock.Prefix,
                         Track = stock.Track,
-                        Sum = info.Sum(i => i.Cost)
+                        Sum = sale.Sum(i => i.AddMoney)
                     })
                 .GroupJoin(
                     db.Sales.Where(sale => sale.Dealer == null && sale.Remain > 0 && sale.Confirmed == true),
@@ -99,16 +99,16 @@ namespace Sklad.Controllers
         {
             var infos = db.Stocks
                 .GroupJoin(
-                    db.InfoMoneys.Where(i => i.PayForTerminal != true),
+                    db.Sales.Where(i => i.PayForTerminal != true),
                     stock => stock.Id,
                     info => info.Stock.Id,
-                    (stock, info) => new
+                    (stock, sale) => new
                     {
                         Id = stock.Id,
                         Name = stock.Name,
                         Prefix = stock.Prefix,
                         Track = stock.Track,
-                        Sum = info.Sum(i => i.Cost)
+                        Sum = sale.Sum(i => i.AddMoney)
                     })
                 .GroupJoin(
                     db.Sales.Where(sale => sale.Dealer == null && sale.Remain > 0 && sale.Confirmed == true),
@@ -544,9 +544,22 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult Realization(Sale model)
         {
-            Sale sale = db.Sales.FirstOrDefault(s => s.Id == model.Id);
+            Sale sale = db.Sales.Include(d => d.Stock).FirstOrDefault(s => s.Id == model.Id);
             sale.DeliveryCost = model.DeliveryCost;
             sale.Comment = model.Comment;
+            sale.PayForTerminal = model.PayForTerminal;
+
+            Sale newSale = new Sale()
+            {
+                Stock = sale.Stock,
+                Date = DateTime.UtcNow.AddHours(6),
+                Number = sale.Number,
+                Inspect = true,
+                Confirmed = true,
+                Description = "Изменение способа оплаты"
+            };
+
+            db.Sales.Add(newSale);
             db.SaveChanges();
 
             return RedirectToAction("Index");
@@ -1181,86 +1194,86 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult DetailInfo(int? id)
         {
-            decimal sumCash = 0;
-            decimal sumTerminal = 0;
+            /* 
+             decimal sumCash = 0;
+             decimal sumTerminal = 0;
 
-            decimal sumPay = 0;
-            decimal sumCashment = 0;
-            decimal sumDelivery = 0;
-            decimal sumProcurement = 0;
-            decimal sumChancery = 0;
-            decimal sumReturn = 0;
-            decimal sumArenda = 0;
-            decimal sumOthers = 0;
+             decimal sumPay = 0;
+             decimal sumCashment = 0;
+             decimal sumDelivery = 0;
+             decimal sumProcurement = 0;
+             decimal sumChancery = 0;
+             decimal sumReturn = 0;
+             decimal sumArenda = 0;
+             decimal sumOthers = 0;
 
-            #region ebanina
-            foreach (var im in db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal != true && i.Cost > 0))
-            {
-                sumCash += im.Cost;
-            }
+             #region ebanina
+             foreach (var im in db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal != true && i.Cost > 0))
+             {
+                 sumCash += im.Cost;
+             }
 
-            foreach (var im in db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal && i.Cost > 0))
-            {
-                sumTerminal += im.Cost;
-            }
+             foreach (var im in db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal && i.Cost > 0))
+             {
+                 sumTerminal += im.Cost;
+             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Зарплата" && i.Confirmed == true))
-            {
-                sumPay += sale.Outgo;
-            }
+             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Зарплата" && i.Confirmed == true))
+             {
+                 sumPay += sale.Outgo;
+             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true))
-            {
-                sumCashment += sale.Outgo;
-            }
+             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true))
+             {
+                 sumCashment += sale.Outgo;
+             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true))
-            {
-                sumDelivery += sale.Outgo;
-            }
+             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true))
+             {
+                 sumDelivery += sale.Outgo;
+             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Закуп СПК" && i.Confirmed == true))
-            {
-                sumProcurement += sale.Outgo;
-            }
+             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Закуп СПК" && i.Confirmed == true))
+             {
+                 sumProcurement += sale.Outgo;
+             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Канцелярия" && i.Confirmed == true))
-            {
-                sumChancery += sale.Outgo;
-            }
+             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Канцелярия" && i.Confirmed == true))
+             {
+                 sumChancery += sale.Outgo;
+             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Возврат денежных средств" && i.Confirmed == true))
-            {
-                sumReturn += sale.Outgo;
-            }
+             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Возврат денежных средств" && i.Confirmed == true))
+             {
+                 sumReturn += sale.Outgo;
+             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Аренда" && i.Confirmed == true))
-            {
-                sumArenda += sale.Outgo;
-            }
+             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Аренда" && i.Confirmed == true))
+             {
+                 sumArenda += sale.Outgo;
+             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true))
-            {
-                sumOthers += sale.Outgo;
-            }
-            #endregion
+             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true))
+             {
+                 sumOthers += sale.Outgo;
+             }
+             #endregion
+             ---Старый код*/
 
-            ViewBag.SumCash = sumCash;
-            ViewBag.SumTerminal = sumTerminal;
-            ViewBag.SumPay = sumPay;
-            ViewBag.SumCashment = sumCashment;
-            ViewBag.SumDelivery = sumDelivery;
-            ViewBag.SumProcurement = sumProcurement;
-            ViewBag.SumChancery = sumChancery;
-            ViewBag.SumReturn = sumReturn;
-            ViewBag.SumArenda = sumArenda;
-            ViewBag.SumOthers = sumOthers;
+            ViewBag.SumCash = db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal != true).Sum(am => am.AddMoney);
+            ViewBag.SumTerminal = db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal == true).Sum(amt => amt.AddMoney);
+            ViewBag.SumPay = db.Sales.Where(s => s.Stock.Id == id && s.OutgoCategory == "Зарплата" && s.Confirmed == true).Sum(s => s.Outgo); 
+            ViewBag.SumCashment = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true).Sum(s => s.Outgo);
+            ViewBag.SumDelivery = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true).Sum(s => s.Outgo);
+            ViewBag.SumProcurement = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Закуп СПК" && i.Confirmed == true).Sum(s => s.Outgo);
+            ViewBag.SumChancery = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Канцелярия" && i.Confirmed == true).Sum(s => s.Outgo);
+            ViewBag.SumReturn = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Возврат денежных средств" && i.Confirmed == true).Sum(s => s.Outgo);
+            ViewBag.SumArenda = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Аренда" && i.Confirmed == true).Sum(s => s.Outgo);
+            ViewBag.SumOthers = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true).Sum(s => s.Outgo);
 
             ViewBag.Hui = id;
 
-            ViewBag.Profit = (sumCash + sumTerminal) - (
-                sumPay - sumCashment - sumDelivery - sumProcurement
-                - sumChancery - sumReturn - sumArenda - sumOthers);
+            ViewBag.Profit = db.Sales.Where(s => s.Stock.Id == id && s.Profit >= 0).Sum(p => p.Profit);
 
             var a = db.GreenhouseForSales.Where(x => x.Stock.Id == id)
                 .GroupBy(x => x.Name).Select(x => new

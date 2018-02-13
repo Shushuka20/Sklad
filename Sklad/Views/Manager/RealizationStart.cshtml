@@ -131,10 +131,15 @@
                         <button id="btn_delete" class="btn btn-danger" style="margin-bottom: 20px;">Удалить</button>
                     </div>
                 }
-
             </div>
             <div id="add" class="btn btn-default">Добавить поле для ввода товара</div>
         </div><br /><br />
+        
+        @if(ViewBag.Admin == true)
+        {
+            <input type="hidden" value="true" name="admin"/>
+        }
+
         <button type="submit" class="btn btn-success">Продолжить</button>
     </form>
 </div>

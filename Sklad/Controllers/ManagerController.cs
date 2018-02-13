@@ -30,7 +30,7 @@ namespace Sklad.Controllers
         }
 
         [HttpGet]
-        public ActionResult RealizationStart(int? id)
+        public ActionResult RealizationStart(int? id, bool? admin)
         {
             Stock stock = db.Stocks.FirstOrDefault(s => s.Id == id);
             ViewBag.ColorS = stock.BackgroundColor;
@@ -68,6 +68,8 @@ namespace Sklad.Controllers
             {
                 ViewBag.ListForRealization = null;
             }
+
+            ViewBag.Admin = admin;
             
             return View(stock);
         }
@@ -75,7 +77,7 @@ namespace Sklad.Controllers
 
 
         [HttpPost]
-        public ActionResult RealizationStart(int? id, int? dealer, string[] ghName, int[] ghAmount)
+        public ActionResult RealizationStart(int? id, int? dealer, string[] ghName, int[] ghAmount, bool? admin)
         {
             Stock stock = db.Stocks.Include(s => s.Greenhouses).FirstOrDefault(s => s.Id == id);
             ViewBag.ColorS = stock.BackgroundColor;
@@ -146,11 +148,11 @@ namespace Sklad.Controllers
             }
             db.SaveChanges();
 
-            return RedirectToAction("Realization", "Manager", new { id = id, idS = sale.Id });
+            return RedirectToAction("Realization", "Manager", new { id = id, idS = sale.Id, admin = admin});
         }
 
         [HttpGet]
-        public ActionResult Realization(int? id, int? idS)
+        public ActionResult Realization(int? id, int? idS, bool? admin)
         {
             Stock stock = db.Stocks.Include(s => s.Packs).FirstOrDefault(s => s.Id == id);
             ViewBag.ColorS = stock.BackgroundColor;
@@ -202,7 +204,11 @@ namespace Sklad.Controllers
                     ViewBag.CostRecommend = d1.CostRecommend.Split('/');
                 }
             }
-
+            ViewBag.Admin = "";
+            if(admin == true)
+            {
+                ViewBag.Admin = "ЗАЯВКА С ОФИСА";
+            }
             ViewBag.Sum = sum;
             ViewBag.Stock = stock;
             ViewBag.GreenHouseList = lala;
