@@ -11,7 +11,12 @@
     </div>
     <div class="form-group">
         <label for="group">Группа товара</label>
-        <input type="text" id="group" name="group" class="form-control" />
+        <select id="group" name="categoryId" class="form-control">          
+            @foreach (var c in ViewBag.Categories)
+            {
+                <option value="@c.Id">@c.Name</option>
+            }
+        </select>
     </div>
     <div class="form-group">
         <label for="bonus">Бонус для менеджера</label>

@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewBag.Title = "CategoryEdit";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@if(Model != null) { 
+    <form method="post" role="form" action="/Admin/CategoryEdit/@Model.Id">
+        <div class="form-group">
+            <label for="login">Название</label>
+            <input type="text" id="login" name="name" value="@Model.Name" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-success">Подтвердить</button>
+    </form>
+}
+else
+{
+    <form method="post" role="form" action="/Admin/CategoryEdit">
+        <div class="form-group">
+            <label for="login">Название</label>
+            <input type="text" id="login" name="name" value="" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-success">Подтвердить</button>
+    </form>
+}
+

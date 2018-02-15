@@ -24,5 +24,6 @@ namespace Sklad.Models
         public DbSet<Montaznik> Montazniks { get; set; }
         public DbSet<Claim> Claims { get; set; }
         public DbSet<Installment> Installments { get; set; }
+        public DbSet<GreenhouseCategory> GreenhouseCategories { get; set; }
     }
 }

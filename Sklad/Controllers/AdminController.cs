@@ -286,6 +286,7 @@ namespace Sklad.Controllers
             IEnumerable<Greenhouse> greenhouses = db.Greenhouses
                 .Include(g => g.PacksForGH)
                 .Include(g => g.Stock)
+                .Include(g => g.GetGreenhouseCategory)
                 .Where(g => g.Stock.Id == stock.Id);
 
             return View(greenhouses);
@@ -296,14 +297,18 @@ namespace Sklad.Controllers
         {
             Stock stock = db.Stocks.Include(s => s.Packs).FirstOrDefault(s => s.Id == id);
             ViewBag.Packs = stock.Packs;
+            ViewBag.Categories = db.GreenhouseCategories;
 
             return View(stock);
         }
 
         [HttpPost]
-        public ActionResult GreenhouseAdd(int? id, Greenhouse model)
+        public ActionResult GreenhouseAdd(int? id, Greenhouse model, int? categoryId)
         {
             Stock stock = db.Stocks.FirstOrDefault(s => s.Id == id);
+            GreenhouseCategory category = db.GreenhouseCategories.FirstOrDefault(c => c.Id == categoryId);
+
+
 
             List<PackForGH> packsForGH = new List<PackForGH>();
             List<Pack> packs = new List<Pack>();
@@ -320,7 +325,7 @@ namespace Sklad.Controllers
             Greenhouse g1 = new Greenhouse()
             {
                 Name = model.Name,
-                Group = model.Group,
+                GetGreenhouseCategory = category,
                 Packs = packs,
                 PacksForGH = packsForGH,
                 Bonus = model.Bonus,
@@ -335,7 +340,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult Greenhouse(int? id)
         {
-            Greenhouse greenhouse = db.Greenhouses.Include(g => g.Stock).Include(g => g.PacksForGH).FirstOrDefault(g => g.Id == id);
+            Greenhouse greenhouse = db.Greenhouses.Include(g => g.Stock).Include(g => g.GetGreenhouseCategory).Include(g => g.PacksForGH).FirstOrDefault(g => g.Id == id);
             Stock stock = greenhouse.Stock;
             IEnumerable<Pack> packs = db.Packs.Include(p => p.Stock).Where(p => p.Stock.Id == stock.Id);
             List<Pack> usepacks = new List<Pack>();
@@ -355,18 +360,20 @@ namespace Sklad.Controllers
                     }
                 }
             }
-
+            ViewBag.Categories = db.GreenhouseCategories;
             ViewBag.Packs = usepacks;
 
             return View(greenhouse);
         }
 
         [HttpPost]
-        public ActionResult GreenHouse(int? id, Greenhouse model)
+        public ActionResult GreenHouse(int? id, Greenhouse model, int getgreenhousecategory)
         {
-            Greenhouse greenhouse = db.Greenhouses.Include(g => g.PacksForGH).FirstOrDefault(g => g.Id == id);
+            Greenhouse greenhouse = db.Greenhouses.Include(g => g.PacksForGH).Include(g => g.GetGreenhouseCategory).FirstOrDefault(g => g.Id == id);
+            GreenhouseCategory category = db.GreenhouseCategories.FirstOrDefault(c => c.Id == getgreenhousecategory);
             greenhouse.Name = model.Name;
-            greenhouse.Group = model.Group;
+            greenhouse.GetGreenhouseCategory = category;
+            db.SaveChanges();
             greenhouse.Bonus = model.Bonus;
             greenhouse.CostPrice = model.CostPrice;
             foreach (var p in greenhouse.PacksForGH)
@@ -395,7 +402,7 @@ namespace Sklad.Controllers
                     greenhouse.PacksForGH.Add(new PackForGH { Name = pack.Name, Cost = pack.Cost, Amount = p.Amount });
                 }
             }
-            db.SaveChanges();
+            db.SaveChanges();           
 
             return RedirectToAction("Index", "Admin");
         }
@@ -966,7 +973,7 @@ namespace Sklad.Controllers
         {
             Stock stock = db.Stocks.FirstOrDefault(s => s.Id == id);
 
-            IEnumerable<Dealer> dealers = db.Dealers;
+            /*IEnumerable<Dealer> dealers = db.Dealers;
             ViewBag.Dealers = dealers;
             IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 1).OrderBy(g => g.Position);
             ViewBag.Ghs1 = ghs1;
@@ -983,7 +990,9 @@ namespace Sklad.Controllers
             IEnumerable<Greenhouse> ghs7 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 7).OrderBy(g => g.Position);
             ViewBag.Ghs7 = ghs7;
             IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 8).OrderBy(g => g.Position);
-            ViewBag.Ghs8 = ghs8;
+            ViewBag.Ghs8 = ghs8;*/
+
+            ViewBag.Categories = db.GreenhouseCategories.Include(g => g.Greenhouses);
 
             HttpCookie cookieReq = Request.Cookies["Greenhouses"];
             string str = "";
@@ -1399,6 +1408,70 @@ namespace Sklad.Controllers
             db.SaveChanges();
 
             return RedirectToAction("Index", "Admin");
+        }
+
+        [HttpGet]
+        public ActionResult Categories()
+        {
+            IEnumerable<GreenhouseCategory> categories = db.GreenhouseCategories;
+
+            return View(categories);
+        }
+
+        [HttpGet]
+        public ActionResult CategoryEdit(int? id)
+        {
+            if(id != null)
+            {
+                GreenhouseCategory category = db.GreenhouseCategories.FirstOrDefault(c => c.Id == id);
+
+                return View(category);
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CategoryEdit(int? id, string name)
+        {
+            if(id != null)
+            {
+                GreenhouseCategory category = db.GreenhouseCategories.FirstOrDefault(c => c.Id == id);
+
+                category.Name = name;
+                db.SaveChanges();
+
+                return RedirectToAction("Categories", "Admin");
+            }
+
+            GreenhouseCategory newCategory = new GreenhouseCategory()
+            {
+                Name = name
+            };
+
+            db.GreenhouseCategories.Add(newCategory);
+            db.SaveChanges();
+
+            return RedirectToAction("Categories", "Admin");
+        }
+
+        [HttpGet]
+        public ActionResult CategoryDelete(int id)
+        {
+            GreenhouseCategory category = db.GreenhouseCategories.FirstOrDefault(c => c.Id == id);
+
+            IEnumerable<Greenhouse> greenhouse = db.Greenhouses.Where(g => g.GetGreenhouseCategory.Id == category.Id);
+
+            foreach(var gr in greenhouse)
+            {
+                var green = gr;
+                category.Greenhouses.Remove(green);
+            }
+
+            db.GreenhouseCategories.Remove(category);
+            db.SaveChanges();
+
+            return RedirectToAction("Categories", "Admin");
         }
     }
 
