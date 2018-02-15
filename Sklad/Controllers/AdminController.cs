@@ -1260,8 +1260,8 @@ namespace Sklad.Controllers
              #endregion
              ---Старый код*/
 
-            ViewBag.SumCash = db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal != true).Sum(am => am.AddMoney);
-            ViewBag.SumTerminal = db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal == true).Sum(amt => amt.AddMoney);
+            ViewBag.SumCash = db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal != true && s.Confirmed == true).Sum(am => am.AddMoney);
+            ViewBag.SumTerminal = db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal == true && s.Confirmed == true).Sum(amt => amt.AddMoney);
             ViewBag.SumPay = db.Sales.Where(s => s.Stock.Id == id && s.OutgoCategory == "Зарплата" && s.Confirmed == true).Sum(s => s.Outgo); 
             ViewBag.SumCashment = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true).Sum(s => s.Outgo);
             ViewBag.SumDelivery = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true).Sum(s => s.Outgo);

@@ -14,7 +14,7 @@
     <h4>Очередь Монтажей</h4>
     <a href="/Manager/OrderInstallationStart" class="btn btn-default">Добавить в очередь</a>
 </div>
-<table class="table table-bordered">
+<table class="table table-bordered table-condensed">
     <thead>
         <tr>
             <th>Номер чека</th>
@@ -30,6 +30,7 @@
             <th>Комментарии</th>
             <th>Изменить</th>
             <th>Цвет</th>
+            <th>Действие</th>
         </tr>
     </thead>
     <tbody>
@@ -67,6 +68,9 @@
                        <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "yellow" })" class="btn btn-warning"></a>
                        <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "red" })" class="btn btn-danger"></a>
                    </td>
+                   <td>
+                       <a href="@Url.Action("ReceivingMonet", new { i.Sale.Number })" class="btn btn-default">Прием денег</a>
+                   </td>
                </tr>
            }
            else if (i.Color == "white" || i.Color == "yellow") {
@@ -100,6 +104,9 @@
                     <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "green" })" class="btn btn-success"></a>
                     <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "yellow" })" class="btn btn-warning"></a>
                     <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "red" })" class="btn btn-danger"></a>
+                </td>
+                <td>
+                    <a href="@Url.Action("ReceivingMonet", new { number = i.Sale.Number })" class="btn btn-default">Прием денег</a>
                 </td>
             </tr>
            }
