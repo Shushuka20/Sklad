@@ -552,6 +552,7 @@ namespace Sklad.Controllers
             return RedirectToAction("Index");
         }
 
+        //TODO: refact this shit
         public ActionResult RealizationDelete(int? id)
         {
             Sale sale = db.Sales
@@ -757,6 +758,7 @@ namespace Sklad.Controllers
             return RedirectToAction("DealerHistory", "Admin", new { id = dealerId });
         }
 
+        //TODO: refact this shit
         public ActionResult Statistic()
         {
             IEnumerable<Stock> stocks = db.Stocks;
@@ -791,6 +793,7 @@ namespace Sklad.Controllers
             return View();
         }
 
+        //TODO: refact this shit
         [HttpGet]
         public ActionResult StatisticFiltr(DateTime? date1, DateTime? date2, int? stockId)
         {
@@ -985,6 +988,7 @@ namespace Sklad.Controllers
             return View(stock);
         }
 
+        //TODO: refact this shit
         [HttpPost]
         public ActionResult AddClaim(int? id, int? dealer, string[] ghName, int[] ghAmount)
         {
@@ -1043,6 +1047,7 @@ namespace Sklad.Controllers
             return RedirectToAction("ContinuationAddClaim", "Admin", new { id = id, idC = claim.Id });
         }
 
+        //TODO: refact this shit
         [HttpGet]
         public ActionResult ContinuationAddClaim(int? id, int? idC)
         {
