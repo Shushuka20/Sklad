@@ -373,7 +373,6 @@ namespace Sklad.Controllers
             GreenhouseCategory category = db.GreenhouseCategories.FirstOrDefault(c => c.Id == getgreenhousecategory);
             greenhouse.Name = model.Name;
             greenhouse.GetGreenhouseCategory = category;
-            db.SaveChanges();
             greenhouse.Bonus = model.Bonus;
             greenhouse.CostPrice = model.CostPrice;
             foreach (var p in greenhouse.PacksForGH)

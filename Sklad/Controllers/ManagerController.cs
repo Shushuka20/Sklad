@@ -917,7 +917,7 @@ namespace Sklad.Controllers
             return View(hp1);
         }
 
-        public ActionResult Ticket(int? id, string comm)
+        public ActionResult Ticket(int? id, string comm, int? sum )
         {
             Sale sale = db.Sales
                 .Include(s => s.GreenhouseForSales)
@@ -987,6 +987,8 @@ namespace Sklad.Controllers
                 }
             }
 
+
+            ViewBag.Sum = sum;
             ViewBag.Packs = packs;
 
             return View(sale);
@@ -1255,6 +1257,11 @@ namespace Sklad.Controllers
             //sale.Remain -= sum;
             sale.DeliveryConfirm = true;
 
+            Installment installment = db.Installments.Include(i => i.Sale).FirstOrDefault(i => i.Sale.Number == sale.Number);
+            if(installment != null)
+            {
+                installment.Color = "green";
+            }          
             IEnumerable<Sale> sales = db.Sales.Where(s => s.Number == sale.Number);
             foreach (var s in sales)
             {
@@ -1746,16 +1753,16 @@ namespace Sklad.Controllers
         }
 
         [HttpPost]
-        public ActionResult OrderInstallmentFinal(string sellNumb, string adress, string phone, DateTime datefrom, DateTime datefor, bool light, ICollection<int> montazniksIds, string comment)
+        public ActionResult OrderInstallmentFinal(string sellNumb, string adress, string phone, DateTime datefrom, DateTime datefor, bool light, string comment)
         {
             Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
             List<Montaznik> montazniksList = new List<Montaznik>();
 
-            foreach(var i in montazniksIds)
+            /*foreach(var i in montazniksIds)
             {
                 Montaznik montaznik = db.Montazniks.FirstOrDefault(m => m.Id == i);
                 montazniksList.Add(montaznik);
-            }
+            }*/
 
             Installment installment = new Installment()
             {
@@ -1819,7 +1826,24 @@ namespace Sklad.Controllers
 
             return RedirectToAction("OrderInstallation", "Manager");
         }
+        [HttpGet]
+        public ActionResult InstallationSum(string sellNumb)
+        {
+            Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
 
+            ViewBag.Remain = sale.Remain;
+            ViewBag.Number = sellNumb;
+
+            Sale saleDolg = db.Sales.Where(s => s.Number == sellNumb).FirstOrDefault(s => s.Comment == "РАССРОЧКА");
+            ViewBag.saleDolg = "";
+            if(saleDolg != null)
+            {
+                ViewBag.saleDolg = "Клиент с рассрочкой";
+            }
+
+
+            return View(sale);
+        }
 
     }
 

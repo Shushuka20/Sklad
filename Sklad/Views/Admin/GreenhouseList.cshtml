@@ -28,7 +28,16 @@
                         <p>@p.Name (@p.Amount шт.)</p>
                     }
                 </td>
-                <td>@g.GetGreenhouseCategory.Name</td>
+                <td>
+                    @if (g.GetGreenhouseCategory != null)
+                    {
+                        @g.GetGreenhouseCategory.Name;
+                    }
+                    else
+                    {
+                        <span>Нет категории</span>
+                    }
+                </td>
                 <td><a href="/Admin/Greenhouse/@g.Id" class="btn btn-default">Редактировать</a></td>
             </tr>
         }

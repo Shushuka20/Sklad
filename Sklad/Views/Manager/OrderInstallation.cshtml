@@ -92,10 +92,10 @@
                     <td>Нет</td>
                 }
                 <td>
-                    @foreach (var m in i.Montazniks)
+                    @if(i.Sale.Montaznik != null)
                     {
-                        @m.FIO; <br />
-                    }
+                        @i.Sale.Montaznik.FIO;
+                    }                    
                 </td>
                 <td>@i.Comment</td>
                 <td><a href="/Manager/InstallationEdit/@i.Id" class="btn btn-default">Изменить</a></td>
@@ -107,6 +107,7 @@
                 </td>
                 <td>
                     <a href="@Url.Action("ReceivingMonet", new { number = i.Sale.Number })" class="btn btn-default">Прием денег</a>
+                    <a href="/Manager/Delivery?sellNumb=@i.Sale.Number" class="btn btn-default">Отправить</a>
                 </td>
             </tr>
            }

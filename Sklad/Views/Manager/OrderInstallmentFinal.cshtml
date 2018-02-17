@@ -44,18 +44,7 @@
             <option value="false">Нет</option>
         </select>
     </div>
-    <div id="montazniks-group" class="form-group">
-        <label for="name">Выбрать монтажников</label>
-        <div id="select_montaznik">
-            <select id="" name="montazniksIds" class="form-control" style="margin-bottom:10px;">
-                @foreach (var m in ViewBag.Montazniks)
-                {
-                    <option value="@m.Id">@m.FIO</option>
-                }           
-            </select>
-            <button onclick="removeSelect(event)" type="button" class="btn btn-danger" style="margin-bottom: 10px;">Удалить</button>
-        </div>
-    </div>
+
     <button onclick="addSelect()" id="add_montaznik" type="button" class="btn btn-default">Добавить монтажника</button>
     <div class="form-group">
         <label for="name">Комментарий</label>
