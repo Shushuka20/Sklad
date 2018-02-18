@@ -13,7 +13,7 @@ namespace Sklad
     {
         protected void Application_Start()
         {
-            Database.SetInitializer(new SkladDbInit());
+            //Database.SetInitializer(new SkladDbInit());
 
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);

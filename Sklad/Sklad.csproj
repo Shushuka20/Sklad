@@ -34,6 +34,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -237,6 +238,10 @@
     <Compile Include="Migrations\201801271435366_27.01.2018.Designer.cs">
       <DependentUpon>201801271435366_27.01.2018.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201802180938013_18.02.cs" />
+    <Compile Include="Migrations\201802180938013_18.02.Designer.cs">
+      <DependentUpon>201802180938013_18.02.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Buyer.cs" />
     <Compile Include="Models\Claim.cs" />
@@ -244,11 +249,13 @@
     <Compile Include="Models\Converter.cs" />
     <Compile Include="Models\Dealer.cs" />
     <Compile Include="Models\Greenhouse.cs" />
+    <Compile Include="Models\GreenhouseCategory.cs" />
     <Compile Include="Models\GreenhouseForSale.cs" />
     <Compile Include="Models\GreenhouseForStock.cs" />
     <Compile Include="Models\HistoryMoney.cs" />
     <Compile Include="Models\HistoryPack.cs" />
     <Compile Include="Models\InfoMoney.cs" />
+    <Compile Include="Models\Installment.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\Montaznik.cs" />
     <Compile Include="Models\Pack.cs" />
@@ -366,6 +373,13 @@
     <Content Include="Views\Manager\DogInstallment.cshtml" />
     <Content Include="Views\Manager\DogInstallmentForm.cshtml" />
     <Content Include="Views\Manager\DogInstallmentStart.cshtml" />
+    <Content Include="Views\Manager\InstallationEdit.cshtml" />
+    <Content Include="Views\Manager\InstallationSum.cshtml" />
+    <Content Include="Views\Manager\OrderInstallation.cshtml" />
+    <Content Include="Views\Manager\OrderInstallationStart.cshtml" />
+    <Content Include="Views\Manager\OrderInstallmentFinal.cshtml" />
+    <Content Include="Views\Admin\Categories.cshtml" />
+    <Content Include="Views\Admin\CategoryEdit.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -449,6 +463,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201801271435366_27.01.2018.resx">
       <DependentUpon>201801271435366_27.01.2018.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802180938013_18.02.resx">
+      <DependentUpon>201802180938013_18.02.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
