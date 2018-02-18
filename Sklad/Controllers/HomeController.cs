@@ -200,6 +200,15 @@ namespace Sklad.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Authorize]
+        public ActionResult OrderInstallation()
+        {
+            User user = null;
+            user = db.Users.Include(u => u.Stock).FirstOrDefault(u => u.Login == User.Identity.Name);
+            if (user != null)
+                return RedirectToAction("OrderInstallation", "Manager", new { id = user.Stock.Id });
+            return RedirectToAction("Index", "Home");
+        }
 
     }
 }

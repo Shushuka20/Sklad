@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewBag.Title = "InstallationSum";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<form role="form" method="get" action="/Manager/Ticket">
+    <div class="form-group">
+        <input type="hidden" name="id" value="@Model.Id"/>
+        <label>Номер № @ViewBag.Number</label> <br />
+        <label>Сумма задолжности: @ViewBag.Remain</label> <br />
+        <label>@ViewBag.saleDolg</label><br />
+        <label for="name">Сумма</label>
+        <input type="text" id="name" name="sum" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Принять</button>
+</form>
+
+

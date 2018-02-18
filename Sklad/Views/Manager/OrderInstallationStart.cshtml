@@ -1,0 +1,14 @@
+﻿
+@{
+    ViewBag.Title = "OrderInstallationStart";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<form role="form" method="post" action="/Manager/OrderInstallmentStart">
+    <div class="form-group">
+        <label for="name">Номер чека</label>
+        <input type="text" id="name" name="sellNumb"  class="form-control" placeholder="" />
+    </div>
+    <button type="submit" class="btn btn-success">Подтвердить</button>
+</form>
+

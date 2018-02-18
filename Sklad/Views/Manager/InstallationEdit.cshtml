@@ -1,0 +1,120 @@
+﻿
+@{
+    ViewBag.Title = "InstallationEdit";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<form role="form" method="post" action="/Manager/InstallationEdit">
+    <input type="hidden" id="name" name="id" value="@Model.Id" />
+    <div class="form-group">
+        <label for="name">Номер чека</label>
+        <input type="text" id="name" name="sellNumb" class="form-control" value="@Model.Sale.Number" />
+    </div>
+    <div class="form-group">
+        <label for="name">Описание теплицы</label>
+        <input type="text" id="name" name="description" class="form-control" value="@Model.Sale.Description" />
+    </div>
+    <div class="form-group">
+        <label for="name">Адрес</label>
+        <input type="text" id="name" name="adress" class="form-control" value="@Model.Adress" />
+    </div>
+    <div class="form-group">
+        <label for="name">Телефон</label>
+        <input type="text" id="name" name="phone" class="form-control" value="@Model.Phone" />
+    </div>
+    <div class="form-group">
+        <label for="name">Денег внесено</label>
+        <input type="text" id="name" name="addedmoney" class="form-control" value="@Model.Sale.AddMoney" />
+    </div>
+    <div class="form-group">
+        <label for="name">Осталось внести</label>
+        <input type="text" id="name" name="remain" class="form-control" value="@Model.Sale.Remain" />
+    </div>
+    <div class="form-group">
+        <label for="name">Дата с</label>
+        <input type="text" id="name" name="datefrom" value="@Model.FromDate.ToString("dd MM yyyy")" class="form-control" placeholder="@Model.FromDate.ToString("dd MM yyyy")" onfocus="(this.type='date')" onfocusout="(this.type='text')" />
+    </div>
+    <div class="form-group">
+        <label for="name">Дата по</label>
+        <input type="text" id="name" name="datefor" value="@Model.ForDate.ToString("dd MM yyyy")" class="form-control" placeholder="@Model.ForDate.ToString("dd MM yyyy")" onfocus="(this.type='date')"  onfocusout="(this.type='text')"  />
+    </div>
+    <div class="form-group">
+        <label for="name">Есть ли свет</label>
+        <select type="set" id="name" name="light" class="form-control">
+            @if (Model.Light == true)
+            {
+                <option selected="selected" value="true">Да</option>
+                <option value="false">Нет</option>
+            }
+            else
+            {
+                <option value="true">Да</option>
+                <option selected="selected" value="false">Нет</option>
+            }
+        </select>
+    </div>
+    <div id="montazniks-group" class="form-group">
+        <label for="name">Выбрать монтажников</label>
+        @if (Model.Montazniks.Count != 0)
+        {
+            foreach (var mon in Model.Montazniks)
+            {
+              <div id="select_montaznik">
+                    <select id="" name="montazniksIds" class="form-control" style="margin-bottom:10px;">
+                        <option selected="selected" value="@mon.Id">@mon.FIO</option>
+                        @foreach (var m in ViewBag.Montazniks)
+                        {
+                            <option value="@m.Id">@m.FIO</option>
+                        }
+                    </select>
+                    <button onclick="removeSelect(event)" type="button" class="btn btn-danger" style="margin-bottom: 10px;">Удалить</button>
+                </div>
+
+            }
+        }
+        @if (Model.Montazniks.Count == 0)
+        {
+            <div id="select_montaznik">
+                <select id="" name="montazniksIds" class="form-control" style="margin-bottom:10px;">
+                    <option selected="selected">Не выбрано</option>
+                    @foreach (var m in ViewBag.Montazniks)
+                    {
+                        <option value="@m.Id">@m.FIO</option>
+                    }
+                </select>
+                <button onclick="removeSelect(event)" type="button" class="btn btn-danger" style="margin-bottom: 10px;">Удалить</button>
+            </div>
+        }
+    </div>
+
+    <button onclick="addSelect()" id="add_montaznik" type="button" class="btn btn-default">Добавить монтажника</button>
+    <div class="form-group">
+        <label for="name">Комментарий</label>
+        <input type="text" id="name" name="comment" class="form-control" value="@Model.Comment" />
+    </div>
+    <button type="submit" class="btn btn-success" style="margin-bottom: 40px;">Подтвердить</button>
+</form>
+
+<script>
+    var selectDiv = `<div id="select_montaznik">
+                        <select id="" name="montazniksIds" class="form-control" style="margin-bottom:10px;">
+                            <option selected="selected">Не выбрано</option>
+                            @foreach (var m in ViewBag.Montazniks)
+                            {
+                                <option value="@m.Id">@m.FIO</option>
+                            }
+                        </select>
+                        <button onclick="removeSelect(event)" type="button" class="btn btn-danger" style="margin-bottom: 10px;">Удалить</button>
+                    </div>`;
+
+    var parent = document.getElementById('montazniks-group');
+    function addSelect() {
+        $('#montazniks-group').append(selectDiv);
+    }
+    function removeSelect(e) {
+        var removedDiv = e.target.parentNode;
+        removedDiv.remove();
+    }
+</script>
+
+

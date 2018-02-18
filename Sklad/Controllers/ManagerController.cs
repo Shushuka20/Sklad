@@ -30,13 +30,13 @@ namespace Sklad.Controllers
         }
 
         [HttpGet]
-        public ActionResult RealizationStart(int? id)
+        public ActionResult RealizationStart(int? id, bool? admin)
         {
             Stock stock = db.Stocks.FirstOrDefault(s => s.Id == id);
             ViewBag.ColorS = stock.BackgroundColor;
 
             IEnumerable<Dealer> dealers = db.Dealers;
-            ViewBag.Dealers = dealers;
+            ViewBag.Dealers = dealers;/*
             IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 1).OrderBy(g => g.Position);
             ViewBag.Ghs1 = ghs1;
             IEnumerable<Greenhouse> ghs2 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 2).OrderBy(g => g.Position);
@@ -52,7 +52,9 @@ namespace Sklad.Controllers
             IEnumerable<Greenhouse> ghs7 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 7).OrderBy(g => g.Position);
             ViewBag.Ghs7 = ghs7;
             IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 8).OrderBy(g => g.Position);
-            ViewBag.Ghs8 = ghs8;
+            ViewBag.Ghs8 = ghs8;*/
+
+            ViewBag.Categories = db.GreenhouseCategories.Include(g => g.Greenhouses);
 
             HttpCookie cookieReq = Request.Cookies["Greenhouses"];
             string str = "";
@@ -68,6 +70,8 @@ namespace Sklad.Controllers
             {
                 ViewBag.ListForRealization = null;
             }
+
+            ViewBag.Admin = admin;
             
             return View(stock);
         }
@@ -75,7 +79,7 @@ namespace Sklad.Controllers
 
 
         [HttpPost]
-        public ActionResult RealizationStart(int? id, int? dealer, string[] ghName, int[] ghAmount)
+        public ActionResult RealizationStart(int? id, int? dealer, string[] ghName, int[] ghAmount, bool? admin)
         {
             Stock stock = db.Stocks.Include(s => s.Greenhouses).FirstOrDefault(s => s.Id == id);
             ViewBag.ColorS = stock.BackgroundColor;
@@ -146,11 +150,11 @@ namespace Sklad.Controllers
             }
             db.SaveChanges();
 
-            return RedirectToAction("Realization", "Manager", new { id = id, idS = sale.Id });
+            return RedirectToAction("Realization", "Manager", new { id = id, idS = sale.Id, admin = admin});
         }
 
         [HttpGet]
-        public ActionResult Realization(int? id, int? idS)
+        public ActionResult Realization(int? id, int? idS, bool? admin)
         {
             Stock stock = db.Stocks.Include(s => s.Packs).FirstOrDefault(s => s.Id == id);
             ViewBag.ColorS = stock.BackgroundColor;
@@ -202,7 +206,11 @@ namespace Sklad.Controllers
                     ViewBag.CostRecommend = d1.CostRecommend.Split('/');
                 }
             }
-
+            ViewBag.Admin = "";
+            if(admin == true)
+            {
+                ViewBag.Admin = "ЗАЯВКА С ОФИСА";
+            }
             ViewBag.Sum = sum;
             ViewBag.Stock = stock;
             ViewBag.GreenHouseList = lala;
@@ -909,7 +917,7 @@ namespace Sklad.Controllers
             return View(hp1);
         }
 
-        public ActionResult Ticket(int? id, string comm)
+        public ActionResult Ticket(int? id, string comm, int? sum )
         {
             Sale sale = db.Sales
                 .Include(s => s.GreenhouseForSales)
@@ -979,6 +987,8 @@ namespace Sklad.Controllers
                 }
             }
 
+
+            ViewBag.Sum = sum;
             ViewBag.Packs = packs;
 
             return View(sale);
@@ -1247,6 +1257,11 @@ namespace Sklad.Controllers
             //sale.Remain -= sum;
             sale.DeliveryConfirm = true;
 
+            Installment installment = db.Installments.Include(i => i.Sale).FirstOrDefault(i => i.Sale.Number == sale.Number);
+            if(installment != null)
+            {
+                installment.Color = "green";
+            }          
             IEnumerable<Sale> sales = db.Sales.Where(s => s.Number == sale.Number);
             foreach (var s in sales)
             {
@@ -1304,7 +1319,7 @@ namespace Sklad.Controllers
 
             IEnumerable<Dealer> dealers = db.Dealers;
             ViewBag.Dealers = dealers;
-            IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 1).OrderBy(g => g.Position);
+            /*IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 1).OrderBy(g => g.Position);
             ViewBag.Ghs1 = ghs1;
             IEnumerable<Greenhouse> ghs2 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 2).OrderBy(g => g.Position);
             ViewBag.Ghs2 = ghs2;
@@ -1319,7 +1334,9 @@ namespace Sklad.Controllers
             IEnumerable<Greenhouse> ghs7 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 7).OrderBy(g => g.Position);
             ViewBag.Ghs7 = ghs7;
             IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 8).OrderBy(g => g.Position);
-            ViewBag.Ghs8 = ghs8;
+            ViewBag.Ghs8 = ghs8;*/
+
+            ViewBag.Categories = db.GreenhouseCategories.Include(g => g.Greenhouses);
 
             HttpCookie cookieReq = Request.Cookies["Greenhouses"];
             string str = "";
@@ -1546,7 +1563,7 @@ namespace Sklad.Controllers
             Claim claim = db.Claims.Include(s => s.Stock).FirstOrDefault(i => i.Id == id);
             Stock stock = db.Stocks.FirstOrDefault(s => s.Id == claim.Stock.Id);
 
-            IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 1).OrderBy(g => g.Position);
+            /*IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 1).OrderBy(g => g.Position);
             ViewBag.Ghs1 = ghs1;
             IEnumerable<Greenhouse> ghs2 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 2).OrderBy(g => g.Position);
             ViewBag.Ghs2 = ghs2;
@@ -1561,9 +1578,10 @@ namespace Sklad.Controllers
             IEnumerable<Greenhouse> ghs7 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 7).OrderBy(g => g.Position);
             ViewBag.Ghs7 = ghs7;
             IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 8).OrderBy(g => g.Position);
-            ViewBag.Ghs8 = ghs8;
+            ViewBag.Ghs8 = ghs8;*/
 
-            
+            ViewBag.Categories = db.GreenhouseCategories.Include(g => g.Greenhouses);
+
             Dictionary<string, decimal> productWithCount = new Dictionary<string, decimal>();
 
             if (claim.Description != null)
@@ -1702,6 +1720,130 @@ namespace Sklad.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult OrderInstallation(int? id)
+        {
+            IEnumerable<Installment> installments = db.Installments.Include(i => i.Sale).Include(m => m.Montazniks);
+            IEnumerable<Installment> installmentsNotGreen = installments.Where(i => i.Color != "green").OrderBy(d => d.ForDate);
+            IEnumerable<Installment> installmentsGreen = installments.Where(i => i.Color == "green");
+
+            installments = installmentsNotGreen.Concat(installmentsGreen);
+
+            return View(installments);
+        }
+        
+        [HttpGet]
+        public ActionResult OrderInstallationStart()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult OrderInstallmentStart(string sellNumb)
+        {
+            return RedirectToAction("OrderInstallmentFinal", "Manager", new { sellNumb });
+        }
+
+        [HttpGet]
+        public ActionResult OrderInstallmentFinal(string sellNumb)
+        {
+            Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
+            ViewBag.Montazniks = db.Montazniks.ToList();
+
+            return View(sale);
+        }
+
+        [HttpPost]
+        public ActionResult OrderInstallmentFinal(string sellNumb, string adress, string phone, DateTime datefrom, DateTime datefor, bool light, string comment)
+        {
+            Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
+            List<Montaznik> montazniksList = new List<Montaznik>();
+
+            /*foreach(var i in montazniksIds)
+            {
+                Montaznik montaznik = db.Montazniks.FirstOrDefault(m => m.Id == i);
+                montazniksList.Add(montaznik);
+            }*/
+
+            Installment installment = new Installment()
+            {
+                Adress = adress,
+                Phone = phone,
+                FromDate = datefrom,
+                ForDate = datefor,
+                Light = light,
+                Comment = comment,
+                Sale = sale,
+                Montazniks = montazniksList
+            };
+            db.Installments.Add(installment);
+            db.SaveChanges();
+
+            return RedirectToAction("OrderInstallation", "Manager");
+        }
+
+        [HttpGet]
+        public ActionResult InstallationEdit(int? id)
+        {
+            Installment installment = db.Installments.Include(s => s.Sale).Include(m => m.Montazniks).FirstOrDefault(i => i.Id == id);
+            ViewBag.Montazniks = db.Montazniks.ToList();
+
+            return View(installment);
+        }
+        [HttpPost]
+        public ActionResult InstallationEdit(int id, string adress, string phone, DateTime datefrom, DateTime datefor, bool light, ICollection<int> montazniksIds, string comment)
+        {
+            Installment installment = db.Installments.FirstOrDefault(i => i.Id == id);
+
+            installment.Montazniks.Clear();
+
+            if (montazniksIds != null)
+            {
+                foreach (var i in db.Montazniks.Where(m => montazniksIds.Contains(m.Id)))
+                {
+                    installment.Montazniks.Add(i);
+                }                
+            }
+            
+            installment.Adress = adress;
+            installment.Phone = phone;
+            installment.FromDate = datefrom;
+            installment.ForDate = datefor;
+            installment.Light = light;
+            installment.Comment = comment;
+            db.Entry(installment).State = EntityState.Modified;
+            db.SaveChanges();
+
+            return RedirectToAction("OrderInstallation", "Manager");
+        }
+
+        [HttpGet]
+        public ActionResult ChangeColor(int? id, string color)
+        {
+            Installment installment = db.Installments.FirstOrDefault(i => i.Id == id);
+
+            installment.Color = color;
+            db.SaveChanges();
+
+            return RedirectToAction("OrderInstallation", "Manager");
+        }
+        [HttpGet]
+        public ActionResult InstallationSum(string sellNumb)
+        {
+            Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
+
+            ViewBag.Remain = sale.Remain;
+            ViewBag.Number = sellNumb;
+
+            Sale saleDolg = db.Sales.Where(s => s.Number == sellNumb).FirstOrDefault(s => s.Comment == "РАССРОЧКА");
+            ViewBag.saleDolg = "";
+            if(saleDolg != null)
+            {
+                ViewBag.saleDolg = "Клиент с рассрочкой";
+            }
+
+
+            return View(sale);
+        }
 
     }
 

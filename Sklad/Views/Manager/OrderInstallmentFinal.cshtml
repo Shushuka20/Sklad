@@ -1,0 +1,66 @@
+﻿
+@{
+    ViewBag.Title = "OrderInstallmentFinal";
+    Layout = "~/Views/Shared/_LayoutManager.cshtml";
+}
+
+<form role="form" method="post" action="/Manager/OrderInstallmentFinal">
+    <div class="form-group">
+        <label for="name">Номер чека</label>
+        <input type="text" id="name" name="sellNumb" class="form-control" placeholder="@Model.Number" value="@Model.Number"/>
+    </div>
+    <div class="form-group">
+        <label for="name">Описание теплицы</label>
+        <input type="text" id="name" name="description" class="form-control" placeholder="@Model.Description" />
+    </div>
+    <div class="form-group">
+        <label for="name">Адрес</label>
+        <input type="text" id="name" name="adress" class="form-control" placeholder="" />
+    </div>
+    <div class="form-group">
+        <label for="name">Телефон</label>
+        <input type="text" id="name" name="phone" class="form-control" placeholder="" />
+    </div>
+    <div class="form-group">
+        <label for="name">Денег внесено</label>
+        <input type="text" id="name" name="addedmoney" class="form-control" placeholder="@Model.AddMoney" />
+    </div>
+    <div class="form-group">
+        <label for="name">Осталось внести</label>
+        <input type="text" id="name" name="remain" class="form-control" placeholder="@Model.Remain" />
+    </div>
+    <div class="form-group">
+        <label for="name">Дата с</label>
+        <input type="date" id="name" name="datefrom" class="form-control" placeholder="" />
+    </div>
+    <div class="form-group">
+        <label for="name">Дата по</label>
+        <input type="date" id="name" name="datefor" class="form-control" placeholder="" />
+    </div>
+    <div class="form-group">
+        <label for="name">Есть ли свет</label>
+        <select type="set" id="name" name="light" class="form-control">
+            <option value="true">Да</option>
+            <option value="false">Нет</option>
+        </select>
+    </div>
+  
+    <div class="form-group">
+        <label for="name">Комментарий</label>
+        <input type="text" id="name" name="comment" class="form-control" placeholder="" />
+    </div>
+    <button type="submit" class="btn btn-success" style="margin-bottom: 40px;">Подтвердить</button>
+</form>
+
+<script>
+    var selectDiv = document.getElementById('select_montaznik');   
+    var parent = document.getElementById('montazniks-group');
+    function addSelect() {
+        var newSelectDiv = selectDiv.cloneNode(true);
+        parent.appendChild(newSelectDiv);
+    }
+    function removeSelect(e) {
+        var removedDiv = e.target.parentNode;
+        removedDiv.remove();
+    }
+</script>

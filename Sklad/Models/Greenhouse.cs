@@ -17,6 +17,7 @@ namespace Sklad.Models
         public Stock Stock { get; set; }
         public ICollection<PackForGH> PacksForGH { get; set; }
         public ICollection<Pack> Packs { get; set; }
+        public GreenhouseCategory GetGreenhouseCategory { get; set; }
 
         public Greenhouse()
         {

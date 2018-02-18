@@ -48,7 +48,7 @@
             <table border="1" class="p_l5">
                 <tr><td rowspan="2">Дебет</td><td colspan="4">Кредит</td><td rowspan="2"></td><td rowspan="2">Сумма, руб,</td><td rowspan="2">Код целевого назначения</td></tr>
                 <tr><td></td><td>Код структу- рного подраз- деления</td><td>Корреспондирующий счет</td><td>Код аналитического учет</td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td> @Model.SumWithD руб.</td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td>@Model.SumWithD руб.</td><td></td></tr>
 
             </table>
 
@@ -171,7 +171,7 @@
     </P>
 
     <div>
-        <a href="/Home/Index" style="margin-top:80px; text-decoration:none; font-size:20px;">Панель менеджера</a>
+        <a href="/Home/Index" style="margin-top:80px; text-decoration:none; font-size:20px;">Главная страница</a>
 
         <form action="/Manager/DogHran" method="get" role="form">
             <input type="hidden" value="@Model.Number" name="sellNumb" />

@@ -100,7 +100,7 @@ namespace Sklad.Controllers
 
             IEnumerable<Dealer> dealers = db.Dealers;
             ViewBag.Dealers = dealers;
-            IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 1).OrderBy(g => g.Position);
+            /*IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 1).OrderBy(g => g.Position);
             ViewBag.Ghs1 = ghs1;
             IEnumerable<Greenhouse> ghs2 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 2).OrderBy(g => g.Position);
             ViewBag.Ghs2 = ghs2;
@@ -115,7 +115,9 @@ namespace Sklad.Controllers
             IEnumerable<Greenhouse> ghs7 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 7).OrderBy(g => g.Position);
             ViewBag.Ghs7 = ghs7;
             IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 8).OrderBy(g => g.Position);
-            ViewBag.Ghs8 = ghs8;
+            ViewBag.Ghs8 = ghs8;*/
+
+            ViewBag.Categories = db.GreenhouseCategories.Include(g => g.Greenhouses);
 
             HttpCookie cookieReq = Request.Cookies["Greenhouses"];
             string str = "";

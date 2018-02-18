@@ -13,7 +13,7 @@
         <tr>
             <th>Наименование</th>
             <th>Список пакетов</th>
-            <th>Группа товара</th>
+            <th>Категория товара</th>
             <th>Действие</th>
         </tr>
     </thead>
@@ -28,7 +28,16 @@
                         <p>@p.Name (@p.Amount шт.)</p>
                     }
                 </td>
-                <td>@g.Group</td>
+                <td>
+                    @if (g.GetGreenhouseCategory != null)
+                    {
+                        @g.GetGreenhouseCategory.Name;
+                    }
+                    else
+                    {
+                        <span>Нет категории</span>
+                    }
+                </td>
                 <td><a href="/Admin/Greenhouse/@g.Id" class="btn btn-default">Редактировать</a></td>
             </tr>
         }

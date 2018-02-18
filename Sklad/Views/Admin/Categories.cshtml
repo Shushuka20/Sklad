@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewBag.Title = "Categories";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="head">
+    <h4>Список Категорий продукции</h4>
+    <a href="/Admin/CategoryEdit" class="btn btn-default">Добавить категорию</a>
+</div>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Номер</th>
+            <th>Имя</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Id</td>
+                <td>@u.Name</td>
+                <td><a href="/Admin/CategoryEdit/@u.Id" class="btn btn-default">Редактировать</a><a href="/Admin/CategoryDelete/@u.Id" class="btn btn-danger">Удалить</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

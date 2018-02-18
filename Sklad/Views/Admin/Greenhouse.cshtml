@@ -11,7 +11,19 @@
     </div>
     <div class="form-group">
         <label for="group">Группа</label>
-        <input type="text" id="group" name="group" class="form-control" value="@Model.Group" />
+        <select id="group" name="getgreenhousecategory" class="form-control">
+            @if(Model.GetGreenhouseCategory != null){
+                <option selected="selected" value="@Model.GetGreenhouseCategory.Id">@Model.GetGreenhouseCategory.Name</option>
+            }
+            else
+            {
+                <option selected="selected" value="null">Нет Категории</option>
+            }
+            @foreach(var c in ViewBag.Categories)
+            {
+                <option value="@c.Id">@c.Name</option>
+            }
+        </select>
     </div>
     <div class="form-group">
         <label for="bonus">Бонус для менеджера</label>

@@ -19,10 +19,12 @@ namespace Sklad.Models
         public string INN { get; set; }
         public string Snils { get; set; }
         public Stock Stock { get; set; }
+        public virtual ICollection<Installment> Installments { get; set; }
         public ICollection<Sale> Sales { get; set; }
 
         public Montaznik()
         {
+            Installments = new List<Installment>();
             Sales = new List<Sale>();
         }
     }
