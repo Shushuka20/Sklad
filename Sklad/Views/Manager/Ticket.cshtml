@@ -13,10 +13,7 @@
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
 </head>
 
-<body>
-    <div style="max-width: 150px; float:left; padding:10px;box-sizing:border-box;">
-        @Model.Comment
-    </div>
+<body style="padding: 0px 15px;">
     <div class="pechat_main" style="float:left;">
         <div class="pechat_left">
             <div class="p_l1">
@@ -48,7 +45,7 @@
             <table border="1" class="p_l5">
                 <tr><td rowspan="2">Дебет</td><td colspan="4">Кредит</td><td rowspan="2"></td><td rowspan="2">Сумма, руб,</td><td rowspan="2">Код целевого назначения</td></tr>
                 <tr><td></td><td>Код структу- рного подраз- деления</td><td>Корреспондирующий счет</td><td>Код аналитического учет</td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td>@Model.SumWithD руб.</td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td>@if (ViewBag.sum == null) {<span>@Model.SumWithD руб.</span>} else{ <span>@ViewBag.Sum руб</span> }</td><td></td></tr>
 
             </table>
 
@@ -64,7 +61,7 @@
                 }
                 <tr><td></td><td></td>
                 <tr>
-                <tr><td>Сумма (итого):</td><td>  @Model.SumWithD рублей</td>
+                <tr><td>Сумма (итого):</td><td>  @if (ViewBag.sum == null) {<span>@Model.SumWithD руб.</span>} else{ <span>@ViewBag.Sum руб</span> }</td>
                 <tr>
                 <tr><td></td><td></td>
                 <tr><td>Получено:</td><td> @ViewBag.AddMoney рублей</td>
@@ -113,7 +110,7 @@
             </table>
 
             <table class="r_tab2">
-                <tr><td>Сумма: @Model.SumWithD руб.</td></tr>
+                <tr><td>Сумма: @if (ViewBag.sum == null) {<span>@Model.SumWithD руб.</span>} else{ <span>@ViewBag.Sum руб</span> }</td></tr>
                 <tr><td></td></tr>
                 <tr><td>Получено: @ViewBag.AddMoney руб. </td></tr>
                 <tr><td></td></tr>
@@ -142,6 +139,25 @@
         <div class="clearfix"></div>
     </div>
     <div class="clearfix" style="margin-bottom: 740px;"></div>
+
+    @if(ViewBag.Sum != null) { 
+        <h4>Данные по мантажу</h4>
+        <div style="max-width: 150px; padding:10px;box-sizing:border-box;">
+            Адрес: @ViewBag.Adress
+        </div>
+        <div style="max-width: 150px; padding:10px;box-sizing:border-box;">
+            Телефон: @ViewBag.Phone
+        </div>
+        <div style="max-width: 150px; padding:10px;box-sizing:border-box; margin-bottom: 40px;">
+            Комментарий: @ViewBag.Comment
+        </div>
+    }
+
+    @if(Model.Comment != null && Model.Comment != "") { 
+        <div style="max-width: 150px; padding:10px;box-sizing:border-box; margin-bottom: 40px">
+            Комментарий к операции: @Model.Comment
+        </div>
+    }
 
     <P CLASS="western" STYLE="margin-bottom: 0.14in">
         № продажи: @Model.Number

@@ -54,7 +54,7 @@ namespace Sklad.Controllers
             IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 8).OrderBy(g => g.Position);
             ViewBag.Ghs8 = ghs8;*/
 
-            ViewBag.Categories = db.GreenhouseCategories.Include(g => g.Greenhouses);
+            ViewBag.Categories = db.GreenhouseCategories.Where(c => c.Stock.Id == id).Include(g => g.Greenhouses);
 
             HttpCookie cookieReq = Request.Cookies["Greenhouses"];
             string str = "";
@@ -987,8 +987,16 @@ namespace Sklad.Controllers
                 }
             }
 
+            if(sum != null)
+            {
+                ViewBag.Sum = sum;
 
-            ViewBag.Sum = sum;
+                Installment installment = db.Installments.FirstOrDefault(i => i.Sale.Id == sale.Id);
+
+                ViewBag.Adress = installment.Adress;
+                ViewBag.Phone = installment.Phone;
+                ViewBag.Comment = installment.Comment;
+            }            
             ViewBag.Packs = packs;
 
             return View(sale);
@@ -1773,7 +1781,8 @@ namespace Sklad.Controllers
                 Light = light,
                 Comment = comment,
                 Sale = sale,
-                Montazniks = montazniksList
+                Montazniks = montazniksList,
+                Color = "white"
             };
             db.Installments.Add(installment);
             db.SaveChanges();
@@ -1784,8 +1793,8 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult InstallationEdit(int? id)
         {
-            Installment installment = db.Installments.Include(s => s.Sale).Include(m => m.Montazniks).FirstOrDefault(i => i.Id == id);
-            ViewBag.Montazniks = db.Montazniks.ToList();
+            Installment installment = db.Installments.Include(s => s.Sale).Include(s => s.Sale.Stock).Include(m => m.Montazniks).FirstOrDefault(i => i.Id == id);
+            ViewBag.Montazniks = db.Montazniks.Where(m => m.Stock.Id == installment.Sale.Stock.Id).ToList();
 
             return View(installment);
         }

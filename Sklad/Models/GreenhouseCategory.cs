@@ -9,6 +9,7 @@ namespace Sklad.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public Stock Stock { get; set; }
         public ICollection<Greenhouse> Greenhouses { get; set; }
 
         public GreenhouseCategory()

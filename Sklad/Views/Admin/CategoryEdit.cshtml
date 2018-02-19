@@ -9,6 +9,22 @@
             <label for="login">Название</label>
             <input type="text" id="login" name="name" value="@Model.Name" class="form-control" />
         </div>
+        <div class="form-group">
+            <select id="group" name="stockid" class="form-control">
+                @if (Model.Stock != null)
+                {
+                    <option selected="selected" value="@Model.Stock.Id">@Model.Stock.Name</option>
+                }
+                else
+                {
+                    <option selected="selected" value="null">Нет розницы</option>
+                }
+                @foreach (var c in ViewBag.Stocks)
+                {
+                    <option value="@c.Id">@c.Name</option>
+                }
+            </select>
+        </div>
         <button type="submit" class="btn btn-success">Подтвердить</button>
     </form>
 }
@@ -18,6 +34,15 @@ else
         <div class="form-group">
             <label for="login">Название</label>
             <input type="text" id="login" name="name" value="" class="form-control" />
+        </div>
+        <div class="form-group">
+            <select id="group" name="stockid" class="form-control">
+                <option selected="selected" value="null">Нет розницы</option>
+                @foreach (var c in ViewBag.Stocks)
+                {
+                    <option value="@c.Id">@c.Name</option>
+                }
+            </select>
         </div>
         <button type="submit" class="btn btn-success">Подтвердить</button>
     </form>

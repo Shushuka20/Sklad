@@ -18,7 +18,7 @@ namespace Sklad.Controllers
             var infos = db.Stocks
                 .Where(s => s.Track == true)
                 .GroupJoin(
-                    db.Sales.Where(i => i.PayForTerminal != true),
+                    db.Sales.Where(i => i.PayForTerminal != true  && i.Confirmed == true),
                     stock => stock.Id,
                     info => info.Stock.Id,
                     (stock, sale) => new
@@ -27,7 +27,7 @@ namespace Sklad.Controllers
                         Name = stock.Name,
                         Prefix = stock.Prefix,
                         Track = stock.Track,
-                        Sum = sale.Sum(i => i.AddMoney)
+                        Sum = sale.Sum(i => i.AddMoney) - sale.Sum(i => i.Outgo)
                     })
                 .GroupJoin(
                     db.Sales.Where(sale => sale.Dealer == null && sale.Remain > 0 && sale.Confirmed == true),
@@ -99,7 +99,7 @@ namespace Sklad.Controllers
         {
             var infos = db.Stocks
                 .GroupJoin(
-                    db.Sales.Where(i => i.PayForTerminal != true),
+                    db.Sales.Where(i => i.PayForTerminal != true && i.Confirmed == true),
                     stock => stock.Id,
                     info => info.Stock.Id,
                     (stock, sale) => new
@@ -108,7 +108,7 @@ namespace Sklad.Controllers
                         Name = stock.Name,
                         Prefix = stock.Prefix,
                         Track = stock.Track,
-                        Sum = sale.Sum(i => i.AddMoney)
+                        Sum = sale.Sum(i => i.AddMoney) - sale.Sum(i => i.Outgo)
                     })
                 .GroupJoin(
                     db.Sales.Where(sale => sale.Dealer == null && sale.Remain > 0 && sale.Confirmed == true),
@@ -122,7 +122,7 @@ namespace Sklad.Controllers
                         Sum = obj.Sum,
                         Track = obj.Track,
                         Debt = sales.Sum(s => s.Remain)
-                    });
+                    }).ToList();
 
             return View(infos);
         }
@@ -297,7 +297,7 @@ namespace Sklad.Controllers
         {
             Stock stock = db.Stocks.Include(s => s.Packs).FirstOrDefault(s => s.Id == id);
             ViewBag.Packs = stock.Packs;
-            ViewBag.Categories = db.GreenhouseCategories;
+            ViewBag.Categories = db.GreenhouseCategories.Include(s => s.Stock).Where(c => c.Stock.Id == stock.Id).ToList();
 
             return View(stock);
         }
@@ -360,7 +360,7 @@ namespace Sklad.Controllers
                     }
                 }
             }
-            ViewBag.Categories = db.GreenhouseCategories;
+            ViewBag.Categories = db.GreenhouseCategories.Include(s => s.Stock).Where(c => c.Stock.Id == stock.Id).ToList();
             ViewBag.Packs = usepacks;
 
             return View(greenhouse);
@@ -872,12 +872,15 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult AddMontazniks()
         {
+            ViewBag.Stocks = db.Stocks.ToList();
+
             return View();
         }
 
         [HttpPost]
-        public ActionResult AddMontazniks(Montaznik mont)
+        public ActionResult AddMontazniks(Montaznik mont, int? stockId)
         {
+            Stock stock = db.Stocks.FirstOrDefault(s => s.Id == stockId);
             Montaznik m1 = new Montaznik()
             {
                 FIO = mont.FIO,
@@ -889,7 +892,8 @@ namespace Sklad.Controllers
                 MarkAuto = mont.MarkAuto,
                 NumberAuto = mont.NumberAuto,
                 INN = mont.INN,
-                Snils = mont.Snils
+                Snils = mont.Snils,
+                Stock = stock
             };
             db.Montazniks.Add(m1);
             db.SaveChanges();
@@ -906,7 +910,7 @@ namespace Sklad.Controllers
         }
 
         [HttpPost]
-        public ActionResult Montaznik(Montaznik mont)
+        public ActionResult Montaznik(Montaznik mont, int? stockId)
         {
             Montaznik m1 = db.Montazniks.FirstOrDefault(m => m.Id == mont.Id);
             m1.FIO = mont.FIO;
@@ -919,6 +923,12 @@ namespace Sklad.Controllers
             m1.Address = mont.Address;
             m1.INN = mont.INN;
             m1.Snils = mont.Snils;
+
+            if(stockId != null)
+            {
+                Stock stock = db.Stocks.FirstOrDefault(s => s.Id == stockId);
+                m1.Stock = stock;
+            }          
             db.SaveChanges();
 
             return RedirectToAction("Montazniks");
@@ -1207,7 +1217,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult DetailInfo(int? id)
         {
-            /* 
+             /*
              decimal sumCash = 0;
              decimal sumTerminal = 0;
 
@@ -1219,6 +1229,7 @@ namespace Sklad.Controllers
              decimal sumReturn = 0;
              decimal sumArenda = 0;
              decimal sumOthers = 0;
+             
 
              #region ebanina
              foreach (var im in db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal != true && i.Cost > 0))
@@ -1273,18 +1284,19 @@ namespace Sklad.Controllers
              #endregion
              ---Старый код*/
 
-            ViewBag.SumCash = db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal != true && s.Confirmed == true).Sum(am => am.AddMoney);
-            ViewBag.SumTerminal = db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal == true && s.Confirmed == true).Sum(amt => amt.AddMoney);
-            ViewBag.SumPay = db.Sales.Where(s => s.Stock.Id == id && s.OutgoCategory == "Зарплата" && s.Confirmed == true).Sum(s => s.Outgo); 
-            ViewBag.SumCashment = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true).Sum(s => s.Outgo);
-            ViewBag.SumDelivery = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true).Sum(s => s.Outgo);
-            ViewBag.SumProcurement = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Закуп СПК" && i.Confirmed == true).Sum(s => s.Outgo);
-            ViewBag.SumChancery = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Канцелярия" && i.Confirmed == true).Sum(s => s.Outgo);
-            ViewBag.SumReturn = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Возврат денежных средств" && i.Confirmed == true).Sum(s => s.Outgo);
-            ViewBag.SumArenda = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Аренда" && i.Confirmed == true).Sum(s => s.Outgo);
-            ViewBag.SumOthers = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true).Sum(s => s.Outgo);
+            ViewBag.SumCash = db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal != true && s.Confirmed == true).ToList().Sum(am => am.AddMoney);
+            ViewBag.SumTerminal = db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal == true && s.Confirmed == true).ToList().Sum(amt => amt.AddMoney);
+            ViewBag.SumPay = db.Sales.Where(s => s.Stock.Id == id && s.OutgoCategory == "Зарплата" && s.Confirmed == true).ToList().Sum(s => s.Outgo); 
+            ViewBag.SumCashment = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumDelivery = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumProcurement = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Закуп СПК" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumChancery = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Канцелярия" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumReturn = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Возврат денежных средств" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumArenda = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Аренда" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumOthers = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
 
             ViewBag.Hui = id;
+
 
             ViewBag.Profit = db.Sales.Where(s => s.Stock.Id == id && s.Profit >= 0).Sum(p => p.Profit);
 
@@ -1417,7 +1429,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult Categories()
         {
-            IEnumerable<GreenhouseCategory> categories = db.GreenhouseCategories;
+            IEnumerable<GreenhouseCategory> categories = db.GreenhouseCategories.Include(s => s.Stock);
 
             return View(categories);
         }
@@ -1425,32 +1437,36 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult CategoryEdit(int? id)
         {
-            if(id != null)
+            ViewBag.Stocks = db.Stocks;
+            if (id != null)
             {
-                GreenhouseCategory category = db.GreenhouseCategories.FirstOrDefault(c => c.Id == id);
+                GreenhouseCategory category = db.GreenhouseCategories.Include(s => s.Stock).FirstOrDefault(c => c.Id == id);
 
                 return View(category);
             }
-
+            
             return View();
         }
 
         [HttpPost]
-        public ActionResult CategoryEdit(int? id, string name)
+        public ActionResult CategoryEdit(int? id, string name, int stockId)
         {
             if(id != null)
             {
-                GreenhouseCategory category = db.GreenhouseCategories.FirstOrDefault(c => c.Id == id);
+                GreenhouseCategory category = db.GreenhouseCategories.Include(s => s.Stock).FirstOrDefault(c => c.Id == id);
+                Stock categoryStock = db.Stocks.FirstOrDefault(s => s.Id == stockId);
 
                 category.Name = name;
+                category.Stock = categoryStock;
                 db.SaveChanges();
 
                 return RedirectToAction("Categories", "Admin");
             }
-
+            Stock newCategoryStock = db.Stocks.FirstOrDefault(s => s.Id == stockId);
             GreenhouseCategory newCategory = new GreenhouseCategory()
             {
-                Name = name
+                Name = name,
+                Stock = newCategoryStock
             };
 
             db.GreenhouseCategories.Add(newCategory);

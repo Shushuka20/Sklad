@@ -13,6 +13,7 @@
         <tr>
             <th>Номер</th>
             <th>Имя</th>
+            <th>Розница</th>
             <th>Действие</th>
         </tr>
     </thead>
@@ -22,6 +23,7 @@
             <tr>
                 <td>@u.Id</td>
                 <td>@u.Name</td>
+                <td>@u.Stock.Name</td>
                 <td><a href="/Admin/CategoryEdit/@u.Id" class="btn btn-default">Редактировать</a><a href="/Admin/CategoryDelete/@u.Id" class="btn btn-danger">Удалить</a></td>
             </tr>
         }
