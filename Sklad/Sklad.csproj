@@ -141,101 +141,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603031722007_InitialCreate.cs" />
-    <Compile Include="Migrations\201603031722007_InitialCreate.Designer.cs">
-      <DependentUpon>201603031722007_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603081242233_GreenhouseDB.cs" />
-    <Compile Include="Migrations\201603081242233_GreenhouseDB.Designer.cs">
-      <DependentUpon>201603081242233_GreenhouseDB.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603210727384_GreenhouseDB1.cs" />
-    <Compile Include="Migrations\201603210727384_GreenhouseDB1.Designer.cs">
-      <DependentUpon>201603210727384_GreenhouseDB1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604221434289_GreenhouseDb2.cs" />
-    <Compile Include="Migrations\201604221434289_GreenhouseDb2.Designer.cs">
-      <DependentUpon>201604221434289_GreenhouseDb2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201612101115236_Migrate01.cs" />
-    <Compile Include="Migrations\201612101115236_Migrate01.Designer.cs">
-      <DependentUpon>201612101115236_Migrate01.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201702062207047_NewMigrate22.cs" />
-    <Compile Include="Migrations\201702062207047_NewMigrate22.Designer.cs">
-      <DependentUpon>201702062207047_NewMigrate22.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201706141628325_ForMontSklad.cs" />
-    <Compile Include="Migrations\201706141628325_ForMontSklad.Designer.cs">
-      <DependentUpon>201706141628325_ForMontSklad.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201706141637221_MontSale.cs" />
-    <Compile Include="Migrations\201706141637221_MontSale.Designer.cs">
-      <DependentUpon>201706141637221_MontSale.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707171423512_BonusForManager.cs" />
-    <Compile Include="Migrations\201707171423512_BonusForManager.Designer.cs">
-      <DependentUpon>201707171423512_BonusForManager.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707241944259_Int sum and amount to decimal.cs" />
-    <Compile Include="Migrations\201707241944259_Int sum and amount to decimal.Designer.cs">
-      <DependentUpon>201707241944259_Int sum and amount to decimal.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707242019170_int to decimal for discount.cs" />
-    <Compile Include="Migrations\201707242019170_int to decimal for discount.Designer.cs">
-      <DependentUpon>201707242019170_int to decimal for discount.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707251227000_Claims.cs" />
-    <Compile Include="Migrations\201707251227000_Claims.Designer.cs">
-      <DependentUpon>201707251227000_Claims.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201708021347338_StockName for Claim.cs" />
-    <Compile Include="Migrations\201708021347338_StockName for Claim.Designer.cs">
-      <DependentUpon>201708021347338_StockName for Claim.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201708030929468_commentProd for Claim.cs" />
-    <Compile Include="Migrations\201708030929468_commentProd for Claim.Designer.cs">
-      <DependentUpon>201708030929468_commentProd for Claim.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201708241420571_PositionOfGreenhouse.cs" />
-    <Compile Include="Migrations\201708241420571_PositionOfGreenhouse.Designer.cs">
-      <DependentUpon>201708241420571_PositionOfGreenhouse.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201709131817136_ForClaim.cs" />
-    <Compile Include="Migrations\201709131817136_ForClaim.Designer.cs">
-      <DependentUpon>201709131817136_ForClaim.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201709151137465_mtest.cs" />
-    <Compile Include="Migrations\201709151137465_mtest.Designer.cs">
-      <DependentUpon>201709151137465_mtest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201709201605585_AddDateToClaim.cs" />
-    <Compile Include="Migrations\201709201605585_AddDateToClaim.Designer.cs">
-      <DependentUpon>201709201605585_AddDateToClaim.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201709202208264_AddDescForClaim.cs" />
-    <Compile Include="Migrations\201709202208264_AddDescForClaim.Designer.cs">
-      <DependentUpon>201709202208264_AddDescForClaim.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201709232009106_CostPriceAndOutgoCategory.cs" />
-    <Compile Include="Migrations\201709232009106_CostPriceAndOutgoCategory.Designer.cs">
-      <DependentUpon>201709232009106_CostPriceAndOutgoCategory.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201709232025248_AddSumCostPriceForSale.cs" />
-    <Compile Include="Migrations\201709232025248_AddSumCostPriceForSale.Designer.cs">
-      <DependentUpon>201709232025248_AddSumCostPriceForSale.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201709232028232_AddProfitForSale.cs" />
-    <Compile Include="Migrations\201709232028232_AddProfitForSale.Designer.cs">
-      <DependentUpon>201709232028232_AddProfitForSale.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201801261217059_26.01.2018.cs" />
-    <Compile Include="Migrations\201801261217059_26.01.2018.Designer.cs">
-      <DependentUpon>201801261217059_26.01.2018.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201801271435366_27.01.2018.cs" />
-    <Compile Include="Migrations\201801271435366_27.01.2018.Designer.cs">
-      <DependentUpon>201801271435366_27.01.2018.cs</DependentUpon>
+    <Compile Include="Migrations\201802191328103_Please.cs" />
+    <Compile Include="Migrations\201802191328103_Please.Designer.cs">
+      <DependentUpon>201802191328103_Please.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Buyer.cs" />
@@ -244,11 +152,13 @@
     <Compile Include="Models\Converter.cs" />
     <Compile Include="Models\Dealer.cs" />
     <Compile Include="Models\Greenhouse.cs" />
+    <Compile Include="Models\GreenhouseCategory.cs" />
     <Compile Include="Models\GreenhouseForSale.cs" />
     <Compile Include="Models\GreenhouseForStock.cs" />
     <Compile Include="Models\HistoryMoney.cs" />
     <Compile Include="Models\HistoryPack.cs" />
     <Compile Include="Models\InfoMoney.cs" />
+    <Compile Include="Models\Installment.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\Montaznik.cs" />
     <Compile Include="Models\Pack.cs" />
@@ -366,6 +276,13 @@
     <Content Include="Views\Manager\DogInstallment.cshtml" />
     <Content Include="Views\Manager\DogInstallmentForm.cshtml" />
     <Content Include="Views\Manager\DogInstallmentStart.cshtml" />
+    <Content Include="Views\Manager\OrderInstallation.cshtml" />
+    <Content Include="Views\Manager\OrderInstallationStart.cshtml" />
+    <Content Include="Views\Manager\OrderInstallmentFinal.cshtml" />
+    <Content Include="Views\Manager\InstallationEdit.cshtml" />
+    <Content Include="Views\Admin\Categories.cshtml" />
+    <Content Include="Views\Admin\CategoryEdit.cshtml" />
+    <Content Include="Views\Manager\InstallationSum.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -378,77 +295,8 @@
     <Folder Include="Views\Home\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603031722007_InitialCreate.resx">
-      <DependentUpon>201603031722007_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603081242233_GreenhouseDB.resx">
-      <DependentUpon>201603081242233_GreenhouseDB.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603210727384_GreenhouseDB1.resx">
-      <DependentUpon>201603210727384_GreenhouseDB1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604221434289_GreenhouseDb2.resx">
-      <DependentUpon>201604221434289_GreenhouseDb2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201612101115236_Migrate01.resx">
-      <DependentUpon>201612101115236_Migrate01.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201702062207047_NewMigrate22.resx">
-      <DependentUpon>201702062207047_NewMigrate22.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201706141628325_ForMontSklad.resx">
-      <DependentUpon>201706141628325_ForMontSklad.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201706141637221_MontSale.resx">
-      <DependentUpon>201706141637221_MontSale.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707171423512_BonusForManager.resx">
-      <DependentUpon>201707171423512_BonusForManager.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707241944259_Int sum and amount to decimal.resx">
-      <DependentUpon>201707241944259_Int sum and amount to decimal.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707242019170_int to decimal for discount.resx">
-      <DependentUpon>201707242019170_int to decimal for discount.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707251227000_Claims.resx">
-      <DependentUpon>201707251227000_Claims.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201708021347338_StockName for Claim.resx">
-      <DependentUpon>201708021347338_StockName for Claim.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201708030929468_commentProd for Claim.resx">
-      <DependentUpon>201708030929468_commentProd for Claim.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201708241420571_PositionOfGreenhouse.resx">
-      <DependentUpon>201708241420571_PositionOfGreenhouse.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201709131817136_ForClaim.resx">
-      <DependentUpon>201709131817136_ForClaim.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201709151137465_mtest.resx">
-      <DependentUpon>201709151137465_mtest.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201709201605585_AddDateToClaim.resx">
-      <DependentUpon>201709201605585_AddDateToClaim.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201709202208264_AddDescForClaim.resx">
-      <DependentUpon>201709202208264_AddDescForClaim.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201709232009106_CostPriceAndOutgoCategory.resx">
-      <DependentUpon>201709232009106_CostPriceAndOutgoCategory.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201709232025248_AddSumCostPriceForSale.resx">
-      <DependentUpon>201709232025248_AddSumCostPriceForSale.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201709232028232_AddProfitForSale.resx">
-      <DependentUpon>201709232028232_AddProfitForSale.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201801261217059_26.01.2018.resx">
-      <DependentUpon>201801261217059_26.01.2018.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201801271435366_27.01.2018.resx">
-      <DependentUpon>201801271435366_27.01.2018.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201802191328103_Please.resx">
+      <DependentUpon>201802191328103_Please.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

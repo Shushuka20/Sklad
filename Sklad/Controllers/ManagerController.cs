@@ -54,7 +54,7 @@ namespace Sklad.Controllers
             IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 8).OrderBy(g => g.Position);
             ViewBag.Ghs8 = ghs8;*/
 
-            ViewBag.Categories = db.GreenhouseCategories.Include(g => g.Greenhouses);
+            ViewBag.Categories = db.GreenhouseCategories.Where(c => c.Stock.Id == id).Include(g => g.Greenhouses);
 
             HttpCookie cookieReq = Request.Cookies["Greenhouses"];
             string str = "";
