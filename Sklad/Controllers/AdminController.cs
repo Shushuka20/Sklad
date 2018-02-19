@@ -869,12 +869,15 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult AddMontazniks()
         {
+            ViewBag.Stocks = db.Stocks.ToList();
+
             return View();
         }
 
         [HttpPost]
-        public ActionResult AddMontazniks(Montaznik mont)
+        public ActionResult AddMontazniks(Montaznik mont, int? stockId)
         {
+            Stock stock = db.Stocks.FirstOrDefault(s => s.Id == stockId);
             Montaznik m1 = new Montaznik()
             {
                 FIO = mont.FIO,
@@ -886,7 +889,8 @@ namespace Sklad.Controllers
                 MarkAuto = mont.MarkAuto,
                 NumberAuto = mont.NumberAuto,
                 INN = mont.INN,
-                Snils = mont.Snils
+                Snils = mont.Snils,
+                Stock = stock
             };
             db.Montazniks.Add(m1);
             db.SaveChanges();
@@ -903,7 +907,7 @@ namespace Sklad.Controllers
         }
 
         [HttpPost]
-        public ActionResult Montaznik(Montaznik mont)
+        public ActionResult Montaznik(Montaznik mont, int? stockId)
         {
             Montaznik m1 = db.Montazniks.FirstOrDefault(m => m.Id == mont.Id);
             m1.FIO = mont.FIO;
@@ -916,6 +920,12 @@ namespace Sklad.Controllers
             m1.Address = mont.Address;
             m1.INN = mont.INN;
             m1.Snils = mont.Snils;
+
+            if(stockId != null)
+            {
+                Stock stock = db.Stocks.FirstOrDefault(s => s.Id == stockId);
+                m1.Stock = stock;
+            }          
             db.SaveChanges();
 
             return RedirectToAction("Montazniks");

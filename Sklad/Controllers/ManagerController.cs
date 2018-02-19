@@ -987,8 +987,16 @@ namespace Sklad.Controllers
                 }
             }
 
+            if(sum != null)
+            {
+                ViewBag.Sum = sum;
 
-            ViewBag.Sum = sum;
+                Installment installment = db.Installments.FirstOrDefault(i => i.Sale.Id == sale.Id);
+
+                ViewBag.Adress = installment.Adress;
+                ViewBag.Phone = installment.Phone;
+                ViewBag.Comment = installment.Comment;
+            }            
             ViewBag.Packs = packs;
 
             return View(sale);
@@ -1773,7 +1781,8 @@ namespace Sklad.Controllers
                 Light = light,
                 Comment = comment,
                 Sale = sale,
-                Montazniks = montazniksList
+                Montazniks = montazniksList,
+                Color = "white"
             };
             db.Installments.Add(installment);
             db.SaveChanges();
@@ -1784,8 +1793,8 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult InstallationEdit(int? id)
         {
-            Installment installment = db.Installments.Include(s => s.Sale).Include(m => m.Montazniks).FirstOrDefault(i => i.Id == id);
-            ViewBag.Montazniks = db.Montazniks.ToList();
+            Installment installment = db.Installments.Include(s => s.Sale).Include(s => s.Sale.Stock).Include(m => m.Montazniks).FirstOrDefault(i => i.Id == id);
+            ViewBag.Montazniks = db.Montazniks.Where(m => m.Stock.Id == installment.Sale.Stock.Id).ToList();
 
             return View(installment);
         }
