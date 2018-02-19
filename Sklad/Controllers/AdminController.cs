@@ -27,7 +27,7 @@ namespace Sklad.Controllers
                         Name = stock.Name,
                         Prefix = stock.Prefix,
                         Track = stock.Track,
-                        Sum = sale.Sum(i => i.AddMoney)
+                        Sum = sale.Sum(i => i.AddMoney) - sale.Sum(i => i.Outgo)
                     })
                 .GroupJoin(
                     db.Sales.Where(sale => sale.Dealer == null && sale.Remain > 0 && sale.Confirmed == true),
@@ -108,7 +108,7 @@ namespace Sklad.Controllers
                         Name = stock.Name,
                         Prefix = stock.Prefix,
                         Track = stock.Track,
-                        Sum = sale.Sum(i => i.AddMoney)
+                        Sum = sale.Sum(i => i.AddMoney) - sale.Sum(i => i.Outgo)
                     })
                 .GroupJoin(
                     db.Sales.Where(sale => sale.Dealer == null && sale.Remain > 0 && sale.Confirmed == true),
@@ -122,7 +122,7 @@ namespace Sklad.Controllers
                         Sum = obj.Sum,
                         Track = obj.Track,
                         Debt = sales.Sum(s => s.Remain)
-                    });
+                    }).ToList();
 
             return View(infos);
         }
