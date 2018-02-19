@@ -18,7 +18,7 @@ namespace Sklad.Controllers
             var infos = db.Stocks
                 .Where(s => s.Track == true)
                 .GroupJoin(
-                    db.Sales.Where(i => i.PayForTerminal != true),
+                    db.Sales.Where(i => i.PayForTerminal != true  && i.Confirmed == true),
                     stock => stock.Id,
                     info => info.Stock.Id,
                     (stock, sale) => new
@@ -99,7 +99,7 @@ namespace Sklad.Controllers
         {
             var infos = db.Stocks
                 .GroupJoin(
-                    db.Sales.Where(i => i.PayForTerminal != true),
+                    db.Sales.Where(i => i.PayForTerminal != true && i.Confirmed == true),
                     stock => stock.Id,
                     info => info.Stock.Id,
                     (stock, sale) => new
