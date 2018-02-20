@@ -1305,8 +1305,7 @@ namespace Sklad.Controllers
 
             ViewBag.Hui = id;
 
-
-            ViewBag.Profit = _db.Sales.Where(s => s.Stock.Id == id && s.Profit >= 0).Sum(p => p.Profit);
+            ViewBag.Profit = _db.Sales.Where(s => s.Stock.Id == id && s.Profit >= 0 && s.Confirmed == true).Sum(p => p.Profit);
 
             var a = _db.GreenhouseForSales.Where(x => x.Stock.Id == id).Include(s => s.Sale).Where(sale => sale.Sale != null && sale.Sale.Confirmed == true)
                 .GroupBy(x => x.Name).Select(x => new
