@@ -311,7 +311,14 @@ namespace Sklad.Controllers
             user = db.Users.Include(u => u.Stock).FirstOrDefault(u => u.Login == User.Identity.Name);
             if (user != null)
             {
-                ViewBag.ColorS = user.Stock.BackgroundColor;
+                if(user.Stock != null)
+                {
+                    ViewBag.ColorS = user.Stock.BackgroundColor;
+                }
+                else
+                {
+                    ViewBag.ColorS = "black";
+                }
             }
 
             return View(sale);
