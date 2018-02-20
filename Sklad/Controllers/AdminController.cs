@@ -1429,7 +1429,9 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult Categories()
         {
-            IEnumerable<GreenhouseCategory> categories = db.GreenhouseCategories.Include(s => s.Stock);
+            IEnumerable<GreenhouseCategory> categories = db.GreenhouseCategories
+                .Include(s => s.Stock)
+                .Where(c => c.Stock != null);
 
             return View(categories);
         }
@@ -1437,15 +1439,16 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult CategoryEdit(int? id)
         {
-            ViewBag.Stocks = db.Stocks;
-            if (id != null)
+            if (id == null)
             {
-                GreenhouseCategory category = db.GreenhouseCategories.Include(s => s.Stock).FirstOrDefault(c => c.Id == id);
-
-                return View(category);
+                return View();
             }
-            
-            return View();
+
+            ViewBag.Stocks = db.Stocks;
+
+            GreenhouseCategory category = db.GreenhouseCategories.Include(s => s.Stock).FirstOrDefault(c => c.Id == id);
+
+            return View(category);
         }
 
         [HttpPost]
