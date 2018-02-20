@@ -12,14 +12,21 @@ namespace Sklad.Controllers
     [Authorize]
     public class AdminController : Controller
     {
-        SkladContext db = new SkladContext();
+        private readonly SkladContext _db;
+        private readonly StatisticService _statisticService;
+
+        public AdminController()
+        {
+            _db = new SkladContext();
+            _statisticService = new StatisticService(_db);
+        }
 
         public ActionResult Index()
         {
-            var infos = db.Stocks
+            var infos = _db.Stocks
                 .Where(s => s.Track == true)
                 .GroupJoin(
-                    db.Sales.Where(i => i.PayForTerminal != true  && i.Confirmed == true),
+                    _db.Sales.Where(i => i.PayForTerminal != true && i.Confirmed == true && i.Stock != null),
                     stock => stock.Id,
                     info => info.Stock.Id,
                     (stock, sale) => new
@@ -28,10 +35,10 @@ namespace Sklad.Controllers
                         Name = stock.Name,
                         Prefix = stock.Prefix,
                         Track = stock.Track,
-                        Sum = sale.Sum(i => i.AddMoney) - sale.Sum(i => i.Outgo)
-                    })
+                    }).ToList()
                 .GroupJoin(
-                    db.Sales.Where(sale => sale.Dealer == null && sale.Remain > 0 && sale.Confirmed == true),
+                    _db.Sales.Include(sale => sale.Stock).Where(sale =>
+                        sale.Dealer == null && sale.Remain > 0 && sale.Confirmed == true),
                     obj => obj.Id,
                     sale => sale.Stock.Id,
                     (obj, sales) => new Info
@@ -39,9 +46,9 @@ namespace Sklad.Controllers
                         Id = obj.Id,
                         Name = obj.Name,
                         Prefix = obj.Prefix,
-                        Sum = obj.Sum,
+                        Sum = _statisticService.CashOnHand(obj.Id),
                         Track = obj.Track,
-                        Debt = sales.Sum(s => s.Remain)
+                        Debt = _statisticService.Debt(obj.Id)
                     });
 
             return View(infos);
@@ -49,7 +56,7 @@ namespace Sklad.Controllers
 
         public ActionResult Users()
         {
-            IEnumerable<User> users = db.Users;
+            IEnumerable<User> users = _db.Users;
 
             return View(users);
         }
@@ -59,7 +66,7 @@ namespace Sklad.Controllers
         {
             if (id != null)
             {
-                User user = db.Users.FirstOrDefault(u => u.Id == id);
+                User user = _db.Users.FirstOrDefault(u => u.Id == id);
 
                 return View(user);
             }
@@ -72,35 +79,35 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult UserNew(int? id, string login, string password, string role, string stock)
         {
-            User user = db.Users.FirstOrDefault(u => u.Id == id);
+            User user = _db.Users.FirstOrDefault(u => u.Id == id);
             user.Login = login;
             user.Password = password;
             user.Role = role;
             Stock s1 = null;
-            s1 = db.Stocks.FirstOrDefault(s => s.Name == stock);
+            s1 = _db.Stocks.FirstOrDefault(s => s.Name == stock);
             if (s1 != null)
             {
                 user.Stock = s1;
             }
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("Users", "Admin");
         }
 
         public ActionResult UserDelete(int? id)
         {
-            User user = db.Users.FirstOrDefault(u => u.Id == id);
-            db.Users.Remove(user);
-            db.SaveChanges();
+            User user = _db.Users.FirstOrDefault(u => u.Id == id);
+            _db.Users.Remove(user);
+            _db.SaveChanges();
 
             return RedirectToAction("Users", "Admin");
         }
 
         public ActionResult Stocks()
         {
-            var infos = db.Stocks
+            var infos = _db.Stocks
                 .GroupJoin(
-                    db.Sales.Where(i => i.PayForTerminal != true && i.Confirmed == true),
+                    _db.Sales.Where(i => i.PayForTerminal != true && i.Confirmed == true && i.Stock != null),
                     stock => stock.Id,
                     info => info.Stock.Id,
                     (stock, sale) => new
@@ -108,11 +115,11 @@ namespace Sklad.Controllers
                         Id = stock.Id,
                         Name = stock.Name,
                         Prefix = stock.Prefix,
-                        Track = stock.Track,
-                        Sum = sale.Sum(i => i.AddMoney) - sale.Sum(i => i.Outgo)
-                    })
+                        Track = stock.Track
+                    }).ToList()
                 .GroupJoin(
-                    db.Sales.Where(sale => sale.Dealer == null && sale.Remain > 0 && sale.Confirmed == true),
+                    _db.Sales.Include(sale => sale.Stock).Where(sale =>
+                        sale.Dealer == null && sale.Remain > 0 && sale.Confirmed == true),
                     obj => obj.Id,
                     sale => sale.Stock.Id,
                     (obj, sales) => new Info
@@ -120,10 +127,10 @@ namespace Sklad.Controllers
                         Id = obj.Id,
                         Name = obj.Name,
                         Prefix = obj.Prefix,
-                        Sum = obj.Sum,
+                        Sum = _statisticService.CashOnHand(obj.Id),
                         Track = obj.Track,
-                        Debt = sales.Sum(s => s.Remain)
-                    }).ToList();
+                        Debt = _statisticService.Debt(obj.Id)
+                    });
 
             return View(infos);
         }
@@ -131,7 +138,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult Stock(int? id)
         {
-            Stock stock = db.Stocks.FirstOrDefault(s => s.Id == id);
+            Stock stock = _db.Stocks.FirstOrDefault(s => s.Id == id);
 
             return View(stock);
         }
@@ -139,23 +146,23 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult Stock(int? id, string name, string prefix, string color)
         {
-            Stock stock = db.Stocks.FirstOrDefault(s => s.Id == id);
+            Stock stock = _db.Stocks.FirstOrDefault(s => s.Id == id);
             stock.Name = name;
             stock.Prefix = prefix;
             stock.BackgroundColor = color;
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("Index", "Admin");
         }
 
         public ActionResult StockDelete(int? id)
         {
-            Stock stock = db.Stocks
+            Stock stock = _db.Stocks
                  .Include(s => s.Packs)
                  .Include(s => s.Greenhouses)
                  .FirstOrDefault(s => s.Id == id);
-            db.Stocks.Remove(stock);
-            db.SaveChanges();
+            _db.Stocks.Remove(stock);
+            _db.SaveChanges();
 
             return RedirectToAction("Index", "Admin");
         }
@@ -170,15 +177,15 @@ namespace Sklad.Controllers
         public ActionResult StockAdd(string name, string pref, string color)
         {
             Stock stock = new Stock() { Name = name, Prefix = pref, Sales = 599, BackgroundColor = color };
-            db.Stocks.Add(stock);
-            db.SaveChanges();
+            _db.Stocks.Add(stock);
+            _db.SaveChanges();
 
             return RedirectToAction("Index", "Admin");
         }
 
         public ActionResult PackList(int? id)
         {
-            Stock stock = db.Stocks.Include(s => s.Packs).FirstOrDefault(s => s.Id == id);
+            Stock stock = _db.Stocks.Include(s => s.Packs).FirstOrDefault(s => s.Id == id);
             ViewBag.Stock = stock;
             IEnumerable<Pack> packs = stock.Packs.OrderBy(p => p.Group);
 
@@ -196,7 +203,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult PackAdd(int? id)
         {
-            Stock stock = db.Stocks.FirstOrDefault(s => s.Id == id);
+            Stock stock = _db.Stocks.FirstOrDefault(s => s.Id == id);
 
             return View(stock);
         }
@@ -204,9 +211,9 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult PackAdd(int? id, string name, decimal amount, decimal cost, int group)
         {
-            Stock stock = db.Stocks.FirstOrDefault(s => s.Id == id);
+            Stock stock = _db.Stocks.FirstOrDefault(s => s.Id == id);
             stock.Packs.Add(new Pack { Name = name, Amount = amount, Cost = cost, Group = group });
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("PackList", "Admin", new { id = id });
         }
@@ -214,7 +221,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult Pack(int? id)
         {
-            Pack pack = db.Packs.FirstOrDefault(p => p.Id == id);
+            Pack pack = _db.Packs.FirstOrDefault(p => p.Id == id);
 
             return View(pack);
         }
@@ -222,9 +229,9 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult Pack(int? id, string name, decimal amount, decimal cost, int group, int costMin)
         {
-            Pack pack = db.Packs.Include(p => p.Stock).FirstOrDefault(p => p.Id == id);
+            Pack pack = _db.Packs.Include(p => p.Stock).FirstOrDefault(p => p.Id == id);
 
-            IEnumerable<Greenhouse> gh1 = db.Greenhouses
+            IEnumerable<Greenhouse> gh1 = _db.Greenhouses
                 .Include(g => g.PacksForGH)
                 .Include(g => g.Stock)
                 .Where(g => g.Stock.Id == pack.Stock.Id);
@@ -246,7 +253,7 @@ namespace Sklad.Controllers
             pack.Group = group;
             pack.CostMin = costMin;
 
-            db.SaveChanges();
+            _db.SaveChanges();
 
             /*HttpCookie cookie = new HttpCookie("Packs");
             cookie["id"] = Convert.ToString(pack.Id);
@@ -257,9 +264,9 @@ namespace Sklad.Controllers
 
         public ActionResult PackDelete(int? id)
         {
-            Pack pack = db.Packs.Include(p => p.Stock).FirstOrDefault(p => p.Id == id);
+            Pack pack = _db.Packs.Include(p => p.Stock).FirstOrDefault(p => p.Id == id);
 
-            IEnumerable<Greenhouse> gh1 = db.Greenhouses
+            IEnumerable<Greenhouse> gh1 = _db.Greenhouses
                 .Include(g => g.PacksForGH)
                 .Include(g => g.Stock)
                 .Where(g => g.Stock.Id == pack.Stock.Id);
@@ -270,21 +277,21 @@ namespace Sklad.Controllers
                 p1 = g.PacksForGH.FirstOrDefault(p => p.Name == pack.Name);
                 if (p1 != null)
                 {
-                    db.PacksForGh.Remove(p1);
+                    _db.PacksForGh.Remove(p1);
                 }
             }
 
-            db.Packs.Remove(pack);
-            db.SaveChanges();
+            _db.Packs.Remove(pack);
+            _db.SaveChanges();
 
             return RedirectToAction("Index", "Admin");
         }
 
         public ActionResult GreenhouseList(int? id)
         {
-            Stock stock = db.Stocks.Include(s => s.Greenhouses).Include(s => s.Packs).FirstOrDefault(s => s.Id == id);
+            Stock stock = _db.Stocks.Include(s => s.Greenhouses).Include(s => s.Packs).FirstOrDefault(s => s.Id == id);
             ViewBag.Stock = stock;
-            IEnumerable<Greenhouse> greenhouses = db.Greenhouses
+            IEnumerable<Greenhouse> greenhouses = _db.Greenhouses
                 .Include(g => g.PacksForGH)
                 .Include(g => g.Stock)
                 .Include(g => g.GetGreenhouseCategory)
@@ -296,9 +303,9 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult GreenhouseAdd(int? id)
         {
-            Stock stock = db.Stocks.Include(s => s.Packs).FirstOrDefault(s => s.Id == id);
+            Stock stock = _db.Stocks.Include(s => s.Packs).FirstOrDefault(s => s.Id == id);
             ViewBag.Packs = stock.Packs;
-            ViewBag.Categories = db.GreenhouseCategories.Include(s => s.Stock).Where(c => c.Stock.Id == stock.Id).ToList();
+            ViewBag.Categories = _db.GreenhouseCategories.Include(s => s.Stock).Where(c => c.Stock.Id == stock.Id).ToList();
 
             return View(stock);
         }
@@ -306,8 +313,8 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult GreenhouseAdd(int? id, Greenhouse model, int? categoryId)
         {
-            Stock stock = db.Stocks.FirstOrDefault(s => s.Id == id);
-            GreenhouseCategory category = db.GreenhouseCategories.FirstOrDefault(c => c.Id == categoryId);
+            Stock stock = _db.Stocks.FirstOrDefault(s => s.Id == id);
+            GreenhouseCategory category = _db.GreenhouseCategories.FirstOrDefault(c => c.Id == categoryId);
 
 
 
@@ -317,7 +324,7 @@ namespace Sklad.Controllers
             {
                 if (p.Amount != 0)
                 {
-                    Pack pack = db.Packs.FirstOrDefault(pck => pck.Id == p.Id);
+                    Pack pack = _db.Packs.FirstOrDefault(pck => pck.Id == p.Id);
                     packsForGH.Add(new PackForGH { Name = pack.Name, Cost = pack.Cost, Amount = p.Amount });
                     packs.Add(pack);
                 }
@@ -333,7 +340,7 @@ namespace Sklad.Controllers
                 CostPrice = model.CostPrice
             };
             stock.Greenhouses.Add(g1);
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("GreenhouseList", "Admin", new { id = id });
         }
@@ -341,9 +348,9 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult Greenhouse(int? id)
         {
-            Greenhouse greenhouse = db.Greenhouses.Include(g => g.Stock).Include(g => g.GetGreenhouseCategory).Include(g => g.PacksForGH).FirstOrDefault(g => g.Id == id);
+            Greenhouse greenhouse = _db.Greenhouses.Include(g => g.Stock).Include(g => g.GetGreenhouseCategory).Include(g => g.PacksForGH).FirstOrDefault(g => g.Id == id);
             Stock stock = greenhouse.Stock;
-            IEnumerable<Pack> packs = db.Packs.Include(p => p.Stock).Where(p => p.Stock.Id == stock.Id);
+            IEnumerable<Pack> packs = _db.Packs.Include(p => p.Stock).Where(p => p.Stock.Id == stock.Id);
             List<Pack> usepacks = new List<Pack>();
             foreach (var p in packs)
             {
@@ -361,7 +368,7 @@ namespace Sklad.Controllers
                     }
                 }
             }
-            ViewBag.Categories = db.GreenhouseCategories.Include(s => s.Stock).Where(c => c.Stock.Id == stock.Id).ToList();
+            ViewBag.Categories = _db.GreenhouseCategories.Include(s => s.Stock).Where(c => c.Stock.Id == stock.Id).ToList();
             ViewBag.Packs = usepacks;
 
             return View(greenhouse);
@@ -370,8 +377,8 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult GreenHouse(int? id, Greenhouse model, int getgreenhousecategory)
         {
-            Greenhouse greenhouse = db.Greenhouses.Include(g => g.PacksForGH).Include(g => g.GetGreenhouseCategory).FirstOrDefault(g => g.Id == id);
-            GreenhouseCategory category = db.GreenhouseCategories.FirstOrDefault(c => c.Id == getgreenhousecategory);
+            Greenhouse greenhouse = _db.Greenhouses.Include(g => g.PacksForGH).Include(g => g.GetGreenhouseCategory).FirstOrDefault(g => g.Id == id);
+            GreenhouseCategory category = _db.GreenhouseCategories.FirstOrDefault(c => c.Id == getgreenhousecategory);
             greenhouse.Name = model.Name;
             greenhouse.GetGreenhouseCategory = category;
             greenhouse.Bonus = model.Bonus;
@@ -398,34 +405,34 @@ namespace Sklad.Controllers
             {
                 if (p.Amount != 0)
                 {
-                    Pack pack = db.Packs.FirstOrDefault(pck => pck.Id == p.Id);
+                    Pack pack = _db.Packs.FirstOrDefault(pck => pck.Id == p.Id);
                     greenhouse.PacksForGH.Add(new PackForGH { Name = pack.Name, Cost = pack.Cost, Amount = p.Amount });
                 }
             }
-            db.SaveChanges();           
+            _db.SaveChanges();           
 
             return RedirectToAction("Index", "Admin");
         }
 
         public ActionResult GreenhouseDelete(int? id)
         {
-            Greenhouse greenhouse = db.Greenhouses.FirstOrDefault(g => g.Id == id);
-            IEnumerable<PackForGH> packs = db.PacksForGh.Where(p => p.GreenHouse.Id == id);
+            Greenhouse greenhouse = _db.Greenhouses.FirstOrDefault(g => g.Id == id);
+            IEnumerable<PackForGH> packs = _db.PacksForGh.Where(p => p.GreenHouse.Id == id);
             foreach (var p in packs)
             {
                 //var pp = db.PacksForGh.FirstOrDefault(pfg => pfg.Id == p.Id);
-                db.PacksForGh.Remove(p);
+                _db.PacksForGh.Remove(p);
             }
 
-            db.Greenhouses.Remove(greenhouse);
-            db.SaveChanges();
+            _db.Greenhouses.Remove(greenhouse);
+            _db.SaveChanges();
 
             return RedirectToAction("Index", "Admin");
         }
 
         public ActionResult Dealers()
         {
-            IEnumerable<Dealer> dealers = db.Dealers;
+            IEnumerable<Dealer> dealers = _db.Dealers;
 
             return View(dealers);
         }
@@ -448,8 +455,8 @@ namespace Sklad.Controllers
                 CostRecommend = model.CostRecommend,
                 EnabledForSale = model.EnabledForSale
             };
-            db.Dealers.Add(dealer);
-            db.SaveChanges();
+            _db.Dealers.Add(dealer);
+            _db.SaveChanges();
 
             return RedirectToAction("Dealers", "Admin");
         }
@@ -457,7 +464,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult Dealer(int? id)
         {
-            Dealer dealer = db.Dealers.FirstOrDefault(d => d.Id == id);
+            Dealer dealer = _db.Dealers.FirstOrDefault(d => d.Id == id);
 
             return View(dealer);
         }
@@ -465,14 +472,14 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult Dealer(int? id, Dealer model)
         {
-            Dealer dealer = db.Dealers.FirstOrDefault(d => d.Id == id);
+            Dealer dealer = _db.Dealers.FirstOrDefault(d => d.Id == id);
             dealer.Name = model.Name;
             dealer.Phone = model.Phone;
             dealer.Address = model.Address;
             dealer.CostRecommend = model.CostRecommend;
             //dealer.Debt = model.Debt;
             dealer.EnabledForSale = model.EnabledForSale;
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("Dealers", "Admin");
         }
@@ -480,7 +487,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult DealerAddMoney(int? id)
         {
-            Dealer d1 = db.Dealers.FirstOrDefault(d => d.Id == id);
+            Dealer d1 = _db.Dealers.FirstOrDefault(d => d.Id == id);
 
             return View(d1);
         }
@@ -488,7 +495,7 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult DealerAddMoney(int? id, int cost)
         {
-            Dealer d1 = db.Dealers.FirstOrDefault(d => d.Id == id);
+            Dealer d1 = _db.Dealers.FirstOrDefault(d => d.Id == id);
             d1.Debt -= cost;
 
             HistoryMoney hm1 = new HistoryMoney()
@@ -498,25 +505,25 @@ namespace Sklad.Controllers
                 Cost = cost,
                 Who = User.Identity.Name
             };
-            db.HistoryMoneys.Add(hm1);
+            _db.HistoryMoneys.Add(hm1);
 
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("Dealers");
         }
 
         public ActionResult DealerDelete(int? id)
         {
-            Dealer dealer = db.Dealers.FirstOrDefault(d => d.Id == id);
-            db.Dealers.Remove(dealer);
-            db.SaveChanges();
+            Dealer dealer = _db.Dealers.FirstOrDefault(d => d.Id == id);
+            _db.Dealers.Remove(dealer);
+            _db.SaveChanges();
 
             return RedirectToAction("Dealers", "Admin");
         }
 
         public ActionResult Realizations(int? id)
         {
-            IEnumerable<Sale> sales = db.Sales
+            IEnumerable<Sale> sales = _db.Sales
                 .Include(s => s.Stock)
                 .Include(s => s.Buyer)
                 .Include(s => s.Dealer)
@@ -530,7 +537,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult RealizationsFiltr(int? id, DateTime date1, DateTime date2)
         {
-            IEnumerable<Sale> sales = db.Sales
+            IEnumerable<Sale> sales = _db.Sales
                 .Include(s => s.Stock)
                 .Include(s => s.Dealer)
                 .Where(s => s.Stock.Id == id && (s.SumWithoutD != 0 || s.Inspect == true) && (s.Date >= date1 && s.Date <= date2) && s.Confirmed == true)
@@ -543,7 +550,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult Realization(int? id)
         {
-            Sale sale = db.Sales.FirstOrDefault(s => s.Id == id);
+            Sale sale = _db.Sales.FirstOrDefault(s => s.Id == id);
 
             return View(sale);
         }
@@ -551,7 +558,7 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult Realization(Sale model)
         {
-            Sale sale = db.Sales.Include(d => d.Stock).FirstOrDefault(s => s.Id == model.Id);
+            Sale sale = _db.Sales.Include(d => d.Stock).FirstOrDefault(s => s.Id == model.Id);
             sale.DeliveryCost = model.DeliveryCost;
             sale.Comment = model.Comment;
             sale.PayForTerminal = model.PayForTerminal;
@@ -566,8 +573,8 @@ namespace Sklad.Controllers
                 Description = "Изменение способа оплаты"
             };
 
-            db.Sales.Add(newSale);
-            db.SaveChanges();
+            _db.Sales.Add(newSale);
+            _db.SaveChanges();
 
             return RedirectToAction("Index");
         }
@@ -575,11 +582,11 @@ namespace Sklad.Controllers
         //TODO: refact this shit
         public ActionResult RealizationDelete(int? id)
         {
-            Sale sale = db.Sales
+            Sale sale = _db.Sales
                 .Include(s => s.Stock)
                 .Include(s => s.GreenhouseForSales)
                 .FirstOrDefault(s => s.Id == id);
-            Stock stock = db.Stocks
+            Stock stock = _db.Stocks
                 .Include(s => s.Packs)
                 .FirstOrDefault(s => s.Id == sale.Stock.Id);
 
@@ -600,14 +607,14 @@ namespace Sklad.Controllers
             {
                 foreach (var g in sale.GreenhouseForSales)
                 {
-                    Greenhouse g1 = db.Greenhouses
+                    Greenhouse g1 = _db.Greenhouses
                         .Include(gh => gh.PacksForGH)
                         .Include(gh => gh.Stock)
                         .FirstOrDefault(gh => gh.Name == g.Name && gh.Stock.Id == sale.Stock.Id);
 
                     foreach (var p in g1.PacksForGH)
                     {
-                        Pack p1 = db.Packs
+                        Pack p1 = _db.Packs
                             .Include(pck => pck.Stock)
                             .FirstOrDefault(pck => pck.Name == p.Name && pck.Stock.Id == sale.Stock.Id);
                         p1.Amount += 1 * p.Amount * g.Amount;
@@ -623,11 +630,11 @@ namespace Sklad.Controllers
                             Stock = sale.Stock,
                             Description = sale.Number
                         };
-                        db.HistoryPacks.Add(hp1);
+                        _db.HistoryPacks.Add(hp1);
                     }
                 }
             }
-            db.SaveChanges();
+            _db.SaveChanges();
             sale.GreenhouseForSales = null;
 
 
@@ -639,52 +646,52 @@ namespace Sklad.Controllers
               {
                   packs.Add(p);
               }*/
-              var needInfoMoney = db.InfoMoneys.Include(s => s.Sale).OrderByDescending(d => d.Date).ToList();
+              var needInfoMoney = _db.InfoMoneys.Include(s => s.Sale).OrderByDescending(d => d.Date).ToList();
 
-              Sale needSale = db.Sales.Include(p => p.GreenhouseForSales).FirstOrDefault(n => n.Number == sale.Number);
+              Sale needSale = _db.Sales.Include(p => p.GreenhouseForSales).FirstOrDefault(n => n.Number == sale.Number);
               foreach (var n in needInfoMoney)
               {   
                   if(sale.Date.Second == needSale.Date.Second && needSale.Date.Minute == needSale.Date.Minute && sale.Date.Hour == needSale.Date.Hour && sale.Date.Day == needSale.Date.Day && sale.Date.Month == needSale.Date.Month && sale.Date.Year == needSale.Date.Year)
                   {
-                    var InfoMoneys = db.InfoMoneys
+                    var InfoMoneys = _db.InfoMoneys
                         .Include(i => i.Sale)
                         .Include(s => s.Stock)
                         .Where(h => h.Sale.Id == needSale.Id && h.Stock.Id == stock.Id)
                         .ToList();
                         foreach (var im in InfoMoneys)
                         {
-                            db.InfoMoneys.Remove(im);
-                            db.SaveChanges();
+                            _db.InfoMoneys.Remove(im);
+                            _db.SaveChanges();
                         }
-                    var DependencySales = db.Sales.Where(s => s.Number == needSale.Number).ToList();
+                    var DependencySales = _db.Sales.Where(s => s.Number == needSale.Number).ToList();
                         foreach(var ds in DependencySales)
                         {                       
-                            var HisPacks = db.HistoryPacks.Include(s => s.Sale).Where(h => h.Sale.Id == ds.Id).ToList();
+                            var HisPacks = _db.HistoryPacks.Include(s => s.Sale).Where(h => h.Sale.Id == ds.Id).ToList();
                             foreach (var hp in HisPacks)
                             {
                                 hp.Sale = null;
                             }
-                            db.SaveChanges();
-                            db.Sales.Remove(ds);
-                            db.SaveChanges();
+                            _db.SaveChanges();
+                            _db.Sales.Remove(ds);
+                            _db.SaveChanges();
                         }
                   }
                   else if (sale.Date.Second == n.Date.Second && sale.Date.Minute == n.Date.Minute && sale.Date.Hour == n.Date.Hour && sale.Date.Day == n.Date.Day && sale.Date.Month == n.Date.Month && sale.Date.Year == n.Date.Year)
                   {
                       InfoMoney test = n;
                       needSale.Remain += sale.AddMoney;
-                      db.InfoMoneys.Remove(test);
+                      _db.InfoMoneys.Remove(test);
                       if(sale.Shipment == true) { 
                           foreach (var g in needSale.GreenhouseForSales)
                           {
-                              Greenhouse g1 = db.Greenhouses
+                              Greenhouse g1 = _db.Greenhouses
                                   .Include(gh => gh.PacksForGH)
                                   .Include(gh => gh.Stock)
                                   .FirstOrDefault(gh => gh.Name == g.Name && gh.Stock.Id == sale.Stock.Id);
 
                               foreach (var p in g1.PacksForGH)
                               {
-                                  Pack p1 = db.Packs
+                                  Pack p1 = _db.Packs
                                       .Include(pck => pck.Stock)
                                       .FirstOrDefault(pck => pck.Name == p.Name && pck.Stock.Id == sale.Stock.Id);
                                   p1.Amount += 1 * p.Amount * g.Amount;
@@ -700,17 +707,17 @@ namespace Sklad.Controllers
                                       Stock = sale.Stock,
                                       Description = sale.Number
                                   };
-                                  db.HistoryPacks.Add(hp1);
+                                  _db.HistoryPacks.Add(hp1);
                               }
                           }
                           needSale.Shipment = false;
                       }
-                    db.Sales.Remove(sale);
-                    db.SaveChanges();
+                    _db.Sales.Remove(sale);
+                    _db.SaveChanges();
                     break;
                   }
               }
-              db.SaveChanges();
+              _db.SaveChanges();
 
 
             /*foreach (var hp in db.HistoryPacks.Where(h => h.Sale.Id == sale.Id))
@@ -725,12 +732,12 @@ namespace Sklad.Controllers
             db.SaveChanges();
             db.Sales.Remove(sale);
             db.SaveChanges();*/
-            var HPacks = db.HistoryPacks.Include(s => s.Sale).Where(h => h.Sale.Id == sale.Id).ToList();
+            var HPacks = _db.HistoryPacks.Include(s => s.Sale).Where(h => h.Sale.Id == sale.Id).ToList();
             foreach(var hp in HPacks)
             {
                 hp.Sale = null;
             }
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("Realizations", "Admin", new { id = stock.Id });
         }
@@ -744,7 +751,7 @@ namespace Sklad.Controllers
 
         public ActionResult DealerHistory(int? id)
         {
-            Dealer d1 = db.Dealers
+            Dealer d1 = _db.Dealers
                 .Include(d => d.HistoryMoneys)
                 .FirstOrDefault(d => d.Id == id);
 
@@ -755,25 +762,25 @@ namespace Sklad.Controllers
 
         public ActionResult DealerRealizations(int? id)
         {
-            Dealer d1 = db.Dealers.FirstOrDefault(d => d.Id == id);
-            IEnumerable<Sale> sales = db.Sales.Where(s => s.Dealer.Id == d1.Id && (s.SumWithoutD != 0 || s.Inspect == true) && s.Confirmed);
+            Dealer d1 = _db.Dealers.FirstOrDefault(d => d.Id == id);
+            IEnumerable<Sale> sales = _db.Sales.Where(s => s.Dealer.Id == d1.Id && (s.SumWithoutD != 0 || s.Inspect == true) && s.Confirmed);
 
             return View(sales);
         }
 
         public ActionResult HistoryPacks(int? id)
         {
-            IEnumerable<HistoryPack> hp1 = db.HistoryPacks.Include(h => h.Stock).Where(h => h.Stock.Id == id && h.Sale == null);
+            IEnumerable<HistoryPack> hp1 = _db.HistoryPacks.Include(h => h.Stock).Where(h => h.Stock.Id == id && h.Sale == null);
 
             return View(hp1);
         }
 
         public ActionResult DealerHistoryDelete(int? id)
         {
-            HistoryMoney hm1 = db.HistoryMoneys.Include(h => h.Dealer).FirstOrDefault(h => h.Id == id);
+            HistoryMoney hm1 = _db.HistoryMoneys.Include(h => h.Dealer).FirstOrDefault(h => h.Id == id);
             int dealerId = hm1.Dealer.Id;
-            db.HistoryMoneys.Remove(hm1);
-            db.SaveChanges();
+            _db.HistoryMoneys.Remove(hm1);
+            _db.SaveChanges();
 
             return RedirectToAction("DealerHistory", "Admin", new { id = dealerId });
         }
@@ -781,10 +788,10 @@ namespace Sklad.Controllers
         //TODO: refact this shit
         public ActionResult Statistic()
         {
-            IEnumerable<Stock> stocks = db.Stocks;
+            IEnumerable<Stock> stocks = _db.Stocks;
 
 
-            IEnumerable<HistoryPack> hpsIE = db.HistoryPacks
+            IEnumerable<HistoryPack> hpsIE = _db.HistoryPacks
                 .Include(h => h.Pack)
                 .Where(h => h.ForHistory == false);
 
@@ -821,20 +828,20 @@ namespace Sklad.Controllers
 
             if (date1 != null && date2 != null && stockId != 0)
             {
-                hpsIE = db.HistoryPacks
+                hpsIE = _db.HistoryPacks
                .Include(h => h.Pack)
                .Include(h => h.Stock)
                .Where(h => h.Date > date1 && h.Date < date2 && h.ForHistory == false && h.Stock.Id == stockId);
             }
             else if (stockId != 0)
             {
-                hpsIE = db.HistoryPacks
+                hpsIE = _db.HistoryPacks
                 .Include(h => h.Pack)
                 .Where(h => h.Stock.Id == stockId && h.ForHistory == false);
             }
             else
             {
-                hpsIE = db.HistoryPacks
+                hpsIE = _db.HistoryPacks
                 .Include(h => h.Pack)
                 .Where(h => h.Date > date1 && h.Date < date2 && h.ForHistory == false);
             }
@@ -865,7 +872,7 @@ namespace Sklad.Controllers
 
         public ActionResult Montazniks()
         {
-            IEnumerable<Montaznik> m1 = db.Montazniks;
+            IEnumerable<Montaznik> m1 = _db.Montazniks;
 
             return View(m1);
         }
@@ -873,7 +880,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult AddMontazniks()
         {
-            ViewBag.Stocks = db.Stocks.ToList();
+            ViewBag.Stocks = _db.Stocks.ToList();
 
             return View();
         }
@@ -881,7 +888,7 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult AddMontazniks(Montaznik mont, int? stockId)
         {
-            Stock stock = db.Stocks.FirstOrDefault(s => s.Id == stockId);
+            Stock stock = _db.Stocks.FirstOrDefault(s => s.Id == stockId);
             Montaznik m1 = new Montaznik()
             {
                 FIO = mont.FIO,
@@ -896,8 +903,8 @@ namespace Sklad.Controllers
                 Snils = mont.Snils,
                 Stock = stock
             };
-            db.Montazniks.Add(m1);
-            db.SaveChanges();
+            _db.Montazniks.Add(m1);
+            _db.SaveChanges();
 
             return RedirectToAction("Montazniks");
         }
@@ -905,7 +912,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult Montaznik(int? id)
         {
-            Montaznik m1 = db.Montazniks.FirstOrDefault(m => m.Id == id);
+            Montaznik m1 = _db.Montazniks.FirstOrDefault(m => m.Id == id);
 
             return View(m1);
         }
@@ -913,7 +920,7 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult Montaznik(Montaznik mont, int? stockId)
         {
-            Montaznik m1 = db.Montazniks.FirstOrDefault(m => m.Id == mont.Id);
+            Montaznik m1 = _db.Montazniks.FirstOrDefault(m => m.Id == mont.Id);
             m1.FIO = mont.FIO;
             m1.MarkAuto = mont.MarkAuto;
             m1.NumberAuto = mont.NumberAuto;
@@ -927,10 +934,10 @@ namespace Sklad.Controllers
 
             if(stockId != null)
             {
-                Stock stock = db.Stocks.FirstOrDefault(s => s.Id == stockId);
+                Stock stock = _db.Stocks.FirstOrDefault(s => s.Id == stockId);
                 m1.Stock = stock;
             }          
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("Montazniks");
         }
@@ -938,16 +945,16 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult DeleteMontaznik(int? id)
         {
-            Montaznik m1 = db.Montazniks.FirstOrDefault(m => m.Id == id);
-            db.Montazniks.Remove(m1);
-            db.SaveChanges();
+            Montaznik m1 = _db.Montazniks.FirstOrDefault(m => m.Id == id);
+            _db.Montazniks.Remove(m1);
+            _db.SaveChanges();
 
             return RedirectToAction("Montazniks");
         }
 
         public ActionResult Debtors(int? id)
         {
-            IEnumerable<Sale> sales = db.Sales
+            IEnumerable<Sale> sales = _db.Sales
                 .Include(s => s.Stock)
                 .Include(s => s.Dealer)
                 .Where(s => s.Stock.Id == id && (s.SumWithoutD != 0 || s.Inspect == true) && s.Confirmed == true && s.Remain > 0)
@@ -958,25 +965,25 @@ namespace Sklad.Controllers
 
         public ActionResult BonusDelete(int? id)
         {
-            Sale sale = db.Sales
+            Sale sale = _db.Sales
                 .Include(s => s.Stock)
                 .FirstOrDefault(s => s.Id == id);
             sale.SumBonuses = 0;
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("Realizations", "Admin", new { id = sale.Stock.Id });
         }
 
         public ActionResult Claims()
         {
-            IEnumerable<Claim> claims = db.Claims.Include(c => c.Stock).Where(c => c.Confirm == true).OrderByDescending(c => c.Date);
+            IEnumerable<Claim> claims = _db.Claims.Include(c => c.Stock).Where(c => c.Confirm == true).OrderByDescending(c => c.Date);
 
             return View(claims);
         }
 
         public ActionResult TargetStocks()
         {
-            IEnumerable<Stock> stocks = db.Stocks;
+            IEnumerable<Stock> stocks = _db.Stocks;
 
             return View(stocks);
         }
@@ -984,7 +991,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult AddClaim(int? id)
         {
-            Stock stock = db.Stocks.FirstOrDefault(s => s.Id == id);
+            Stock stock = _db.Stocks.FirstOrDefault(s => s.Id == id);
 
             /*IEnumerable<Dealer> dealers = db.Dealers;
             ViewBag.Dealers = dealers;
@@ -1005,7 +1012,7 @@ namespace Sklad.Controllers
             IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 8).OrderBy(g => g.Position);
             ViewBag.Ghs8 = ghs8;*/
 
-            ViewBag.Categories = db.GreenhouseCategories.Include(g => g.Greenhouses);
+            ViewBag.Categories = _db.GreenhouseCategories.Include(g => g.Greenhouses);
 
             HttpCookie cookieReq = Request.Cookies["Greenhouses"];
             string str = "";
@@ -1024,7 +1031,7 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult AddClaim(int? id, int? dealer, string[] ghName, int[] ghAmount)
         {
-            Stock stock = db.Stocks.Include(s => s.Greenhouses).FirstOrDefault(s => s.Id == id);
+            Stock stock = _db.Stocks.Include(s => s.Greenhouses).FirstOrDefault(s => s.Id == id);
             ViewBag.ColorS = stock.BackgroundColor;
             Claim claim = null;
             string str = "";
@@ -1061,7 +1068,7 @@ namespace Sklad.Controllers
                         if (ghAmount[i] > 0)
                         {
                             g.Amount = ghAmount[i];
-                            db.GreenhouseForSales.Add(new GreenhouseForSale
+                            _db.GreenhouseForSales.Add(new GreenhouseForSale
                             {
                                 Name = g.Name,
                                 Group = g.Group,
@@ -1074,7 +1081,7 @@ namespace Sklad.Controllers
                     }
                 }
             }
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("ContinuationAddClaim", "Admin", new { id = id, idC = claim.Id });
         }
@@ -1083,8 +1090,8 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult ContinuationAddClaim(int? id, int? idC)
         {
-            Stock stock = db.Stocks.Include(s => s.Packs).FirstOrDefault(s => s.Id == id);
-            Claim claim = db.Claims
+            Stock stock = _db.Stocks.Include(s => s.Packs).FirstOrDefault(s => s.Id == id);
+            Claim claim = _db.Claims
                 .Include(s => s.GreenhouseForSales)
                 .FirstOrDefault(s => s.Id == idC);
             List<GreenhouseForSale> greenhouses = new List<GreenhouseForSale>();
@@ -1098,7 +1105,7 @@ namespace Sklad.Controllers
             }
             foreach (var gh in greenhouses)
             {
-                Greenhouse g1 = db.Greenhouses.Include(g => g.PacksForGH).FirstOrDefault(g => g.Name == gh.Name && g.Stock.Id == stock.Id);
+                Greenhouse g1 = _db.Greenhouses.Include(g => g.PacksForGH).FirstOrDefault(g => g.Name == gh.Name && g.Stock.Id == stock.Id);
                 ngreenhouses.Add(new Greenhouse()
                 {
                     Name = g1.Name,
@@ -1115,7 +1122,7 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult ContinuationAddClaim(int? id, Claim model)
         {
-            Claim claim = db.Claims.FirstOrDefault(c => c.Id == id);
+            Claim claim = _db.Claims.FirstOrDefault(c => c.Id == id);
             claim.Confirm = true;
             claim.Address = model.Address;
             claim.Client = model.Client;
@@ -1125,7 +1132,7 @@ namespace Sklad.Controllers
             claim.Date = DateTime.UtcNow.AddHours(6);
             claim.StockName = "Админ";
 
-            db.SaveChanges();
+            _db.SaveChanges();
 
             HttpCookie cookie = Request.Cookies["Greenhouses"];
             cookie["ListForRealization"] = null;
@@ -1137,7 +1144,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult EditClaim(int? id)
         {
-            Claim c1 = db.Claims.Include(c => c.Stock).FirstOrDefault(c => c.Id == id);
+            Claim c1 = _db.Claims.Include(c => c.Stock).FirstOrDefault(c => c.Id == id);
 
             return View(c1);
         }
@@ -1145,11 +1152,11 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult EditClaim(Claim model)
         {
-            Claim c1 = db.Claims.Include(c => c.Stock).FirstOrDefault(c => c.Id == model.Id);
+            Claim c1 = _db.Claims.Include(c => c.Stock).FirstOrDefault(c => c.Id == model.Id);
             c1.Status = model.Status;
             c1.Text = model.Text;
             c1.Comment = model.Comment;
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("Claims");
         }
@@ -1157,30 +1164,30 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult DeleteClaim(int? id)
         {
-            Claim c1 = db.Claims.Include(c => c.Stock).FirstOrDefault(c => c.Id == id);
-            db.Claims.Remove(c1);
-            db.SaveChanges();
+            Claim c1 = _db.Claims.Include(c => c.Stock).FirstOrDefault(c => c.Id == id);
+            _db.Claims.Remove(c1);
+            _db.SaveChanges();
 
             return RedirectToAction("Claims");
         }
 
         public ActionResult ListsPositionForGreenhouse(int? id)
         {
-            IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 1).OrderBy(g => g.Position);
+            IEnumerable<Greenhouse> ghs1 = _db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 1).OrderBy(g => g.Position);
             ViewBag.Ghs1 = ghs1;
-            IEnumerable<Greenhouse> ghs2 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 2).OrderBy(g => g.Position);
+            IEnumerable<Greenhouse> ghs2 = _db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 2).OrderBy(g => g.Position);
             ViewBag.Ghs2 = ghs2;
-            IEnumerable<Greenhouse> ghs3 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 3).OrderBy(g => g.Position);
+            IEnumerable<Greenhouse> ghs3 = _db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 3).OrderBy(g => g.Position);
             ViewBag.Ghs3 = ghs3;
-            IEnumerable<Greenhouse> ghs4 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 4).OrderBy(g => g.Position);
+            IEnumerable<Greenhouse> ghs4 = _db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 4).OrderBy(g => g.Position);
             ViewBag.Ghs4 = ghs4;
-            IEnumerable<Greenhouse> ghs5 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 5).OrderBy(g => g.Position);
+            IEnumerable<Greenhouse> ghs5 = _db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 5).OrderBy(g => g.Position);
             ViewBag.Ghs5 = ghs5;
-            IEnumerable<Greenhouse> ghs6 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 6).OrderBy(g => g.Position);
+            IEnumerable<Greenhouse> ghs6 = _db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 6).OrderBy(g => g.Position);
             ViewBag.Ghs6 = ghs6;
-            IEnumerable<Greenhouse> ghs7 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 7).OrderBy(g => g.Position);
+            IEnumerable<Greenhouse> ghs7 = _db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 7).OrderBy(g => g.Position);
             ViewBag.Ghs7 = ghs7;
-            IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 8).OrderBy(g => g.Position);
+            IEnumerable<Greenhouse> ghs8 = _db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == id && g.Group == 8).OrderBy(g => g.Position);
             ViewBag.Ghs8 = ghs8;
 
             return View(id);
@@ -1189,7 +1196,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult EditPositionForGreenhouse(int? id, int? group)
         {
-            IEnumerable<Greenhouse> ghs = db.Greenhouses
+            IEnumerable<Greenhouse> ghs = _db.Greenhouses
                 .Include(g => g.Stock)
                 .Where(g => g.Stock.Id == id && g.Group == group)
                 .OrderBy(g => g.Position);
@@ -1206,11 +1213,11 @@ namespace Sklad.Controllers
             for (var i = 0; i < gh.Length; i++)
             {
                 string buf = gh[i];
-                Greenhouse gh1 = db.Greenhouses.Include(g => g.Stock)
+                Greenhouse gh1 = _db.Greenhouses.Include(g => g.Stock)
                     .FirstOrDefault(g => g.Stock.Id == id && g.Group == group && g.Name == buf);
                 gh1.Position = i + 1;
             }
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("Index");
         }
@@ -1285,23 +1292,22 @@ namespace Sklad.Controllers
              #endregion
              ---Старый код*/
 
-            ViewBag.SumCash = db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal != true && s.Confirmed == true).ToList().Sum(am => am.AddMoney);
-            ViewBag.SumTerminal = db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal == true && s.Confirmed == true).ToList().Sum(amt => amt.AddMoney);
-            ViewBag.SumPay = db.Sales.Where(s => s.Stock.Id == id && s.OutgoCategory == "Зарплата" && s.Confirmed == true).ToList().Sum(s => s.Outgo); 
-            ViewBag.SumCashment = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
-            ViewBag.SumDelivery = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
-            ViewBag.SumProcurement = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Закуп СПК" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
-            ViewBag.SumChancery = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Канцелярия" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
-            ViewBag.SumReturn = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Возврат денежных средств" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
-            ViewBag.SumArenda = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Аренда" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
-            ViewBag.SumOthers = db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumCash = _db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal != true && s.Confirmed == true).ToList().Sum(am => am.AddMoney);
+            ViewBag.SumTerminal = _db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal == true && s.Confirmed == true).ToList().Sum(amt => amt.AddMoney);
+            ViewBag.SumPay = _db.Sales.Where(s => s.Stock.Id == id && s.OutgoCategory == "Зарплата" && s.Confirmed == true).ToList().Sum(s => s.Outgo); 
+            ViewBag.SumCashment = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumDelivery = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumProcurement = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Закуп СПК" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumChancery = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Канцелярия" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumReturn = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Возврат денежных средств" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumArenda = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Аренда" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
+            ViewBag.SumOthers = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true).ToList().Sum(s => s.Outgo);
 
             ViewBag.Hui = id;
 
+            ViewBag.Profit = _db.Sales.Where(s => s.Stock.Id == id && s.Profit >= 0 && s.Confirmed == true).Sum(p => p.Profit);
 
-            ViewBag.Profit = db.Sales.Where(s => s.Stock.Id == id && s.Profit >= 0).Sum(p => p.Profit);
-
-            var a = db.GreenhouseForSales.Where(x => x.Stock.Id == id).Include(s => s.Sale).Where(sale => sale.Sale != null && sale.Sale.Confirmed == true)
+            var a = _db.GreenhouseForSales.Where(x => x.Stock.Id == id).Include(s => s.Sale).Where(sale => sale.Sale != null && sale.Sale.Confirmed == true)
                 .GroupBy(x => x.Name).Select(x => new
                 {
                     Name = x.Key,
@@ -1342,52 +1348,52 @@ namespace Sklad.Controllers
 
             #region ebanina
 
-            foreach (var im in db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal != true && i.Date >= date1 && i.Date <= date2))
+            foreach (var im in _db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal != true && i.Date >= date1 && i.Date <= date2))
             {
                 sumCash += im.Cost;
             }
 
-            foreach (var im in db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal && i.Date >= date1 && i.Date <= date2))
+            foreach (var im in _db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal && i.Date >= date1 && i.Date <= date2))
             {
                 sumTerminal += im.Cost;
             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Зарплата" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
+            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Зарплата" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
             {
                 sumPay += sale.Outgo;
             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
+            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
             {
                 sumCashment += sale.Outgo;
             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
+            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
             {
                 sumDelivery += sale.Outgo;
             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Закуп СПК" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
+            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Закуп СПК" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
             {
                 sumProcurement += sale.Outgo;
             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Канцелярия" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
+            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Канцелярия" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
             {
                 sumChancery += sale.Outgo;
             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Возврат денежных средств" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
+            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Возврат денежных средств" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
             {
                 sumReturn += sale.Outgo;
             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Аренда" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
+            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Аренда" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
             {
                 sumArenda += sale.Outgo;
             }
 
-            foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
+            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
             {
                 sumOthers += sale.Outgo;
             }
@@ -1413,7 +1419,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult ChangeTrack(int id)
         {
-            Stock stock = db.Stocks.FirstOrDefault(i => i.Id == id);
+            Stock stock = _db.Stocks.FirstOrDefault(i => i.Id == id);
             if(stock.Track == true)
             {
                 stock.Track = false;
@@ -1422,7 +1428,7 @@ namespace Sklad.Controllers
             {
                 stock.Track = true;
             }
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return RedirectToAction("Index", "Admin");
         }
@@ -1430,7 +1436,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult Categories()
         {
-            IEnumerable<GreenhouseCategory> categories = db.GreenhouseCategories
+            IEnumerable<GreenhouseCategory> categories = _db.GreenhouseCategories
                 .Include(s => s.Stock)
                 .Where(c => c.Stock != null);
 
@@ -1445,9 +1451,9 @@ namespace Sklad.Controllers
                 return View();
             }
 
-            ViewBag.Stocks = db.Stocks;
+            ViewBag.Stocks = _db.Stocks;
 
-            GreenhouseCategory category = db.GreenhouseCategories.Include(s => s.Stock).FirstOrDefault(c => c.Id == id);
+            GreenhouseCategory category = _db.GreenhouseCategories.Include(s => s.Stock).FirstOrDefault(c => c.Id == id);
 
             return View(category);
         }
@@ -1457,24 +1463,24 @@ namespace Sklad.Controllers
         {
             if(id != null)
             {
-                GreenhouseCategory category = db.GreenhouseCategories.Include(s => s.Stock).FirstOrDefault(c => c.Id == id);
-                Stock categoryStock = db.Stocks.FirstOrDefault(s => s.Id == stockId);
+                GreenhouseCategory category = _db.GreenhouseCategories.Include(s => s.Stock).FirstOrDefault(c => c.Id == id);
+                Stock categoryStock = _db.Stocks.FirstOrDefault(s => s.Id == stockId);
 
                 category.Name = name;
                 category.Stock = categoryStock;
-                db.SaveChanges();
+                _db.SaveChanges();
 
                 return RedirectToAction("Categories", "Admin");
             }
-            Stock newCategoryStock = db.Stocks.FirstOrDefault(s => s.Id == stockId);
+            Stock newCategoryStock = _db.Stocks.FirstOrDefault(s => s.Id == stockId);
             GreenhouseCategory newCategory = new GreenhouseCategory()
             {
                 Name = name,
                 Stock = newCategoryStock
             };
 
-            db.GreenhouseCategories.Add(newCategory);
-            db.SaveChanges();
+            _db.GreenhouseCategories.Add(newCategory);
+            _db.SaveChanges();
 
             return RedirectToAction("Categories", "Admin");
         }
@@ -1482,9 +1488,9 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult CategoryDelete(int id)
         {
-            GreenhouseCategory category = db.GreenhouseCategories.FirstOrDefault(c => c.Id == id);
+            GreenhouseCategory category = _db.GreenhouseCategories.FirstOrDefault(c => c.Id == id);
 
-            IEnumerable<Greenhouse> greenhouse = db.Greenhouses.Where(g => g.GetGreenhouseCategory.Id == category.Id);
+            IEnumerable<Greenhouse> greenhouse = _db.Greenhouses.Where(g => g.GetGreenhouseCategory.Id == category.Id);
 
             foreach(var gr in greenhouse)
             {
@@ -1492,8 +1498,8 @@ namespace Sklad.Controllers
                 category.Greenhouses.Remove(green);
             }
 
-            db.GreenhouseCategories.Remove(category);
-            db.SaveChanges();
+            _db.GreenhouseCategories.Remove(category);
+            _db.SaveChanges();
 
             return RedirectToAction("Categories", "Admin");
         }
