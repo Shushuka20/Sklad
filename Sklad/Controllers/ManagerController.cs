@@ -60,8 +60,6 @@ namespace Sklad.Controllers
             return View(stock);
         }
 
-
-
         [HttpPost]
         public ActionResult RealizationStart(int? id, int? dealer, string[] ghName, int[] ghAmount, bool? admin)
         {
@@ -720,29 +718,10 @@ namespace Sklad.Controllers
                 .FirstOrDefault(s => s.Id == id);
             ViewBag.ColorS = stock.BackgroundColor;
 
-            decimal sum = 0;
-            decimal debt = 0;
+            StatisticService statisticService = new StatisticService(db);
 
-            foreach (var im in db.InfoMoneys.Where(i => i.Stock.Id == stock.Id && i.PayForTerminal != true))
-            {
-                sum += im.Cost;
-            }
-
-            /*foreach(var s in db.Sales.Where(s => s.Stock.Id == stock.Id && s.PayForTerminal != true))
-            {
-                sum += s.AddMoney;
-            }
-            foreach(var s in db.Sales.Where(s=>s.Stock.Id==stock.Id && s.Inspect==true && s.Outgo > 0 && s.PayForTerminal != true))
-            {
-                sum -= s.Outgo;
-            }*/
-            foreach (var s in db.Sales.Where(s => s.Stock.Id == stock.Id && s.Dealer == null && s.Remain > 0 && s.Confirmed == true))
-            {
-                debt += s.Remain;
-            }
-
-            ViewBag.Sum = sum;
-            ViewBag.Debt = debt;
+            ViewBag.Sum = statisticService.CashOnHand(id);
+            ViewBag.Debt = statisticService.Debt(id);
 
             return View(stock);
         }
