@@ -36,23 +36,7 @@ namespace Sklad.Controllers
             ViewBag.ColorS = stock.BackgroundColor;
 
             IEnumerable<Dealer> dealers = db.Dealers;
-            ViewBag.Dealers = dealers;/*
-            IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 1).OrderBy(g => g.Position);
-            ViewBag.Ghs1 = ghs1;
-            IEnumerable<Greenhouse> ghs2 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 2).OrderBy(g => g.Position);
-            ViewBag.Ghs2 = ghs2;
-            IEnumerable<Greenhouse> ghs3 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 3).OrderBy(g => g.Position);
-            ViewBag.Ghs3 = ghs3;
-            IEnumerable<Greenhouse> ghs4 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 4).OrderBy(g => g.Position);
-            ViewBag.Ghs4 = ghs4;
-            IEnumerable<Greenhouse> ghs5 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 5).OrderBy(g => g.Position);
-            ViewBag.Ghs5 = ghs5;
-            IEnumerable<Greenhouse> ghs6 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 6).OrderBy(g => g.Position);
-            ViewBag.Ghs6 = ghs6;
-            IEnumerable<Greenhouse> ghs7 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 7).OrderBy(g => g.Position);
-            ViewBag.Ghs7 = ghs7;
-            IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 8).OrderBy(g => g.Position);
-            ViewBag.Ghs8 = ghs8;*/
+            ViewBag.Dealers = dealers;
 
             ViewBag.Categories = db.GreenhouseCategories.Where(c => c.Stock.Id == id).Include(g => g.Greenhouses);
 
