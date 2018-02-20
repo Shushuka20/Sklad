@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
 using Sklad.Models;
+using Sklad.Services;
 
 namespace Sklad.Controllers
 {
@@ -1300,7 +1301,7 @@ namespace Sklad.Controllers
 
             ViewBag.Profit = db.Sales.Where(s => s.Stock.Id == id && s.Profit >= 0).Sum(p => p.Profit);
 
-            var a = db.GreenhouseForSales.Where(x => x.Stock.Id == id).Include(s => s.Sale).Where(sale => sale.Sale.Confirmed == true)
+            var a = db.GreenhouseForSales.Where(x => x.Stock.Id == id).Include(s => s.Sale).Where(sale => sale.Sale != null && sale.Sale.Confirmed == true)
                 .GroupBy(x => x.Name).Select(x => new
                 {
                     Name = x.Key,
