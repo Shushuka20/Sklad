@@ -75,7 +75,7 @@
                             }
                         </td>
                         <td>@s.Comment</td>
-                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a></td>
+                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
                     </tr>
                 }
                 else
@@ -112,7 +112,7 @@
                             }
                         </td>
                         <td>@s.Comment</td>
-                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a></td>
+                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
                     </tr>
                 }
             }
@@ -151,7 +151,7 @@
                     </td>
 
                         <td>@s.Comment</td>
-                    <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a></td>
+                    <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
                 </tr>
             }
             else if (str != null)
@@ -190,7 +190,7 @@
                             }
                         </td>
                         <td>@s.Comment</td>
-                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a></td>
+                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
                     </tr>
                 }
                 else if (str.Contains("Приём денег."))
@@ -227,7 +227,7 @@
                             }
                         </td>
                         <td>@s.Comment</td>
-                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a></td>
+                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
                     </tr>
                 }
                 else if (s.Comment == "РАССРОЧКА")
@@ -282,7 +282,7 @@
                             }
                         </td>
                         <td>@s.Comment</td>
-                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a></td>
+                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
                     </tr>
                 }
             }
@@ -348,7 +348,7 @@
                         }
                         </td>
                         <td>@s.Comment</td>
-                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a></td>
+                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
                     </tr>
                 }
         }

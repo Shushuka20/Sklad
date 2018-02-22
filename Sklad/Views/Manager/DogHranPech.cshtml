@@ -112,13 +112,13 @@
                 sum += p.Amount * p.Cost * s.Amount;
             }
             <P LANG="ru-RU" CLASS="western" STYLE="margin-bottom: 0in; line-height: 100%">
-                <FONT COLOR="#ff0000"><FONT SIZE=2>@s.Name @s.Amount шт. @sum руб. @Sklad.Models.Число.Пропись(Convert.ToDecimal(sum), Sklad.Models.РодЧисло.Мужской) рублей</FONT></FONT>
+                <FONT COLOR="#222" style="font-weight: bold;"><FONT SIZE=2 >@s.Name @s.Amount шт. @sum руб. @Sklad.Models.Число.Пропись(Convert.ToDecimal(sum), Sklad.Models.РодЧисло.Мужской) рублей</FONT></FONT>
             </P>
             allsum += sum;
         }
     }
     <P LANG="ru-RU" CLASS="western" STYLE="margin-bottom: 0in; line-height: 100%">
-        <FONT COLOR="#ff0000"><FONT SIZE=2>Всего: @Model.SumWithD руб. @Sklad.Models.Число.Пропись(Convert.ToDecimal(Convert.ToInt32(Model.SumWithD)), Sklad.Models.РодЧисло.Мужской) рублей</FONT></FONT>
+        <FONT COLOR="#222" style="font-weight: bold;"><FONT SIZE=2>Всего: @Model.SumWithD руб. @Sklad.Models.Число.Пропись(Convert.ToDecimal(Convert.ToInt32(Model.SumWithD)), Sklad.Models.РодЧисло.Мужской) рублей</FONT></FONT>
     </P>
     <P LANG="ru-RU" CLASS="western" STYLE="margin-bottom: 0in; line-height: 100%">
         <BR>
@@ -420,7 +420,7 @@
     <P LANG="ru-RU" CLASS="western" STYLE="margin-bottom: 0in; line-height: 100%">
         <FONT SIZE=2>
             Осуществить передачу товара
-            заказчику в течение _5_  дней, после
+            заказчику в течение 14 дней, после
             обращения заказчика.
         </FONT>
     </P>

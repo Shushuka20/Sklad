@@ -45,7 +45,7 @@
             <table border="1" class="p_l5">
                 <tr><td rowspan="2">Дебет</td><td colspan="4">Кредит</td><td rowspan="2"></td><td rowspan="2">Сумма, руб,</td><td rowspan="2">Код целевого назначения</td></tr>
                 <tr><td></td><td>Код структу- рного подраз- деления</td><td>Корреспондирующий счет</td><td>Код аналитического учет</td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td>@if (ViewBag.sum == null) {<span>@Model.SumWithD руб.</span>} else{ <span>@ViewBag.Sum руб</span> }</td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td><span>@Model.SumWithD руб.</span></td><td></td></tr>
 
             </table>
 
@@ -61,7 +61,7 @@
                 }
                 <tr><td></td><td></td>
                 <tr>
-                <tr><td>Сумма (итого):</td><td>  @if (ViewBag.sum == null) {<span>@Model.SumWithD руб.</span>} else{ <span>@ViewBag.Sum руб</span> }</td>
+                <tr><td>Сумма (итого):</td><td><span>@Model.SumWithD руб.</span></td>
                 <tr>
                 <tr><td></td><td></td>
                 <tr><td>Получено:</td><td> @ViewBag.AddMoney рублей</td>
@@ -110,9 +110,9 @@
             </table>
 
             <table class="r_tab2">
-                <tr><td>Сумма: @if (ViewBag.sum == null) {<span>@Model.SumWithD руб.</span>} else{ <span>@ViewBag.Sum руб</span> }</td></tr>
+                <tr><td>Сумма: <span>@Model.SumWithD руб.</span></td></tr>
                 <tr><td></td></tr>
-                <tr><td>Получено: @ViewBag.AddMoney руб. </td></tr>
+                <tr><td>Получено:@if (ViewBag.Sum == null) {<span>@ViewBag.AddMoney руб.</span>} else { <span>@ViewBag.Sum руб.</span> } </td></tr>
                 <tr><td></td></tr>
                 <tr><td></td></tr>
                 <tr><td>В том числе без НДС</td></tr>
@@ -159,6 +159,7 @@
         </div>
     }
 
+    @if(ViewBag.Sum == null) { 
     <P CLASS="western" STYLE="margin-bottom: 0.14in">
         № продажи: @Model.Number
     </P>
@@ -185,7 +186,7 @@
     <P CLASS="western" STYLE="margin-bottom: 0.14in">
         <BR /><BR />
     </P>
-
+    }
     <div>
         <a href="/Home/Index" style="margin-top:80px; text-decoration:none; font-size:20px;">Главная страница</a>
 

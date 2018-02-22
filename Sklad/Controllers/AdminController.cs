@@ -651,7 +651,7 @@ namespace Sklad.Controllers
               Sale needSale = _db.Sales.Include(p => p.GreenhouseForSales).FirstOrDefault(n => n.Number == sale.Number);
               foreach (var n in needInfoMoney)
               {   
-                  if(sale.Date.Second == needSale.Date.Second && needSale.Date.Minute == needSale.Date.Minute && sale.Date.Hour == needSale.Date.Hour && sale.Date.Day == needSale.Date.Day && sale.Date.Month == needSale.Date.Month && sale.Date.Year == needSale.Date.Year)
+                if(sale.Date.Second == needSale.Date.Second && needSale.Date.Minute == needSale.Date.Minute && sale.Date.Hour == needSale.Date.Hour && sale.Date.Day == needSale.Date.Day && sale.Date.Month == needSale.Date.Month && sale.Date.Year == needSale.Date.Year)
                   {
                     var InfoMoneys = _db.InfoMoneys
                         .Include(i => i.Sale)
@@ -661,7 +661,6 @@ namespace Sklad.Controllers
                         foreach (var im in InfoMoneys)
                         {
                             _db.InfoMoneys.Remove(im);
-                            _db.SaveChanges();
                         }
                     var DependencySales = _db.Sales.Where(s => s.Number == needSale.Number).ToList();
                         foreach(var ds in DependencySales)
@@ -1305,7 +1304,7 @@ namespace Sklad.Controllers
 
             ViewBag.Hui = id;
 
-            ViewBag.Profit = _db.Sales.Where(s => s.Stock.Id == id && s.Profit >= 0 && s.Confirmed == true).Sum(p => p.Profit);
+            ViewBag.Profit = _db.Sales.Where(s => s.Stock.Id == id && s.Profit >= 0 && s.Confirmed == true).ToList().Sum(p => p.Profit);
 
             var a = _db.GreenhouseForSales.Where(x => x.Stock.Id == id).Include(s => s.Sale).Where(sale => sale.Sale != null && sale.Sale.Confirmed == true)
                 .GroupBy(x => x.Name).Select(x => new
@@ -1334,85 +1333,19 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult DetailFiltr(DateTime? date1, DateTime? date2, int? id)
         {
-            decimal sumCash = 0;
-            decimal sumTerminal = 0;
 
-            decimal sumPay = 0;
-            decimal sumCashment = 0;
-            decimal sumDelivery = 0;
-            decimal sumProcurement = 0;
-            decimal sumChancery = 0;
-            decimal sumReturn = 0;
-            decimal sumArenda = 0;
-            decimal sumOthers = 0;
+            ViewBag.SumCash = _db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal != true && s.Confirmed == true && s.Date >= date1 && s.Date <= date2).ToList().Sum(am => am.AddMoney);
+            ViewBag.SumTerminal = _db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal == true && s.Confirmed == true && s.Date >= date1 && s.Date <= date2).ToList().Sum(amt => amt.AddMoney);
+            ViewBag.SumPay = _db.Sales.Where(s => s.Stock.Id == id && s.OutgoCategory == "Зарплата" && s.Confirmed == true && s.Date >= date1 && s.Date <= date2).ToList().Sum(s => s.Outgo);
+            ViewBag.SumCashment = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2).ToList().Sum(s => s.Outgo);
+            ViewBag.SumDelivery = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2).ToList().Sum(s => s.Outgo);
+            ViewBag.SumProcurement = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Закуп СПК" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2).ToList().Sum(s => s.Outgo);
+            ViewBag.SumChancery = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Канцелярия" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2).ToList().Sum(s => s.Outgo);
+            ViewBag.SumReturn = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Возврат денежных средств" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2).ToList().Sum(s => s.Outgo);
+            ViewBag.SumArenda = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Аренда" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2).ToList().Sum(s => s.Outgo);
+            ViewBag.SumOthers = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2).ToList().Sum(s => s.Outgo);
 
-            #region ebanina
-
-            foreach (var im in _db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal != true && i.Date >= date1 && i.Date <= date2))
-            {
-                sumCash += im.Cost;
-            }
-
-            foreach (var im in _db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal && i.Date >= date1 && i.Date <= date2))
-            {
-                sumTerminal += im.Cost;
-            }
-
-            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Зарплата" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
-            {
-                sumPay += sale.Outgo;
-            }
-
-            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
-            {
-                sumCashment += sale.Outgo;
-            }
-
-            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
-            {
-                sumDelivery += sale.Outgo;
-            }
-
-            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Закуп СПК" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
-            {
-                sumProcurement += sale.Outgo;
-            }
-
-            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Канцелярия" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
-            {
-                sumChancery += sale.Outgo;
-            }
-
-            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Возврат денежных средств" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
-            {
-                sumReturn += sale.Outgo;
-            }
-
-            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Аренда" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
-            {
-                sumArenda += sale.Outgo;
-            }
-
-            foreach (var sale in _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2))
-            {
-                sumOthers += sale.Outgo;
-            }
-            #endregion
-
-            ViewBag.SumCash = sumCash;
-            ViewBag.SumTerminal = sumTerminal;
-            ViewBag.SumPay = sumPay;
-            ViewBag.SumCashment = sumCashment;
-            ViewBag.SumDelivery = sumDelivery;
-            ViewBag.SumProcurement = sumProcurement;
-            ViewBag.SumChancery = sumChancery;
-            ViewBag.SumReturn = sumReturn;
-            ViewBag.SumArenda = sumArenda;
-            ViewBag.SumOthers = sumOthers;
-
-            ViewBag.Profit = (sumCash + sumTerminal) - (
-            sumPay - sumCashment - sumDelivery - sumProcurement
-            - sumChancery - sumReturn - sumArenda - sumOthers);
+            ViewBag.Profit = _db.Sales.Where(s => s.Stock.Id == id && s.Profit >= 0 && s.Confirmed == true && s.Date >= date1 && s.Date <= date2).ToList().Sum(p => p.Profit);
 
             return View();
         }

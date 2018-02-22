@@ -51,6 +51,19 @@ namespace Sklad.Models
                             case 9: result += " девяносто"; break;
                         }
                     }
+                    switch (array_int[i] % 100)
+                    {
+                        case 10: result += " десять"; break;
+                        case 11: result += " одиннадцать"; break;
+                        case 12: result += " двенадцать"; break;
+                        case 13: result += " тринадцать"; break;
+                        case 14: result += " четырнадцать"; break;
+                        case 15: result += " пятнадцать"; break;
+                        case 16: result += " шестнадцать"; break;
+                        case 17: result += " семнадцать"; break;
+                        case 18: result += " восемннадцать"; break;
+                        case 19: result += " девятнадцать"; break;
+                    }
                     switch (array_int[i] % 10)
                     {
                         case 1: if (i == 2) result += " одна"; else result += " один"; break;
@@ -64,19 +77,6 @@ namespace Sklad.Models
                         case 9: result += " девять"; break;
                     }
                 }
-                else switch (array_int[i] % 100)
-                    {
-                        case 10: result += " десять"; break;
-                        case 11: result += " одиннадцать"; break;
-                        case 12: result += " двенадцать"; break;
-                        case 13: result += " тринадцать"; break;
-                        case 14: result += " четырнадцать"; break;
-                        case 15: result += " пятнадцать"; break;
-                        case 16: result += " шестнадцать"; break;
-                        case 17: result += " семнадцать"; break;
-                        case 18: result += " восемннадцать"; break;
-                        case 19: result += " девятнадцать"; break;
-                    }
                 if (array_int[i] % 100 >= 10 && array_int[i] % 100 <= 19) result += " " + array_string[i, 2] + " ";
                 else switch (array_int[i] % 10)
                     {
