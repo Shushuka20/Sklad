@@ -189,14 +189,6 @@ namespace Sklad.Controllers
             ViewBag.Stock = stock;
             IEnumerable<Pack> packs = stock.Packs.OrderBy(p => p.Group);
 
-            /* HttpCookie cookieReq = Request.Cookies["Packs"];
-             int packId = 0;
-             if (cookieReq != null)
-             {
-                 packId = Convert.ToInt32(cookieReq["id"]);
-             }
-             ViewBag.PackId = packId;*/
-
             return View(packs);
         }
 
@@ -254,10 +246,6 @@ namespace Sklad.Controllers
             pack.CostMin = costMin;
 
             _db.SaveChanges();
-
-            /*HttpCookie cookie = new HttpCookie("Packs");
-            cookie["id"] = Convert.ToString(pack.Id);
-            Response.Cookies.Add(cookie);*/
 
             return RedirectToAction("Index", "Admin");
         }
@@ -420,7 +408,6 @@ namespace Sklad.Controllers
             IEnumerable<PackForGH> packs = _db.PacksForGh.Where(p => p.GreenHouse.Id == id);
             foreach (var p in packs)
             {
-                //var pp = db.PacksForGh.FirstOrDefault(pfg => pfg.Id == p.Id);
                 _db.PacksForGh.Remove(p);
             }
 
@@ -477,7 +464,6 @@ namespace Sklad.Controllers
             dealer.Phone = model.Phone;
             dealer.Address = model.Address;
             dealer.CostRecommend = model.CostRecommend;
-            //dealer.Debt = model.Debt;
             dealer.EnabledForSale = model.EnabledForSale;
             _db.SaveChanges();
 
@@ -590,19 +576,6 @@ namespace Sklad.Controllers
                 .Include(s => s.Packs)
                 .FirstOrDefault(s => s.Id == sale.Stock.Id);
 
-            /*чистим бабки
-            var infoMoneys = db.InfoMoneys
-                .Include(i => i.Sale)
-                .Include(i => i.Stock)
-                .Where(i => i.Sale.Id == sale.Id && i.Stock.Id == stock.Id)
-                .ToList();
-            foreach (var im in infoMoneys)
-            {
-                db.InfoMoneys.Remove(im);
-                db.SaveChanges();
-            }*/
-
-            //чистим пакеты
             if (sale.Shipment == true)
             {
                 foreach (var g in sale.GreenhouseForSales)
@@ -637,100 +610,83 @@ namespace Sklad.Controllers
             _db.SaveChanges();
             sale.GreenhouseForSales = null;
 
+            var needInfoMoney = _db.InfoMoneys.Include(s => s.Sale).OrderByDescending(d => d.Date).ToList();
 
-            /*IEnumerable<Pack> packss = db.Packs
-                  .Include(p => p.Stock)
-                  .Where(p => p.Stock.Id == stock.Id);
-              ICollection<Pack> packs = new List<Pack>();
-              foreach (var p in packss)
-              {
-                  packs.Add(p);
-              }*/
-              var needInfoMoney = _db.InfoMoneys.Include(s => s.Sale).OrderByDescending(d => d.Date).ToList();
-
-              Sale needSale = _db.Sales.Include(p => p.GreenhouseForSales).FirstOrDefault(n => n.Number == sale.Number);
-              foreach (var n in needInfoMoney)
-              {   
-                if(sale.Date.Second == needSale.Date.Second && needSale.Date.Minute == needSale.Date.Minute && sale.Date.Hour == needSale.Date.Hour && sale.Date.Day == needSale.Date.Day && sale.Date.Month == needSale.Date.Month && sale.Date.Year == needSale.Date.Year)
-                  {
+            Sale needSale = _db.Sales.Include(p => p.GreenhouseForSales).FirstOrDefault(n => n.Number == sale.Number);
+            foreach (var n in needInfoMoney)
+            {
+                if (sale.Date.Second == needSale.Date.Second && needSale.Date.Minute == needSale.Date.Minute &&
+                    sale.Date.Hour == needSale.Date.Hour && sale.Date.Day == needSale.Date.Day &&
+                    sale.Date.Month == needSale.Date.Month && sale.Date.Year == needSale.Date.Year)
+                {
                     var InfoMoneys = _db.InfoMoneys
                         .Include(i => i.Sale)
                         .Include(s => s.Stock)
                         .Where(h => h.Sale.Id == needSale.Id && h.Stock.Id == stock.Id)
                         .ToList();
-                        foreach (var im in InfoMoneys)
-                        {
-                            _db.InfoMoneys.Remove(im);
-                        }
+                    foreach (var im in InfoMoneys)
+                    {
+                        _db.InfoMoneys.Remove(im);
+                    }
                     var DependencySales = _db.Sales.Where(s => s.Number == needSale.Number).ToList();
-                        foreach(var ds in DependencySales)
-                        {                       
-                            var HisPacks = _db.HistoryPacks.Include(s => s.Sale).Where(h => h.Sale.Id == ds.Id).ToList();
-                            foreach (var hp in HisPacks)
-                            {
-                                hp.Sale = null;
-                            }
-                            _db.SaveChanges();
-                            _db.Sales.Remove(ds);
-                            _db.SaveChanges();
+                    foreach (var ds in DependencySales)
+                    {
+                        var HisPacks = _db.HistoryPacks.Include(s => s.Sale).Where(h => h.Sale.Id == ds.Id).ToList();
+                        foreach (var hp in HisPacks)
+                        {
+                            hp.Sale = null;
                         }
-                  }
-                  else if (sale.Date.Second == n.Date.Second && sale.Date.Minute == n.Date.Minute && sale.Date.Hour == n.Date.Hour && sale.Date.Day == n.Date.Day && sale.Date.Month == n.Date.Month && sale.Date.Year == n.Date.Year)
-                  {
-                      InfoMoney test = n;
-                      needSale.Remain += sale.AddMoney;
-                      _db.InfoMoneys.Remove(test);
-                      if(sale.Shipment == true) { 
-                          foreach (var g in needSale.GreenhouseForSales)
-                          {
-                              Greenhouse g1 = _db.Greenhouses
-                                  .Include(gh => gh.PacksForGH)
-                                  .Include(gh => gh.Stock)
-                                  .FirstOrDefault(gh => gh.Name == g.Name && gh.Stock.Id == sale.Stock.Id);
+                        _db.SaveChanges();
+                        _db.Sales.Remove(ds);
+                        _db.SaveChanges();
+                    }
+                }
+                else if (sale.Date.Second == n.Date.Second && sale.Date.Minute == n.Date.Minute &&
+                         sale.Date.Hour == n.Date.Hour && sale.Date.Day == n.Date.Day &&
+                         sale.Date.Month == n.Date.Month && sale.Date.Year == n.Date.Year)
+                {
+                    InfoMoney test = n;
+                    needSale.Remain += sale.AddMoney;
+                    _db.InfoMoneys.Remove(test);
+                    if (sale.Shipment == true)
+                    {
+                        foreach (var g in needSale.GreenhouseForSales)
+                        {
+                            Greenhouse g1 = _db.Greenhouses
+                                .Include(gh => gh.PacksForGH)
+                                .Include(gh => gh.Stock)
+                                .FirstOrDefault(gh => gh.Name == g.Name && gh.Stock.Id == sale.Stock.Id);
 
-                              foreach (var p in g1.PacksForGH)
-                              {
-                                  Pack p1 = _db.Packs
-                                      .Include(pck => pck.Stock)
-                                      .FirstOrDefault(pck => pck.Name == p.Name && pck.Stock.Id == sale.Stock.Id);
-                                  p1.Amount += 1 * p.Amount * g.Amount;
+                            foreach (var p in g1.PacksForGH)
+                            {
+                                Pack p1 = _db.Packs
+                                    .Include(pck => pck.Stock)
+                                    .FirstOrDefault(pck => pck.Name == p.Name && pck.Stock.Id == sale.Stock.Id);
+                                p1.Amount += 1 * p.Amount * g.Amount;
 
-                                  HistoryPack hp1 = new HistoryPack()
-                                  {
-                                      Name = p1.Name,
-                                      Amount = p.Amount * g.Amount * 1,
-                                      Date = DateTime.Now,
-                                      ForHistory = false,
-                                      Sale = null,
-                                      Pack = p1,
-                                      Stock = sale.Stock,
-                                      Description = sale.Number
-                                  };
-                                  _db.HistoryPacks.Add(hp1);
-                              }
-                          }
-                          needSale.Shipment = false;
-                      }
+                                HistoryPack hp1 = new HistoryPack()
+                                {
+                                    Name = p1.Name,
+                                    Amount = p.Amount * g.Amount * 1,
+                                    Date = DateTime.Now,
+                                    ForHistory = false,
+                                    Sale = null,
+                                    Pack = p1,
+                                    Stock = sale.Stock,
+                                    Description = sale.Number
+                                };
+                                _db.HistoryPacks.Add(hp1);
+                            }
+                        }
+                        needSale.Shipment = false;
+                    }
                     _db.Sales.Remove(sale);
                     _db.SaveChanges();
                     break;
-                  }
-              }
-              _db.SaveChanges();
-
-
-            /*foreach (var hp in db.HistoryPacks.Where(h => h.Sale.Id == sale.Id))
-            {
-                hp.Sale = null;
-                hp.Stock = null;
-                Pack pack = null;
-                pack = packs.FirstOrDefault(p => p.Name == hp.Name);
-                if (pack != null)
-                    pack.Amount -= hp.Amount;
+                }
             }
-            db.SaveChanges();
-            db.Sales.Remove(sale);
-            db.SaveChanges();*/
+            _db.SaveChanges();
+
             var HPacks = _db.HistoryPacks.Include(s => s.Sale).Where(h => h.Sale.Id == sale.Id).ToList();
             foreach(var hp in HPacks)
             {
@@ -740,13 +696,6 @@ namespace Sklad.Controllers
 
             return RedirectToAction("Realizations", "Admin", new { id = stock.Id });
         }
-
-        /*public ActionResult Outgos(int? id)
-        {
-            IEnumerable<Sale> sales = db.Sales.Where(s => s.Stock.Id == id && s.Inspect == true && s.Outgo > 0);
-
-            return View(sales);
-        }*/
 
         public ActionResult DealerHistory(int? id)
         {
@@ -992,25 +941,6 @@ namespace Sklad.Controllers
         {
             Stock stock = _db.Stocks.FirstOrDefault(s => s.Id == id);
 
-            /*IEnumerable<Dealer> dealers = db.Dealers;
-            ViewBag.Dealers = dealers;
-            IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 1).OrderBy(g => g.Position);
-            ViewBag.Ghs1 = ghs1;
-            IEnumerable<Greenhouse> ghs2 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 2).OrderBy(g => g.Position);
-            ViewBag.Ghs2 = ghs2;
-            IEnumerable<Greenhouse> ghs3 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 3).OrderBy(g => g.Position);
-            ViewBag.Ghs3 = ghs3;
-            IEnumerable<Greenhouse> ghs4 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 4).OrderBy(g => g.Position);
-            ViewBag.Ghs4 = ghs4;
-            IEnumerable<Greenhouse> ghs5 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 5).OrderBy(g => g.Position);
-            ViewBag.Ghs5 = ghs5;
-            IEnumerable<Greenhouse> ghs6 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 6).OrderBy(g => g.Position);
-            ViewBag.Ghs6 = ghs6;
-            IEnumerable<Greenhouse> ghs7 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 7).OrderBy(g => g.Position);
-            ViewBag.Ghs7 = ghs7;
-            IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 8).OrderBy(g => g.Position);
-            ViewBag.Ghs8 = ghs8;*/
-
             ViewBag.Categories = _db.GreenhouseCategories.Include(g => g.Greenhouses);
 
             HttpCookie cookieReq = Request.Cookies["Greenhouses"];
@@ -1224,73 +1154,6 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult DetailInfo(int? id)
         {
-             /*
-             decimal sumCash = 0;
-             decimal sumTerminal = 0;
-
-             decimal sumPay = 0;
-             decimal sumCashment = 0;
-             decimal sumDelivery = 0;
-             decimal sumProcurement = 0;
-             decimal sumChancery = 0;
-             decimal sumReturn = 0;
-             decimal sumArenda = 0;
-             decimal sumOthers = 0;
-             
-
-             #region ebanina
-             foreach (var im in db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal != true && i.Cost > 0))
-             {
-                 sumCash += im.Cost;
-             }
-
-             foreach (var im in db.InfoMoneys.Where(i => i.Stock.Id == id && i.PayForTerminal && i.Cost > 0))
-             {
-                 sumTerminal += im.Cost;
-             }
-
-             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Зарплата" && i.Confirmed == true))
-             {
-                 sumPay += sale.Outgo;
-             }
-
-             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Инкасация" && i.Confirmed == true))
-             {
-                 sumCashment += sale.Outgo;
-             }
-
-             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Доставка" && i.Confirmed == true))
-             {
-                 sumDelivery += sale.Outgo;
-             }
-
-             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Закуп СПК" && i.Confirmed == true))
-             {
-                 sumProcurement += sale.Outgo;
-             }
-
-             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Канцелярия" && i.Confirmed == true))
-             {
-                 sumChancery += sale.Outgo;
-             }
-
-             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Возврат денежных средств" && i.Confirmed == true))
-             {
-                 sumReturn += sale.Outgo;
-             }
-
-             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Аренда" && i.Confirmed == true))
-             {
-                 sumArenda += sale.Outgo;
-             }
-
-             foreach (var sale in db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true))
-             {
-                 sumOthers += sale.Outgo;
-             }
-             #endregion
-             ---Старый код*/
-
             ViewBag.SumCash = _db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal != true && s.Confirmed == true).ToList().Sum(am => am.AddMoney);
             ViewBag.SumTerminal = _db.Sales.Where(s => s.Stock.Id == id && s.PayForTerminal == true && s.Confirmed == true).ToList().Sum(amt => amt.AddMoney);
             ViewBag.SumPay = _db.Sales.Where(s => s.Stock.Id == id && s.OutgoCategory == "Зарплата" && s.Confirmed == true).ToList().Sum(s => s.Outgo); 
@@ -1349,6 +1212,7 @@ namespace Sklad.Controllers
 
             return View();
         }
+
         [HttpGet]
         public ActionResult ChangeTrack(int id)
         {

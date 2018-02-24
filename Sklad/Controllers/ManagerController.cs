@@ -711,13 +711,6 @@ namespace Sklad.Controllers
             return RedirectToAction("Packs", "Manager", new { id = pack.Stock.Id });
         }
 
-        /*public ActionResult Outgos(int? id)
-        {
-            IEnumerable<Sale> sales = db.Sales.Where(s => s.Stock.Id == id && s.Inspect == true);
-
-            return View(sales);
-        }*/
-
         public ActionResult Info(int? id)
         {
             Stock stock = db.Stocks
@@ -1232,7 +1225,6 @@ namespace Sklad.Controllers
             Sale sale = db.Sales
                 .Include(x => x.Stock)
                 .FirstOrDefault(x => x.Id == id);
-            //sale.Remain -= sum;
             sale.DeliveryConfirm = true;
 
             Installment installment = db.Installments.Include(i => i.Sale).FirstOrDefault(i => i.Sale.Number == sale.Number);
@@ -1297,22 +1289,6 @@ namespace Sklad.Controllers
 
             IEnumerable<Dealer> dealers = db.Dealers;
             ViewBag.Dealers = dealers;
-            /*IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 1).OrderBy(g => g.Position);
-            ViewBag.Ghs1 = ghs1;
-            IEnumerable<Greenhouse> ghs2 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 2).OrderBy(g => g.Position);
-            ViewBag.Ghs2 = ghs2;
-            IEnumerable<Greenhouse> ghs3 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 3).OrderBy(g => g.Position);
-            ViewBag.Ghs3 = ghs3;
-            IEnumerable<Greenhouse> ghs4 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 4).OrderBy(g => g.Position);
-            ViewBag.Ghs4 = ghs4;
-            IEnumerable<Greenhouse> ghs5 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 5).OrderBy(g => g.Position);
-            ViewBag.Ghs5 = ghs5;
-            IEnumerable<Greenhouse> ghs6 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 6).OrderBy(g => g.Position);
-            ViewBag.Ghs6 = ghs6;
-            IEnumerable<Greenhouse> ghs7 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 7).OrderBy(g => g.Position);
-            ViewBag.Ghs7 = ghs7;
-            IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 8).OrderBy(g => g.Position);
-            ViewBag.Ghs8 = ghs8;*/
 
             ViewBag.Categories = db.GreenhouseCategories.Include(g => g.Greenhouses);
 
@@ -1399,8 +1375,6 @@ namespace Sklad.Controllers
             List<Greenhouse> ngreenhouses = new List<Greenhouse>();
             List<PackForGH> packs = new List<PackForGH>();
             List<GreenHouseForList> lala = new List<GreenHouseForList>();
-
-            //db.SaveChanges();
 
             foreach (var gh in claim.GreenhouseForSales)
             {
@@ -1541,23 +1515,6 @@ namespace Sklad.Controllers
             Claim claim = db.Claims.Include(s => s.Stock).FirstOrDefault(i => i.Id == id);
             Stock stock = db.Stocks.FirstOrDefault(s => s.Id == claim.Stock.Id);
 
-            /*IEnumerable<Greenhouse> ghs1 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 1).OrderBy(g => g.Position);
-            ViewBag.Ghs1 = ghs1;
-            IEnumerable<Greenhouse> ghs2 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 2).OrderBy(g => g.Position);
-            ViewBag.Ghs2 = ghs2;
-            IEnumerable<Greenhouse> ghs3 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 3).OrderBy(g => g.Position);
-            ViewBag.Ghs3 = ghs3;
-            IEnumerable<Greenhouse> ghs4 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 4).OrderBy(g => g.Position);
-            ViewBag.Ghs4 = ghs4;
-            IEnumerable<Greenhouse> ghs5 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 5).OrderBy(g => g.Position);
-            ViewBag.Ghs5 = ghs5;
-            IEnumerable<Greenhouse> ghs6 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 6).OrderBy(g => g.Position);
-            ViewBag.Ghs6 = ghs6;
-            IEnumerable<Greenhouse> ghs7 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 7).OrderBy(g => g.Position);
-            ViewBag.Ghs7 = ghs7;
-            IEnumerable<Greenhouse> ghs8 = db.Greenhouses.Include(g => g.Stock).Where(g => g.Stock.Id == stock.Id && g.Group == 8).OrderBy(g => g.Position);
-            ViewBag.Ghs8 = ghs8;*/
-
             ViewBag.Categories = db.GreenhouseCategories.Include(g => g.Greenhouses);
 
             Dictionary<string, decimal> productWithCount = new Dictionary<string, decimal>();
@@ -1632,6 +1589,7 @@ namespace Sklad.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public ActionResult DogInstallmentStart(string sellNumb)
         {
@@ -1715,6 +1673,7 @@ namespace Sklad.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public ActionResult OrderInstallmentStart(string sellNumb)
         {
@@ -1735,12 +1694,6 @@ namespace Sklad.Controllers
         {
             Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
             List<Montaznik> montazniksList = new List<Montaznik>();
-
-            /*foreach(var i in montazniksIds)
-            {
-                Montaznik montaznik = db.Montazniks.FirstOrDefault(m => m.Id == i);
-                montazniksList.Add(montaznik);
-            }*/
 
             Installment installment = new Installment()
             {
@@ -1768,6 +1721,7 @@ namespace Sklad.Controllers
 
             return View(installment);
         }
+
         [HttpPost]
         public ActionResult InstallationEdit(int id, string adress, string phone, DateTime datefrom, DateTime datefor, bool light, ICollection<int> montazniksIds, string comment)
         {
@@ -1805,6 +1759,7 @@ namespace Sklad.Controllers
 
             return RedirectToAction("OrderInstallation", "Manager");
         }
+
         [HttpGet]
         public ActionResult InstallationSum(string sellNumb)
         {
@@ -1820,10 +1775,8 @@ namespace Sklad.Controllers
                 ViewBag.saleDolg = "Клиент с рассрочкой";
             }
 
-
             return View(sale);
         }
-
     }
 
     public class GreenHouseForList
@@ -1841,7 +1794,4 @@ namespace Sklad.Controllers
 
         public GreenHouseForList() { }
     }
-
-   
-
 }
