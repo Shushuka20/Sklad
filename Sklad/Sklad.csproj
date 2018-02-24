@@ -142,7 +142,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-
     <Compile Include="Migrations\201603031722007_InitialCreate.cs" />
     <Compile Include="Migrations\201603031722007_InitialCreate.Designer.cs">
       <DependentUpon>201603031722007_InitialCreate.cs</DependentUpon>
@@ -272,6 +271,7 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ClaimService.cs" />
+    <Compile Include="Services\SaleService.cs" />
     <Compile Include="Services\StatisticService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -397,7 +397,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201603031722007_InitialCreate.resx">
       <DependentUpon>201603031722007_InitialCreate.cs</DependentUpon>
@@ -478,7 +477,6 @@
       <DependentUpon>201802192151399_20.02.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -14,11 +14,13 @@ namespace Sklad.Controllers
     {
         private readonly SkladContext _db;
         private readonly StatisticService _statisticService;
+        private readonly SaleService _saleService;
 
         public AdminController()
         {
             _db = new SkladContext();
             _statisticService = new StatisticService(_db);
+            _saleService = new SaleService(_db);
         }
 
         public ActionResult Index()
@@ -568,7 +570,12 @@ namespace Sklad.Controllers
         //TODO: refact this shit
         public ActionResult RealizationDelete(int? id)
         {
-            Sale sale = _db.Sales
+            Sale sale = _db.Sales.Include(s => s.Stock).FirstOrDefault(s => s.Id == id);
+            int stockId = sale.Stock.Id;
+            sale = null;
+            _saleService.SaleDelete(id);
+
+            /*Sale sale = _db.Sales
                 .Include(s => s.Stock)
                 .Include(s => s.GreenhouseForSales)
                 .FirstOrDefault(s => s.Id == id);
@@ -692,9 +699,9 @@ namespace Sklad.Controllers
             {
                 hp.Sale = null;
             }
-            _db.SaveChanges();
+            _db.SaveChanges();*/
 
-            return RedirectToAction("Realizations", "Admin", new { id = stock.Id });
+            return RedirectToAction("Realizations", "Admin", new { id = stockId });
         }
 
         public ActionResult DealerHistory(int? id)
