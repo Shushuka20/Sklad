@@ -1250,13 +1250,13 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult CategoryEdit(int? id)
         {
+            ViewBag.Stocks = _db.Stocks;
+
             if (id == null)
             {
                 return View();
             }
-
-            ViewBag.Stocks = _db.Stocks;
-
+         
             GreenhouseCategory category = _db.GreenhouseCategories.Include(s => s.Stock).FirstOrDefault(c => c.Id == id);
 
             return View(category);

@@ -1659,7 +1659,7 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult OrderInstallation(int? id)
         {
-            IEnumerable<Installment> installments = db.Installments.Include(i => i.Sale).Include(m => m.Montazniks);
+            IEnumerable<Installment> installments = db.Installments.Include(i => i.Sale).Include(m => m.Montazniks).Where(i => i.Sale.Stock.Id == id);
             IEnumerable<Installment> installmentsNotGreen = installments.Where(i => i.Color != "green").OrderBy(d => d.ForDate);
             IEnumerable<Installment> installmentsGreen = installments.Where(i => i.Color == "green");
 
