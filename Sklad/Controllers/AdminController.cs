@@ -27,23 +27,14 @@ namespace Sklad.Controllers
         {
             var infos = _db.Stocks
                 .Where(s => s.Track == true)
-                .GroupJoin(
-                    _db.Sales.Where(i => i.PayForTerminal != true && i.Confirmed == true && i.Stock != null),
-                    stock => stock.Id,
-                    info => info.Stock.Id,
-                    (stock, sale) => new
+                .Select(stock => new
                     {
                         Id = stock.Id,
                         Name = stock.Name,
                         Prefix = stock.Prefix,
                         Track = stock.Track,
                     }).ToList()
-                .GroupJoin(
-                    _db.Sales.Include(sale => sale.Stock).Where(sale =>
-                        sale.Dealer == null && sale.Remain > 0 && sale.Confirmed == true),
-                    obj => obj.Id,
-                    sale => sale.Stock.Id,
-                    (obj, sales) => new Info
+                .Select(obj => new Info
                     {
                         Id = obj.Id,
                         Name = obj.Name,
@@ -108,23 +99,14 @@ namespace Sklad.Controllers
         public ActionResult Stocks()
         {
             var infos = _db.Stocks
-                .GroupJoin(
-                    _db.Sales.Where(i => i.PayForTerminal != true && i.Confirmed == true && i.Stock != null),
-                    stock => stock.Id,
-                    info => info.Stock.Id,
-                    (stock, sale) => new
+                .Select(stock => new
                     {
                         Id = stock.Id,
                         Name = stock.Name,
                         Prefix = stock.Prefix,
                         Track = stock.Track
                     }).ToList()
-                .GroupJoin(
-                    _db.Sales.Include(sale => sale.Stock).Where(sale =>
-                        sale.Dealer == null && sale.Remain > 0 && sale.Confirmed == true),
-                    obj => obj.Id,
-                    sale => sale.Stock.Id,
-                    (obj, sales) => new Info
+                .Select(obj => new Info
                     {
                         Id = obj.Id,
                         Name = obj.Name,
