@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.DynamicData;
 using Sklad.Models;
@@ -43,6 +44,39 @@ namespace Sklad.Services
             var greenhousesForSale = _db.GreenhouseForSales
                     .Include(g => g.Sale)
                     .Where(g => g.Sale.Id == sale.Id).ToList();
+            if (sale.Shipment == true)
+            {
+                foreach (var g in greenhousesForSale)
+                {
+                    Greenhouse g1 = _db.Greenhouses
+                        .Include(gh => gh.PacksForGH)
+                        .Include(gh => gh.Stock)
+                        .FirstOrDefault(gh => gh.Name == g.Name && gh.Stock.Id == sale.Stock.Id);
+
+                    foreach (var p in g1.PacksForGH)
+                    {
+                        Pack p1 = _db.Packs
+                            .Include(pck => pck.Stock)
+                            .FirstOrDefault(pck => pck.Name == p.Name && pck.Stock.Id == sale.Stock.Id);
+                        p1.Amount += 1 * p.Amount * g.Amount;
+
+                        //хуй знает нужно или нет, чтобы сохранялась в историю при удалении сэйла, потестить
+                       /* HistoryPack hp1 = new HistoryPack()
+                        {
+                            Name = p1.Name,
+                            Amount = p.Amount * g.Amount * 1,
+                            Date = DateTime.Now,
+                            ForHistory = false,
+                            Sale = null,
+                            Pack = p1,
+                            Stock = sale.Stock,
+                            Description = sale.Number
+                        };
+                        _db.HistoryPacks.Add(hp1);*/
+                    }
+                }
+            }
+
             foreach (var greenhouseForSale in greenhousesForSale)
             {
                 greenhouseForSale.Stock = null;
