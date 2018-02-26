@@ -1691,8 +1691,9 @@ namespace Sklad.Controllers
 
         [HttpPost]
         public ActionResult OrderInstallmentFinal(string sellNumb, string adress, string phone, DateTime datefrom, DateTime datefor, bool light, string comment)
-        {
-            Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
+        {            
+            Sale sale = db.Sales.Include(s => s.Stock).FirstOrDefault(s => s.Number == sellNumb);
+            Stock stock = db.Stocks.FirstOrDefault(s => s.Id == sale.Stock.Id);
             List<Montaznik> montazniksList = new List<Montaznik>();
 
             Installment installment = new Installment()
@@ -1710,7 +1711,7 @@ namespace Sklad.Controllers
             db.Installments.Add(installment);
             db.SaveChanges();
 
-            return RedirectToAction("OrderInstallation", "Manager");
+            return RedirectToAction("OrderInstallation", "Manager", new { id = stock.Id });
         }
 
         [HttpGet]
