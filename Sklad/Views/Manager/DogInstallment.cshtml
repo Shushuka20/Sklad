@@ -19,7 +19,14 @@
     </div>
     <div class="form-group">
         <label for="name">ФИО</label>
-        <input type="text" id="name" name="FIO" class="form-control" />
+        @if (ViewBag.FIO != null)
+        {
+            <input type="text" id="name" name="FIO" value="@ViewBag.FIO" class="form-control" />
+        }
+        else
+        {
+            <input type="text" id="name" name="FIO" class="form-control" />
+        }
     </div>
     <div class="form-group">
         <label for="name">Серия и номер паспорта</label>
@@ -39,7 +46,14 @@
     </div>
     <div class="form-group">
         <label for="name">Контактный телефон</label> 
-        <input type="text" id="name" name="privatePhone" class="form-control" />
+        @if (ViewBag.Phone != null)
+        {
+            <input type="text" id="name" name="phone" value="@ViewBag.Phone" class="form-control" />
+        }
+        else
+        {
+            <input type="text" id="name" name="phone" class="form-control" />
+        }
     </div>
     <div class="form-group">
         <label for="name">Домашний телефон</label>

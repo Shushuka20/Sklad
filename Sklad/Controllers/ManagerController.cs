@@ -1127,9 +1127,15 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult DogHran(string sellNumb)
         {
+            Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
+
             ViewBag.SellNumb = null;
-            if (sellNumb != null)
+            if (sellNumb != null) { 
                 ViewBag.SellNumb = sellNumb;
+                ViewBag.FIO = sale.FIO;
+                ViewBag.Phone = sale.Phone;
+                ViewBag.AddressInstallation = sale.AddressInstallation;
+            }
 
             return View();
         }
@@ -1605,13 +1611,16 @@ namespace Sklad.Controllers
             ViewBag.SellNumb = sellNumb;
             ViewBag.Sum = null;
             ViewBag.AddMoney = null;
+            ViewBag.FIO = null;
+            ViewBag.Phone = null;
             if (sellNumb != null)
-
             {
                 Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
                 ViewBag.SellNumb = sellNumb;
                 ViewBag.Sum = sale.SumWithD;
                 ViewBag.AddMoney = sale.AddMoney;
+                ViewBag.FIO = sale.FIO;
+                ViewBag.Phone = sale.Phone;
             }
 
             return View();
