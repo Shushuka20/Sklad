@@ -223,6 +223,9 @@ namespace Sklad.Controllers
             sale.PayForTerminal = model.PayForTerminal;
             sale.Delivery = model.Delivery;
             sale.Address = model.Address;
+            sale.FIO = model.FIO;
+            sale.Phone = model.Phone;
+            sale.AddressInstallation = model.AddressInstallation;
             sale.DeliveryCost = model.DeliveryCost;
             sale.Date = DateTime.UtcNow.AddHours(6);
             sale.Remain = model.SumWithoutD - model.Discount - model.AddMoney;
@@ -1692,8 +1695,7 @@ namespace Sklad.Controllers
         [HttpPost]
         public ActionResult OrderInstallmentFinal(string sellNumb, string adress, string phone, DateTime datefrom, DateTime datefor, bool light, string comment)
         {            
-            Sale sale = db.Sales.Include(s => s.Stock).FirstOrDefault(s => s.Number == sellNumb);
-            Stock stock = db.Stocks.FirstOrDefault(s => s.Id == sale.Stock.Id);
+            Sale sale = db.Sales.Include(s => s.Stock).FirstOrDefault(s => s.Number == sellNumb);         
             List<Montaznik> montazniksList = new List<Montaznik>();
 
             Installment installment = new Installment()
@@ -1711,7 +1713,7 @@ namespace Sklad.Controllers
             db.Installments.Add(installment);
             db.SaveChanges();
 
-            return RedirectToAction("OrderInstallation", "Manager", new { id = stock.Id });
+            return RedirectToAction("OrderInstallation", "Manager", new { id = sale.Stock.Id });
         }
 
         [HttpGet]
