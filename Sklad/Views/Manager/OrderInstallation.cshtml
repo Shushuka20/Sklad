@@ -68,8 +68,9 @@
                        <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "yellow" })" class="btn btn-warning"></a>
                        <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "red" })" class="btn btn-danger"></a>
                    </td>
-                   <td>
+                   <td>                      
                        <a href="@Url.Action("ReceivingMonet", new { i.Sale.Number })" class="btn btn-default">Прием денег</a>
+                       <a href="@Url.Action("OrderInstallationDelete", new { i.Id })" class="btn btn-default">Удалить</a>
                    </td>
                </tr>
            }
@@ -97,7 +98,13 @@
                         @i.Sale.Montaznik.FIO;
                     }                    
                 </td>
-                <td>@i.Comment</td>
+                <td>
+                    @i.Sale.FIO <br />
+                    @i.Sale.Phone <br />
+                    @i.Sale.AddressInstallation <br />
+                    @i.Comment
+                
+                </td>
                 <td><a href="/Manager/InstallationEdit/@i.Id" class="btn btn-default">Изменить</a></td>
                 <td>
                     <a href="@Url.Action("ChangeColor", new { id = i.Id, color = "white" })" class="btn btn-default"></a>
@@ -107,6 +114,7 @@
                 </td>
                 <td>
                     <a href="@Url.Action("ReceivingMonet", new { number = i.Sale.Number })" class="btn btn-default">Прием денег</a>
+                    <a href="@Url.Action("OrderInstallationDelete", new { i.Id })" class="btn btn-default">Удалить</a>
                     <a href="/Manager/Delivery?sellNumb=@i.Sale.Number" class="btn btn-default">Отправить</a>
                 </td>
             </tr>

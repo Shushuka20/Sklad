@@ -543,6 +543,10 @@ namespace Sklad.Controllers
                 Description = "Изменение способа оплаты"
             };
 
+            InfoMoney info = _db.InfoMoneys.Include(s => s.Sale).FirstOrDefault(i => i.Sale.Id == sale.Id);
+
+            info.PayForTerminal = model.PayForTerminal;
+
             _db.Sales.Add(newSale);
             _db.SaveChanges();
 

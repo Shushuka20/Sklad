@@ -1679,7 +1679,17 @@ namespace Sklad.Controllers
 
             return View(installments);
         }
-        
+
+        [HttpGet]
+        public ActionResult OrderInstallationDelete(int? id)
+        {
+            Installment installment = db.Installments.FirstOrDefault(i => i.Id == id);
+            db.Installments.Remove(installment);
+            db.SaveChanges();
+
+            return RedirectToAction("Index", "Home");
+        }
+
         [HttpGet]
         public ActionResult OrderInstallationStart()
         {
@@ -1697,6 +1707,12 @@ namespace Sklad.Controllers
         {
             Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
             ViewBag.Montazniks = db.Montazniks.ToList();
+            ViewBag.HasInstallation = false;
+
+            if(db.Installments.Include(s => s.Sale).FirstOrDefault(i => i.Sale.Id == sale.Id) != null)
+            {
+                ViewBag.HasInstallation = true;
+            }
 
             return View(sale);
         }
@@ -1716,6 +1732,7 @@ namespace Sklad.Controllers
                 Light = light,
                 Comment = comment,
                 Sale = sale,
+
                 Montazniks = montazniksList,
                 Color = "white"
             };
