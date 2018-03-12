@@ -18,15 +18,36 @@
     </div>
     <div class="form-group">
         <label for="name">ФИО</label>
-        <input type="text" id="name" name="FIO" class="form-control" />
+        @if (ViewBag.FIO != null)
+        {
+            <input type="text" id="name" name="FIO" value="@ViewBag.FIO" class="form-control" />
+        }
+        else
+        {
+            <input type="text" id="name" name="FIO" class="form-control" />
+        }
     </div>
     <div class="form-group">
         <label for="name">Адрес установки</label>
-        <input type="text" id="name" name="address" class="form-control" />
+        @if (ViewBag.AddressInstallation != null)
+        {
+            <input type="text" id="name" name="address" value="@ViewBag.AddressInstallation" class="form-control" />
+        }
+        else
+        {
+            <input type="text" id="name" name="address" class="form-control" />
+        }
     </div>
     <div class="form-group">
         <label for="name">Телефон</label>
-        <input type="number" id="name" name="phone" class="form-control" />
+        @if (ViewBag.Phone != null)
+        {
+            <input type="text" id="name" name="phone" value="@ViewBag.Phone" class="form-control" />
+        }
+        else
+        {
+            <input type="text" id="name" name="phone" class="form-control" />
+        }
     </div>
 
 

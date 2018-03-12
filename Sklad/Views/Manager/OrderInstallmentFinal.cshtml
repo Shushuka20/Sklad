@@ -5,6 +5,16 @@
 }
 
 <form role="form" method="post" action="/Manager/OrderInstallmentFinal">
+
+    @if (ViewBag.HasInstallation == true)
+    {
+        <div id="Modal" class="Modal" style="position: fixed; background-color: #ffffff; left: 30%; top: 25%; border: 1px solid #222; padding: 50px; text-align: center; border-radius: 7px; z-index: 999; display: none;">
+            <h3>По данной реализации уже есть заявка на монтаж, продолжить?</h3>
+            <button type="submit" class="btn btn-default" style="width: 100px; margin-top: 20px;">Да</button>
+            <div class="btn btn-default" id="but_unsub" style="width: 100px; margin-top: 20px;">Нет</div>
+        </div>
+    }
+
     <div class="form-group">
         <label for="name">Номер чека</label>
         <input type="text" id="name" name="sellNumb" class="form-control" placeholder="@Model.Number" value="@Model.Number"/>
@@ -15,11 +25,11 @@
     </div>
     <div class="form-group">
         <label for="name">Адрес</label>
-        <input type="text" id="name" name="adress" class="form-control" placeholder="" />
+        <input type="text" id="name" name="adress" class="form-control" placeholder="@Model.AddressInstallation" />
     </div>
     <div class="form-group">
         <label for="name">Телефон</label>
-        <input type="text" id="name" name="phone" class="form-control" placeholder="" />
+        <input type="text" id="name" name="phone" class="form-control" placeholder="@Model.Phone" />
     </div>
     <div class="form-group">
         <label for="name">Денег внесено</label>
@@ -49,7 +59,14 @@
         <label for="name">Комментарий</label>
         <input type="text" id="name" name="comment" class="form-control" placeholder="" />
     </div>
-    <button type="submit" class="btn btn-success" style="margin-bottom: 40px;">Подтвердить</button>
+    @if (ViewBag.HasInstallation == true)
+    {
+        <button id="but_sub" type="button" class="btn btn-success" style="margin-bottom: 40px;">Подтвердить</button>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-success" style="margin-bottom: 40px;">Подтвердить</button>
+    }
 </form>
 
 <script>

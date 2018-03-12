@@ -223,6 +223,9 @@ namespace Sklad.Controllers
             sale.PayForTerminal = model.PayForTerminal;
             sale.Delivery = model.Delivery;
             sale.Address = model.Address;
+            sale.FIO = model.FIO;
+            sale.Phone = model.Phone;
+            sale.AddressInstallation = model.AddressInstallation;
             sale.DeliveryCost = model.DeliveryCost;
             sale.Date = DateTime.UtcNow.AddHours(6);
             sale.Remain = model.SumWithoutD - model.Discount - model.AddMoney;
@@ -1124,9 +1127,15 @@ namespace Sklad.Controllers
         [HttpGet]
         public ActionResult DogHran(string sellNumb)
         {
+            Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
+
             ViewBag.SellNumb = null;
-            if (sellNumb != null)
+            if (sellNumb != null) { 
                 ViewBag.SellNumb = sellNumb;
+                ViewBag.FIO = sale.FIO;
+                ViewBag.Phone = sale.Phone;
+                ViewBag.AddressInstallation = sale.AddressInstallation;
+            }
 
             return View();
         }
@@ -1602,13 +1611,16 @@ namespace Sklad.Controllers
             ViewBag.SellNumb = sellNumb;
             ViewBag.Sum = null;
             ViewBag.AddMoney = null;
+            ViewBag.FIO = null;
+            ViewBag.Phone = null;
             if (sellNumb != null)
-
             {
                 Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
                 ViewBag.SellNumb = sellNumb;
                 ViewBag.Sum = sale.SumWithD;
                 ViewBag.AddMoney = sale.AddMoney;
+                ViewBag.FIO = sale.FIO;
+                ViewBag.Phone = sale.Phone;
             }
 
             return View();
@@ -1667,7 +1679,17 @@ namespace Sklad.Controllers
 
             return View(installments);
         }
-        
+
+        [HttpGet]
+        public ActionResult OrderInstallationDelete(int? id)
+        {
+            Installment installment = db.Installments.FirstOrDefault(i => i.Id == id);
+            db.Installments.Remove(installment);
+            db.SaveChanges();
+
+            return RedirectToAction("Index", "Home");
+        }
+
         [HttpGet]
         public ActionResult OrderInstallationStart()
         {
@@ -1685,14 +1707,20 @@ namespace Sklad.Controllers
         {
             Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
             ViewBag.Montazniks = db.Montazniks.ToList();
+            ViewBag.HasInstallation = false;
+
+            if(db.Installments.Include(s => s.Sale).FirstOrDefault(i => i.Sale.Id == sale.Id) != null)
+            {
+                ViewBag.HasInstallation = true;
+            }
 
             return View(sale);
         }
 
         [HttpPost]
         public ActionResult OrderInstallmentFinal(string sellNumb, string adress, string phone, DateTime datefrom, DateTime datefor, bool light, string comment)
-        {
-            Sale sale = db.Sales.FirstOrDefault(s => s.Number == sellNumb);
+        {            
+            Sale sale = db.Sales.Include(s => s.Stock).FirstOrDefault(s => s.Number == sellNumb);         
             List<Montaznik> montazniksList = new List<Montaznik>();
 
             Installment installment = new Installment()
@@ -1704,13 +1732,14 @@ namespace Sklad.Controllers
                 Light = light,
                 Comment = comment,
                 Sale = sale,
+
                 Montazniks = montazniksList,
                 Color = "white"
             };
             db.Installments.Add(installment);
             db.SaveChanges();
 
-            return RedirectToAction("OrderInstallation", "Manager");
+            return RedirectToAction("OrderInstallation", "Manager", new { id = sale.Stock.Id });
         }
 
         [HttpGet]

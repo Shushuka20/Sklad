@@ -12,6 +12,9 @@ namespace Sklad.Models
         public string Number { get; set; }
         public string Description { get; set; }
         public string Address { get; set; }
+        public string FIO { get; set; }
+        public string Phone { get; set; }
+        public string AddressInstallation { get; set; }
         public string OutgoDescription { get; set; }
         public string OutgoCategory { get; set; }
         public string Comment { get; set; }

@@ -58,16 +58,8 @@
         var submit = document.getElementById('submitPayment');
 
         function Compare() {
-            if (parseFloat(remain.value.replace(/,/, '.')) < parseFloat(sum.value.replace(/,/, '.'))) 
-                submit.disabled = true;
-            else if (parseFloat(sum.value.replace(/,/, '.')) == 0) {
-                submit.disabled = true
-            }
-            else if (parseFloat(remain.value.replace(/,/, '.')) >= parseFloat(sum.value.replace(/,/, '.')))
-                submit.disabled = false;
-            
-
-            console.log(parseFloat(sum.value.replace(/,/, '.')))
+            if (parseFloat(remain.value.replace(/,/, '.')) < parseFloat(sum.value.replace(/,/, '.')))
+                sum.value = remain.value;
         }
 
         sum.addEventListener("input", Compare);
