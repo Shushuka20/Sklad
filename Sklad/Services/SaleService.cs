@@ -14,7 +14,8 @@ namespace Sklad.Services
         {
             _db = db;
         }
-
+        
+        //To do возврат остатка на реализацию
         public void SaleDelete(int? id)
         {
             Sale sale = _db.Sales
