@@ -131,26 +131,26 @@
             </div>
         </div>
     </div>
-</div>
-<div class="row" style="padding-bottom: 40px;">
-    <div class="head" style="margin-top: 40px;">
-        <h4>Cписок проданной продукции</h4>
-    </div>
-    <table style="width: 800px; margin: 0 auto;" class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Название</th>
-                <th>Количество</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var p in ViewBag.GreenHouseList)
-            {
+    <div class="row" style="padding-bottom: 40px;">
+        <div class="head" style="margin-top: 40px;">
+            <h4>Cписок проданной продукции</h4>
+        </div>
+        <table style="width: 800px; margin: 0 auto;" class="table table-bordered">
+            <thead>
                 <tr>
-                    <td>@p.Key</td>
-                    <td>@p.Value</td>
+                    <th>Название</th>
+                    <th>Количество</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var p in ViewBag.GreenHouseList)
+            {
+                    <tr>
+                        <td>@p.Key</td>
+                        <td>@p.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>

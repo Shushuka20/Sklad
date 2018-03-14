@@ -98,6 +98,7 @@ namespace Sklad.Controllers
 
         public ActionResult Stocks()
         {
+
             var infos = _db.Stocks
                 .Select(stock => new
                     {
@@ -1202,6 +1203,27 @@ namespace Sklad.Controllers
             ViewBag.SumOthers = _db.Sales.Where(i => i.Stock.Id == id && i.OutgoCategory == "Прочее" && i.Confirmed == true && i.Date >= date1 && i.Date <= date2).ToList().Sum(s => s.Outgo);
 
             ViewBag.Profit = _db.Sales.Where(s => s.Stock.Id == id && s.Profit >= 0 && s.Confirmed == true && s.Date >= date1 && s.Date <= date2).ToList().Sum(p => p.Profit);
+
+            var a = _db.GreenhouseForSales.Where(x => x.Stock.Id == id).Include(s => s.Sale).Where(sale => sale.Sale != null && sale.Sale.Confirmed == true && sale.Sale.Date >= date1 && sale.Sale.Date <= date2)
+                .GroupBy(x => x.Name).Select(x => new
+                {
+                    Name = x.Key,
+                    Objects = x.Select(z => z)
+                }).ToList();
+
+            var b = new SortedList<string, int>();
+
+            foreach (var q in a)
+            {
+                var count = 0;
+                foreach (var o in q.Objects)
+                {
+                    count += o.Amount;
+                }
+                b.Add(q.Name, count);
+            }
+
+            ViewBag.GreenHouseList = b;
 
             return View();
         }
