@@ -497,7 +497,7 @@ namespace Sklad.Controllers
             InfoMoney im1 = new InfoMoney()
             {
                 Stock = sale.Stock,
-                Sale = sale,
+                Sale = s1,
                 Cost = sum,
                 Date = DateTime.UtcNow.AddHours(6),
                 PayForTerminal = payterm
