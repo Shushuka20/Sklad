@@ -959,9 +959,13 @@ namespace Sklad.Controllers
 
                 Installment installment = db.Installments.FirstOrDefault(i => i.Sale.Id == sale.Id);
 
-                ViewBag.Adress = installment.Adress;
-                ViewBag.Phone = installment.Phone;
-                ViewBag.Comment = installment.Comment;
+                if(installment != null)
+                {
+                    ViewBag.Adress = installment.Adress;
+                    ViewBag.Phone = installment.Phone;
+                    ViewBag.Comment = installment.Comment;
+                }
+                
             }            
             ViewBag.Packs = packs;
 
