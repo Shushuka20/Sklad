@@ -11,7 +11,7 @@
     <tbody>
         <tr>
             <th>Денег на кассе:</th>
-            <th>@ViewBag.Sum</th>
+            <th>@if (Model.Id == 1011) { { ViewBag.Sum -= 16500; } } @ViewBag.Sum</th>
         </tr>
         <tr>      
             <th>Сумма задолженности клиентов:</th>
