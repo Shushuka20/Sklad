@@ -140,7 +140,7 @@
     </div>
     <div class="clearfix" style="margin-bottom: 740px;"></div>
 
-    @if(ViewBag.Sum != null) { 
+    @if(ViewBag.Sum != null && ViewBag.Adress != null && ViewBag.Phone != null && ViewBag.Comment != null) { 
         <h4>Данные по мантажу</h4>
         <div style="max-width: 150px; padding:10px;box-sizing:border-box;">
             Адрес: @ViewBag.Adress

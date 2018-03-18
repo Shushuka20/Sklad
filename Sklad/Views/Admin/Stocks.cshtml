@@ -31,7 +31,13 @@
             <tr>
                 <td>@s.Name</td>
                 <td>@s.Prefix</td>
-                <td>@s.Sum</td>
+                <td>
+                    @if (s.Id == 1011)
+                        {
+                            { s.Sum -= 16500; }
+                        }
+                    @s.Sum
+                </td>
                 <td>
                     @if (s.Name == "Аносова 3")
                     {

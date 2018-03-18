@@ -18,6 +18,7 @@ namespace Sklad.Models
         public string OutgoDescription { get; set; }
         public string OutgoCategory { get; set; }
         public string Comment { get; set; }
+        public string ContractType { get; set; }
         public int Outgo { get; set; }
         public int DeliveryCost { get; set; }
         public decimal SumWithD { get; set; }
@@ -34,7 +35,7 @@ namespace Sklad.Models
         public bool Inspect { get; set; }
         public bool Payment { get; set; }
         public bool Confirmed { get; set; }
-        public bool DeliveryConfirm { get; set; }
+        public bool DeliveryConfirm { get; set; }       
         public Buyer Buyer { get; set; }
         public Dealer Dealer { get; set; }
         public Stock Stock { get; set; }
