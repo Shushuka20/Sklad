@@ -46,17 +46,17 @@ namespace Sklad.Controllers
             if (cookieReq != null)
             {
                 str = cookieReq["ListForRealization"];
-                if(str != "")
+                if (str != "")
                     ViewBag.ListForRealization = str;
             }
             Uri prevUrl = Request.UrlReferrer;
-            if(prevUrl.AbsolutePath != "/Manager/Realization/"+ id)
+            if (prevUrl.AbsolutePath != "/Manager/Realization/" + id)
             {
                 ViewBag.ListForRealization = null;
             }
 
             ViewBag.Admin = admin;
-            
+
             return View(stock);
         }
 
@@ -132,7 +132,7 @@ namespace Sklad.Controllers
             }
             db.SaveChanges();
 
-            return RedirectToAction("Realization", "Manager", new { id = id, idS = sale.Id, admin = admin});
+            return RedirectToAction("Realization", "Manager", new { id = id, idS = sale.Id, admin = admin });
         }
 
         [HttpGet]
@@ -189,7 +189,7 @@ namespace Sklad.Controllers
                 }
             }
             ViewBag.Admin = "";
-            if(admin == true)
+            if (admin == true)
             {
                 ViewBag.Admin = "ЗАЯВКА С ОФИСА";
             }
@@ -296,7 +296,7 @@ namespace Sklad.Controllers
             user = db.Users.Include(u => u.Stock).FirstOrDefault(u => u.Login == User.Identity.Name);
             if (user != null)
             {
-                if(user.Stock != null)
+                if (user.Stock != null)
                 {
                     ViewBag.ColorS = user.Stock.BackgroundColor;
                 }
@@ -370,7 +370,7 @@ namespace Sklad.Controllers
                     .FirstOrDefault(gh => gh.Name == g.Name && gh.Stock.Id == stock.Id);
                 sale.SumBonuses += (g1.Bonus * g.Amount);
                 sale.SumCostPrice += (g1.CostPrice * g.Amount);
-                sale.Profit = sale.SumWithD - sale.SumCostPrice; 
+                sale.Profit = sale.SumWithD - sale.SumCostPrice;
             }
 
             InfoMoney im1 = null;
@@ -883,7 +883,7 @@ namespace Sklad.Controllers
             return View(hp1);
         }
 
-        public ActionResult Ticket(int? id, string comm, int? sum )
+        public ActionResult Ticket(int? id, string comm, int? sum)
         {
             Sale sale = db.Sales
                 .Include(s => s.GreenhouseForSales)
@@ -953,20 +953,20 @@ namespace Sklad.Controllers
                 }
             }
 
-            if(sum != null)
+            if (sum != null)
             {
                 ViewBag.Sum = sum;
 
                 Installment installment = db.Installments.FirstOrDefault(i => i.Sale.Id == sale.Id);
 
-                if(installment != null)
+                if (installment != null)
                 {
                     ViewBag.Adress = installment.Adress;
                     ViewBag.Phone = installment.Phone;
                     ViewBag.Comment = installment.Comment;
                 }
-                
-            }            
+
+            }
             ViewBag.Packs = packs;
 
             return View(sale);
@@ -1098,12 +1098,26 @@ namespace Sklad.Controllers
             sale.Montaznik = m1;
             sale.DeliveryConfirm = false;
 
+            string contractType = "";
+            if (mont == true && deliv == true)
+            {
+                contractType = "Монтаж и Доставка";
+            }
+            else if (mont == true && deliv == false)
+            {
+                contractType = "Монтаж";
+            }
+            else if (mont == false && deliv == true)
+            {
+                contractType = "Доставка";
+            }
+
             Sale s1 = new Models.Sale()
             {
                 Number = sale.Number,
                 AddMoney = sale.AddMoney,
                 Confirmed = sale.Confirmed,
-                Date = sale.Date,
+                Date = sale.Date, // Будущая правка, берет дату из реализации, нужна дата сотавления договора на монтаж
                 Remain = sale.Remain,
                 Comment = "Монтажник: " + m1.FIO + ".",
                 Stock = sale.Stock,
@@ -1111,10 +1125,11 @@ namespace Sklad.Controllers
                 Description = sale.Description,
                 SumWithD = sale.SumWithD,
                 SumWithoutD = sale.SumWithoutD,
-                Inspect = sale.Inspect
+                Inspect = sale.Inspect,
+                ContractType = contractType
             };
 
-            if(shipment != null)
+            if (shipment != null)
                 if (shipment == true)
                 {
                     sale.Shipment = true;
@@ -1126,6 +1141,28 @@ namespace Sklad.Controllers
             db.SaveChanges();
 
             return View(sale);
+        }
+
+        [HttpGet]
+        public ActionResult DogDeliveryPech(int id)
+        {
+            Sale contractSale = db.Sales.Include(m => m.Montaznik).FirstOrDefault(s => s.Id == id);
+            Sale sale = db.Sales.Include(s => s.Stock).Include(g => g.GreenhouseForSales).FirstOrDefault(s => s.Number == contractSale.Number);
+
+            List<Greenhouse> ghfs = new List<Greenhouse>();
+            foreach (var g in sale.GreenhouseForSales)
+            {
+                Greenhouse g1 = db.Greenhouses
+                    .Include(x => x.PacksForGH)
+                    .Include(x => x.Stock)
+                    .FirstOrDefault(x => x.Name == g.Name && x.Stock.Id == sale.Stock.Id);
+                g1.Amount = g.Amount;
+                ghfs.Add(g1);
+            }
+
+            ViewBag.Ghfs = ghfs;
+
+            return View(contractSale);
         }
 
         [HttpGet]

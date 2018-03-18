@@ -22,7 +22,7 @@ namespace Sklad.Services
                .Include(s => s.Stock)
                .FirstOrDefault(s => s.Id == id);
 
-            var saleFirst = _db.Sales.Where(s => s.Number == sale.Number).OrderBy(s => s.Date).First();
+            var saleFirst = _db.Sales.Where(s => s.Number == sale.Number).OrderBy(s => s.Id).First();
 
             if (sale.Id == saleFirst.Id)
             {
