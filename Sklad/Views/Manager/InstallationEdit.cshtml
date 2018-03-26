@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "InstallationEdit";
     Layout = "~/Views/Shared/_LayoutManager.cshtml";
 }
@@ -16,11 +15,11 @@
     </div>
     <div class="form-group">
         <label for="name">Адрес</label>
-        <input type="text" id="name" name="adress" class="form-control" value="@Model.Adress" />
+        <input type="text" id="name" name="adress" class="form-control" value="@Model.Sale.AddressInstallation" />
     </div>
     <div class="form-group">
         <label for="name">Телефон</label>
-        <input type="text" id="name" name="phone" class="form-control" value="@Model.Phone" />
+        <input type="text" id="name" name="phone" class="form-control" value="@Model.Sale.Phone" />
     </div>
     <div class="form-group">
         <label for="name">Денег внесено</label>
@@ -36,7 +35,7 @@
     </div>
     <div class="form-group">
         <label for="name">Дата по</label>
-        <input type="text" id="name" name="datefor" value="@Model.ForDate.ToString("dd MM yyyy")" class="form-control" placeholder="@Model.ForDate.ToString("dd MM yyyy")" onfocus="(this.type='date')"  onfocusout="(this.type='text')"  />
+        <input type="text" id="name" name="datefor" value="@Model.ForDate.ToString("dd MM yyyy")" class="form-control" placeholder="@Model.ForDate.ToString("dd MM yyyy")" onfocus="(this.type='date')" onfocusout="(this.type='text')" />
     </div>
     <div class="form-group">
         <label for="name">Есть ли свет</label>
@@ -59,7 +58,7 @@
         {
             foreach (var mon in Model.Montazniks)
             {
-              <div id="select_montaznik">
+                <div id="select_montaznik">
                     <select id="" name="montazniksIds" class="form-control" style="margin-bottom:10px;">
                         <option selected="selected" value="@mon.Id">@mon.FIO</option>
                         @foreach (var m in ViewBag.Montazniks)

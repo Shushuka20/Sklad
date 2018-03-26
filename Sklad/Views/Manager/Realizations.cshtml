@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Realizations";
     Layout = "~/Views/Shared/_LayoutManager.cshtml";
 }
@@ -38,11 +37,11 @@
     <tbody id="results">
         @foreach (var s in Model)
         {
-            string str = s.Comment; 
-                if (s.Number != null && s.Description == null && s.Outgo == 0)
+            string str = s.Comment;
+            if (s.Number != null && s.Description == null && s.Outgo == 0)
+            {
+                if (s.PayForTerminal == true)
                 {
-                    if (s.PayForTerminal == true)
-                    {
                     <tr style="background-color: #49bcff">
                         <td>@s.Date</td>
                         <td>@s.Number</td>
@@ -57,10 +56,10 @@
                             @if (s.Shipment == true)
                             {
                                 <span>была</span>
-                            }                           
+                            }
                             else if (s.Shipment == false)
                             {
-                                <span>Не была</span>                               
+                                <span>Не была</span>
                             }
                             <a href="/Manager/ChangeStatus/@s.Id" class="btn btn-default" style="display: block">Изменить</a>
                         </td>
@@ -80,7 +79,7 @@
                             @s.AddressInstallation <br />
                             @s.Comment
                         </td>
-                        <td><a href="/Manager/DogHran?sellNumb=@s.Number">Хранение</a> / <a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a> </td>
+                        <td><a href="/Manager/DogHran?sellNumb=@s.Number">Хранение</a> / <a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a> / <a href="/Manager/Payment?number=@s.Number">Платеж</a></td>
                     </tr>
                 }
                 else
@@ -122,7 +121,7 @@
                             @s.AddressInstallation <br />
                             @s.Comment
                         </td>
-                        <td><a href="/Manager/DogHran?sellNumb=@s.Number">Хранение</a> / <a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
+                        <td><a href="/Manager/DogHran?sellNumb=@s.Number">Хранение</a> / <a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a> / <a href="/Manager/Payment?number=@s.Number">Платеж</a></td>
                     </tr>
                 }
             }
@@ -148,7 +147,7 @@
                             <span>Не была</span>
                         }
                         <a href="/Manager/ChangeStatus/@s.Id" class="btn btn-default" style="display: block">Изменить</a>
-                        </td>
+                    </td>
                     <td>
                         @if (s.Dealer != null)
                         {
@@ -160,13 +159,13 @@
                         }
                     </td>
 
-                        <td>
-                            @s.FIO <br />
-                            @s.Phone <br />
-                            @s.AddressInstallation <br />
-                            @s.Comment
-                        </td>
-                    <td><a href="/Manager/DogHran?sellNumb=@s.Number">Хранение</a> / <a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
+                    <td>
+                        @s.FIO <br />
+                        @s.Phone <br />
+                        @s.AddressInstallation <br />
+                        @s.Comment
+                    </td>
+                    <td><a href="/Manager/DogHran?sellNumb=@s.Number">Хранение</a> / <a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a> / <a href="/Manager/Payment?number=@s.Number">Платеж</a></td>
                 </tr>
             }
             else if (str != null)
@@ -196,7 +195,7 @@
                         </td>
                         <td>
                             @if (s.Dealer != null)
-                        {
+                            {
                                 <span>@s.Dealer.Name</span>
                             }
                             else
@@ -210,7 +209,7 @@
                             @s.AddressInstallation <br />
                             @s.Comment
                         </td>
-                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/DogDeliveryPech/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
+                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a> / <a href="/Manager/Payment?number=@s.Number">Платеж</a></td>
                     </tr>
                 }
                 else if (str.Contains("Приём денег."))
@@ -227,7 +226,7 @@
                         <td>@s.OutgoDescription</td>
                         <td>
                             @if (s.Shipment == true)
-                        {
+                            {
                                 <span>Была</span>
                             }
                             else if (s.Shipment == false)
@@ -238,7 +237,7 @@
                         </td>
                         <td>
                             @if (s.Dealer != null)
-                        {
+                            {
                                 <span>@s.Dealer.Name</span>
                             }
                             else
@@ -252,7 +251,7 @@
                             @s.AddressInstallation <br />
                             @s.Comment
                         </td>
-                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
+                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a> / <a href="/Manager/Payment?number=@s.Number">Платеж</a></td>
                     </tr>
                 }
                 else if (s.Comment == "РАССРОЧКА")
@@ -312,7 +311,7 @@
                             @s.AddressInstallation <br />
                             @s.Comment
                         </td>
-                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
+                        <td><a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a> / <a href="/Manager/Payment?number=@s.Number">Платеж</a></td>
                     </tr>
                 }
             }
@@ -336,10 +335,9 @@
                         else if (s.Shipment == false)
                         {
                             <span>Не была</span>
-                        }                        
+                        }
                     </td>
-                    <td>
-                    </td>
+                    <td></td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -358,11 +356,11 @@
                     <td>@s.OutgoDescription</td>
                     <td>
                         @if (s.Shipment == true)
-                                    {
+                        {
                             <span>Была</span>
                         }
                         else if (s.Shipment == false)
-                            {
+                        {
                             <span>Не была</span>
                         }
                         <a href="/Manager/ChangeStatus/@s.Id" class="btn btn-default" style="display: block">Изменить</a>
@@ -370,22 +368,22 @@
                     <td>
                         @if (s.Dealer != null)
                         {
-                          <span>@s.Dealer.Name</span>
+                            <span>@s.Dealer.Name</span>
                         }
                         else
                         {
-                          <span>@s.Number</span>
+                            <span>@s.Number</span>
                         }
-                        </td>
-                        <td>
-                            @s.FIO <br />
-                            @s.Phone <br />
-                            @s.AddressInstallation <br />
-                            @s.Comment
-                        </td>
-                        <td><a href="/Manager/DogHran?sellNumb=@s.Number">Хранение</a> / <a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a></td>
-                    </tr>
-                }
+                    </td>
+                    <td>
+                        @s.FIO <br />
+                        @s.Phone <br />
+                        @s.AddressInstallation <br />
+                        @s.Comment
+                    </td>
+                    <td><a href="/Manager/DogHran?sellNumb=@s.Number">Хранение</a> / <a href="/Manager/Delivery?sellNumb=@s.Number">Доставка</a> / <a href="/Manager/Ticket/@s.Id">Распечатать</a> / <a href="/Manager/OrderInstallmentFinal?sellNumb=@s.Number">Добавить в очередь</a> / <a href="/Manager/Payment?number=@s.Number">Платеж</a></td>
+                </tr>
+            }
         }
-        </tbody>
+    </tbody>
 </table>

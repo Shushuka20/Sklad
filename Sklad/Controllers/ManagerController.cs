@@ -1816,7 +1816,7 @@ namespace Sklad.Controllers
             db.Entry(installment).State = EntityState.Modified;
             db.SaveChanges();
 
-            return RedirectToAction("OrderInstallation", "Manager");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
